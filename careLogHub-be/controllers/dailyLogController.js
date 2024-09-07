@@ -56,4 +56,19 @@ const deleteDailyLog = asyncHandler(async(req,res) =>{
     res.json(dailyLogExist.dailyLogType + " has been deleted.")
 })
 
-module.exports = {createDailyLog,getDailyLogs,getSingleDailyLog,deleteDailyLog}
+
+const updateDailyLog = asyncHandler(async(req,res) =>{
+    const {dailyLogId} = req.params
+    if(!mongoose.Types.ObjectId.isValid(dailyLogId)){
+        throw new Error("Daily Log does not exist.")
+    }
+    const updatedDailyLog = await DailyLog.findOneAndUpdate({_id:dailyLogId},{...req.body})
+    if(!updatedDailyLog){
+        throw new Error("Daily Log does not exist.")
+    }
+
+    res.status(200).json(updatedDailyLog)
+
+})
+
+module.exports = {createDailyLog,getDailyLogs,getSingleDailyLog,deleteDailyLog,updateDailyLog}
