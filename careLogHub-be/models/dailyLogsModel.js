@@ -1,17 +1,18 @@
 const mongoose = require('mongoose')
 
 const dailyLogSchema = mongoose.Schema({
-    title:{
+    dailyLogType:{
         type:String,
-        required:true
+        required:true,
+        enum:["Incident Report","Daily Log"] // restricts the values to these two options.
     },
     body:{
         type:String,
         required:true
     },
     date:{
-        type:Date(),
-        default: new Date()
+        type:Date,
+        required:true
     }
 },
     {timestamps:true}

@@ -2,9 +2,12 @@ const express = require("express")
 const app = express()
 const mongoose = require("mongoose")
 require('dotenv').config()
+const dailyLog = require('./routes/dailyLogRoutes')
 
 //middleware
 app.use(express.json())
+
+app.use("/api/dailyLog",dailyLog)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
