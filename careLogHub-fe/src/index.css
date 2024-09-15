@@ -2,6 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
 
 /* layout */
+
+/** {*/
+/*    margin:0;*/
+/*}*/
+
+
+
+
 :root {
     --primary: #1aac83;
     --error: #e7195a;
@@ -22,19 +30,49 @@ header .container {
     align-items: center;
     justify-content: space-between;
 }
+
 header a {
     color: #333;
     text-decoration: none;
 }
 .pages{
     max-width: 1400px;
+    /*min-height: 1400px;*/
     padding: 20px;
     margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow:1
 }
 
 /* homepage */
 .home {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 100px;
+    display: flex;
+    /*flex-grow:1;*/
+    /*justify-content: space-between;*/
+    /*align-items: center;*/
+    /*display: grid;*/
+    /*grid-template-columns: 3fr 1fr;*/
+    /*gap: 100px;*/
+}
+
+.workouts h3{
+    padding-left: 50px;
+    height:50px;
+    width:300px;
+    border: 3px solid
+}
+
+.workouts{
+    display: flex;
+    gap:4px;
+    flex-grow:1;
+    flex-wrap: wrap;
+}
+
+.workouts small{
+    color:grey;
+    font-style:oblique;
+
 }
