@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {Timeout} = require("mongodb/src");
+// const {Timeout} = require("mongodb/src");
 
 const dailyLogSchema = mongoose.Schema({
     dailyLogType:{
