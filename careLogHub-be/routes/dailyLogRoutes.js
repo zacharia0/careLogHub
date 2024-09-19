@@ -3,8 +3,9 @@ const {createDailyLog,getDailyLogs,getSingleDailyLog,deleteDailyLog,updateDailyL
 
 const router = express.Router()
 
+
 router.post('/',createDailyLog)
-router.get("/allLogs",getDailyLogs)
+router.get("/",getDailyLogs)
 router.get("/:dailyLogId",getSingleDailyLog)
 router.delete("/:dailyLogId",deleteDailyLog)
 router.put("/update/:dailyLogId",updateDailyLog)

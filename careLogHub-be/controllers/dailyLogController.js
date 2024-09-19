@@ -3,11 +3,16 @@ const asyncHandler = require("../middleware/asyncHandler");
 const mongoose= require("mongoose")
 
 const createDailyLog = asyncHandler(async(req,res) =>{
-    console.log("Hello there")
-    const {dailyLogType,body,date} = req.body
+    const {dailyLogType,body,date,time} = req.body
     if(!dailyLogType || !date || !body){
         throw new Error("All fields are required.")
     }
+
+    const currentTime = new Date();
+    const logDate = new Date(date)
+    logDate.setHours((currentTime.getHours()))
+    logDate.setMinutes(currentTime.getMinutes())
+    logDate.setSeconds(currentTime.getSeconds())
 
     const newDailyLog = new DailyLog({dailyLogType,body,date})
 
@@ -22,7 +27,7 @@ const createDailyLog = asyncHandler(async(req,res) =>{
 
 
 const getDailyLogs = asyncHandler(async(req,res) =>{
-    const allDailyLogs = await DailyLog.find()
+    const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1})
     console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
         throw new Error("[Empty Daily Logs]")
