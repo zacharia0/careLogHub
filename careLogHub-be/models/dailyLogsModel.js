@@ -1,6 +1,4 @@
 const mongoose = require('mongoose')
-// const {Timeout} = require("mongodb/src");
-
 const dailyLogSchema = mongoose.Schema({
     dailyLogType:{
         type:String,
@@ -15,10 +13,7 @@ const dailyLogSchema = mongoose.Schema({
         type:Date,
         required:true
     },
-    // time:{
-    //     type:Date,
-    //     required:true
-    // }
+
 },
     {timestamps:true}
 )

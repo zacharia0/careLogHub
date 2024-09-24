@@ -1,9 +1,11 @@
 import {useEffect, useState} from "react";
 import {format, parseISO} from "date-fns";
+import "../index.css"
 
 
 //Components
 import DailyLogDetails from "../components/dailyLogDetails.jsx";
+import {Link} from "react-router-dom";
 
 const Home = () =>{
 
@@ -24,18 +26,24 @@ const Home = () =>{
 
 
     return(
-        <div>{logs && logs.map((log) =>{
-            const parseDate = parseISO(log.date)
-            return (
-                <div>
-                    {/*<h3>{log.dailyLogType}</h3>*/}
-                    {/*<p>{log.body}</p>*/}
-                    {/*<small>{format(parseDate, "MMMM dd, yyyy h:mm a")}</small>*/}
+        <div>
+            {/*<Link to = "/createDailyLog"><button>Create New Log</button></Link>*/}
+            <Link to="/createDailyLog" className="button-link">Create New Log</Link>
 
-                    <DailyLogDetails  key={log._id} dailyLog={log}/>
-                </div>
-            )
-        })}</div>
+            <div>{logs && logs.map((log) =>{
+                // const parseDate = parseISO(log.date)
+                return (
+                    <div key = {log._id}>
+                        <div>
+                            <DailyLogDetails dailyLog={log}/>
+                        </div>
+
+
+                    </div>
+                )
+            })}</div>
+
+        </div>
     )
 }
 
