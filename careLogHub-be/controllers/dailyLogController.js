@@ -3,8 +3,9 @@ const asyncHandler = require("../middleware/asyncHandler");
 const mongoose= require("mongoose")
 
 const createDailyLog = asyncHandler(async(req,res) =>{
-    const {dailyLogType,body,date,time} = req.body
-    if(!dailyLogType || !date || !body){
+    const {dailyLogType,body,date} = req.body
+    if(!dailyLogType || !date || !body ){
+        res.status(4000)
         throw new Error("All fields are required.")
     }
 
@@ -14,7 +15,7 @@ const createDailyLog = asyncHandler(async(req,res) =>{
     logDate.setMinutes(currentTime.getMinutes())
     logDate.setSeconds(currentTime.getSeconds())
 
-    const newDailyLog = new DailyLog({dailyLogType,body,date})
+    const newDailyLog = new DailyLog({dailyLogType,body,date:logDate})
 
     try{
         await newDailyLog.save()
@@ -28,8 +29,9 @@ const createDailyLog = asyncHandler(async(req,res) =>{
 
 const getDailyLogs = asyncHandler(async(req,res) =>{
     const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1})
-    console.log(allDailyLogs)
+    // console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
+        res.status(400)
         throw new Error("[Empty Daily Logs]")
     }
     res.status(200).json(allDailyLogs)
@@ -39,9 +41,10 @@ const getSingleDailyLog = asyncHandler(async(req,res) =>{
     console.log("Inside the singleDaily log")
     const {dailyLogId} = req.params
     if(!mongoose.Types.ObjectId.isValid(dailyLogId)){
+        res.status(400)
         throw new Error("Daily Log does not exist.")
     }
-    console.log(dailyLogId)
+    // console.log(dailyLogId)
     const dailyLogExist = await DailyLog.findById(dailyLogId)
     if(!dailyLogExist){
         throw new Error("Daily Log does not exist.")
