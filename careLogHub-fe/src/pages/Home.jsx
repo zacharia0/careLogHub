@@ -1,48 +1,40 @@
 import {useEffect, useState} from "react";
-import {format, parseISO} from "date-fns";
-import "../index.css"
-
-
-//Components
-import DailyLogDetails from "../components/dailyLogDetails.jsx";
+import DailyLogDetails from "../components/DailyLogDetails.jsx";
 import {Link} from "react-router-dom";
 
-const Home = () =>{
+const Home = () => {
+    const [dailyLog, setDailyLog] = useState("")
+    const [error, setError] = useState(null)
 
-    const [logs,setLogs] = useState(null)
-
-    useEffect(() =>{
-        const fetchLogs = async() =>{
+    useEffect(() => {
+        const fetchDailyLogs = async () => {
             const response = await fetch("http://localhost:4000/api/dailyLogs")
-
             const json = await response.json()
-            if(response.ok){
-                setLogs(json)
+
+            if (!response.ok) {
+                setError(json.error)
+                console.log(json)
             }
 
+            if (response.ok) {
+                setDailyLog(json)
+                setError(null)
+            }
         }
-        fetchLogs()
-    },[])
+        fetchDailyLogs()
+    }, [])
+    console.log("Current dailyLogs state:", dailyLog); // Debugging the state
 
-
-    return(
+    return (
         <div>
-            {/*<Link to = "/createDailyLog"><button>Create New Log</button></Link>*/}
-            <Link to="/createDailyLog" className="button-link">Create New Log</Link>
+            <div>
+                <Link to="/createdailylog">Create Daily Log</Link>
+            </div>
+            {error && <div>{error} </div>}
 
-            <div>{logs && logs.map((log) =>{
-                // const parseDate = parseISO(log.date)
-                return (
-                    <div key = {log._id}>
-                        <div>
-                            <DailyLogDetails dailyLog={log}/>
-                        </div>
-
-
-                    </div>
-                )
-            })}</div>
-
+            {dailyLog && dailyLog.map((log) => (
+                <DailyLogDetails dailyLog={log} key={log._id}/>
+            ))}
         </div>
     )
 }

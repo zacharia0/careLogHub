@@ -1,7 +1,9 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
+import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
 
 const LogForm = () =>{
+    const {dispatch} = useDailyLogContext()
     const [dailyLogType, setDailyLogType] = useState("")
     const [body,setBody] = useState("")
     const [date, setDate] = useState("")
@@ -55,7 +57,7 @@ const LogForm = () =>{
                 value = {body}
                 onChange = { (e) =>setBody(e.target.value)}
             /><br/>
-            
+
             <label>Date:</label><br/>
             <input
                 type="date"
