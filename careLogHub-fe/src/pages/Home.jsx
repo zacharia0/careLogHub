@@ -1,9 +1,10 @@
 import {useEffect, useState} from "react";
 import DailyLogDetails from "../components/DailyLogDetails.jsx";
 import {Link} from "react-router-dom";
+import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
 
 const Home = () => {
-    const [dailyLog, setDailyLog] = useState("")
+    const {dailyLogs,dispatch} = useDailyLogContext()
     const [error, setError] = useState(null)
 
     useEffect(() => {
@@ -17,13 +18,13 @@ const Home = () => {
             }
 
             if (response.ok) {
-                setDailyLog(json)
+                dispatch({type:"SET_DAILY_LOG",payload:json})
                 setError(null)
             }
         }
         fetchDailyLogs()
     }, [])
-    console.log("Current dailyLogs state:", dailyLog); // Debugging the state
+    console.log("Current dailyLogs state:", dailyLogs); // Debugging the state
 
     return (
         <div>
@@ -32,7 +33,7 @@ const Home = () => {
             </div>
             {error && <div>{error} </div>}
 
-            {dailyLog && dailyLog.map((log) => (
+            {dailyLogs && dailyLogs.map((log) => (
                 <DailyLogDetails dailyLog={log} key={log._id}/>
             ))}
         </div>

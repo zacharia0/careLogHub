@@ -6,6 +6,10 @@ export const DailyLogContext = createContext()
 
 export const dailyLogReducer = (state,action) =>{
     switch(action.type){
+        case "SET_DAILY_LOG":
+            return{
+                dailyLogs:action.payload
+            }
 
     }
 
