@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import DailyLogDetails from "../components/DailyLogDetails.jsx";
 import {Link} from "react-router-dom";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
+import LogForm from "../components/LogForm.jsx";
 
 const Home = () => {
     const {dailyLogs,dispatch} = useDailyLogContext()
@@ -24,7 +25,7 @@ const Home = () => {
         }
         fetchDailyLogs()
     }, [])
-    console.log("Current dailyLogs state:", dailyLogs); // Debugging the state
+    // console.log("Current dailyLogs state:", dailyLogs); // Debugging the state
 
     return (
         <div>
@@ -36,6 +37,7 @@ const Home = () => {
             {dailyLogs && dailyLogs.map((log) => (
                 <DailyLogDetails dailyLog={log} key={log._id}/>
             ))}
+
         </div>
     )
 }

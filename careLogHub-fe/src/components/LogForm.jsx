@@ -30,8 +30,9 @@ const LogForm = () =>{
             setBody('')
             setDate('')
             setDailyLogType('')
+            dispatch({type:"CREATE_DAILY_LOG",payload:json})
             console.log("New Observation added")
-            navigate("/")
+            // navigate("/")
 
         }
 
