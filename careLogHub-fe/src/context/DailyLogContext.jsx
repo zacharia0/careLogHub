@@ -15,6 +15,10 @@ export const dailyLogReducer = (state,action) =>{
             return{
                 dailyLogs: [action.payload,...state.dailyLogs]
             }
+        case "DELETE_DAILY_LOG":
+            return{
+                dailyLogs: state.dailyLogs.filter((dailyLog) => dailyLog._id !== action.payload._id)
+            }
 
 
 
