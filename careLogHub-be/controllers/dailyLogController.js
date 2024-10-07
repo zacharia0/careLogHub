@@ -5,7 +5,7 @@ const mongoose= require("mongoose")
 const createDailyLog = asyncHandler(async(req,res) =>{
     const {dailyLogType,body,date} = req.body
     if(!dailyLogType || !date || !body ){
-        res.status(4000)
+        res.status(400)
         throw new Error("All fields are required.")
     }
 
@@ -14,6 +14,7 @@ const createDailyLog = asyncHandler(async(req,res) =>{
     logDate.setHours((currentTime.getHours()))
     logDate.setMinutes(currentTime.getMinutes())
     logDate.setSeconds(currentTime.getSeconds())
+
 
     const newDailyLog = new DailyLog({dailyLogType,body,date:logDate})
 
@@ -24,15 +25,24 @@ const createDailyLog = asyncHandler(async(req,res) =>{
         throw new Error(error.message)
     }
 
+    // ANOTHER WAY OF ADDING NEW DATA TO THE DATABASE.
+
+    // try {
+    //     const dailyLog = DailyLog.create({dailyLogType,body,date:logDate})
+    //     res.status(200).json(dailyLog)
+    // }catch(error){
+    //     res.status(400).json({error:error.message})
+    // }
+
 })
 
 
 const getDailyLogs = asyncHandler(async(req,res) =>{
     const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1})
-    // console.log(allDailyLogs)
+    console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
         res.status(400)
-        throw new Error("[Empty Daily Logs]")
+        throw new Error("NO DAILY LOGS")
     }
     res.status(200).json(allDailyLogs)
 })
@@ -47,6 +57,7 @@ const getSingleDailyLog = asyncHandler(async(req,res) =>{
     // console.log(dailyLogId)
     const dailyLogExist = await DailyLog.findById(dailyLogId)
     if(!dailyLogExist){
+        res.status(404)
         throw new Error("Daily Log does not exist.")
     }
     res.status(200).json(dailyLogExist)
@@ -61,7 +72,7 @@ const deleteDailyLog = asyncHandler(async(req,res) =>{
     if(!dailyLogExist){
         throw new Error("Daily Log does not exist.")
     }
-    res.json(dailyLogExist.dailyLogType + " has been deleted.")
+    res.status(200).json(dailyLogExist)
 })
 
 
@@ -70,8 +81,9 @@ const updateDailyLog = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(dailyLogId)){
         throw new Error("Daily Log does not exist.")
     }
-    const updatedDailyLog = await DailyLog.findOneAndUpdate({_id:dailyLogId},{...req.body})
+    const updatedDailyLog = await DailyLog.findOneAndUpdate({_id:dailyLogId},{...req.body},{new:true})
     if(!updatedDailyLog){
+        res.status(404)
         throw new Error("Daily Log does not exist.")
     }
 
