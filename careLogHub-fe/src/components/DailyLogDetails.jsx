@@ -11,6 +11,7 @@ const DailyLogDetails = ({dailyLog}) => {
         body: dailyLog.body,
         date:dailyLog.date
     })
+    const [error,setError] = useState("")
 
 
     const handleDelete = async () => {
@@ -29,6 +30,7 @@ const DailyLogDetails = ({dailyLog}) => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        setError("")
         const response = await fetch("http://localhost:4000/api/dailyLogs/update/" + dailyLog._id, {
             method: "PUT",
             headers: {
@@ -37,19 +39,40 @@ const DailyLogDetails = ({dailyLog}) => {
             body: JSON.stringify(updatedLog)
         });
         const json = await response.json();
-        if (response.ok) {
-            dispatch({type: "UPDATE_DAILY_LOG", payload: json})
-            setIsEditing(false)
+        console.log(json.body.length)
+        // if(json.body.length <= 0){
+        //     setError("Observation cannot be empty!")
+        //     console.log("Observation cannot be empty!")
+        // }
+        // if (response.ok) {
+        //     dispatch({type: "UPDATE_DAILY_LOG", payload: json})
+        //     setIsEditing(false)
+        //
+        // } else {
+        //     setError(json.message || "failed to update log.") // Display server error message or a fallback
+        //     console.error("Failed to update log:", json)
+        // }
 
-        } else {
-            console.error("Failed to update log:", json)
+        if(!response.ok){
+            setError(json.message || "Failed to update log.")
+            console.error("failed to update Log", json)
+            return
         }
+        if(!updatedLog.body || updatedLog.body.trim() ===""){
+            //Check if body is empty
+            setError("Observation cannot be empty!")
+            console.error(json.message)
+            return
+        }
+        dispatch({type:"UPDATE_DAILY_LOG",payload:json})
+        setIsEditing(false)
 
     }
 
 
     return (
         <div>
+            {error && <div style ={{color:'red'}}>{error}</div>}
             {
                 isEditing ? (
                         <form onSubmit={handleUpdate}>

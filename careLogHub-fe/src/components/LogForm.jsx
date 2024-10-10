@@ -11,6 +11,23 @@ const LogForm = () =>{
     const navigate = useNavigate()
     const handleSubmit =  async (e) =>{
         e.preventDefault()
+
+        // if(!dailyLogType || !body || !date){
+        //     setError("All fields are required")
+        //     return
+        // }
+        if(!dailyLogType){
+            setError("Daily Log type is required")
+            return
+        }
+        if(!body){
+            setError("Daily Log body is required")
+            return
+        }
+        if(!date){
+            setError("Daily Log date is required")
+            return
+        }
         const dailyLogObservation = {dailyLogType,body,date}
 
         const response = await fetch('http://localhost:4000/api/dailyLogs',{
@@ -23,7 +40,7 @@ const LogForm = () =>{
 
         const json = await response.json();
         if(!response.ok){
-            setError(json.error)
+            // setError(json.message)
         }
         if(response.ok){
             setError('')
@@ -47,7 +64,7 @@ const LogForm = () =>{
                 value = {dailyLogType}
                 onChange={ (e) => setDailyLogType(e.target.value)}
             >
-                <option value="Daily Log">Select One</option>
+                <option value="">Select One</option>
                 <option value="Daily Log">Daily Log</option>
                 <option value="Incident Report">Incident Report</option>
             </select><br/>
@@ -72,7 +89,7 @@ const LogForm = () =>{
             {date}
             {dailyLogType}
             <button>Create Observation</button>
-            {error && <div>{error}</div>}
+            {error && <div style={{color:'red'}}>{error}</div>}
 
         </form>
     )
