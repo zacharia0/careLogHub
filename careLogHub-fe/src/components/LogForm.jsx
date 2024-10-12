@@ -57,10 +57,11 @@ const LogForm = () =>{
 
     return(
         <form onSubmit={handleSubmit}>
-            <Link to = "/">View Logs</Link>
+            <Link className="text-blue-500 hover:underline font-semibold" to="/">View All Logs</Link>
             <h3><strong>Create Daily Log</strong></h3>
             <label>Type:</label><br/>
             <select
+                className="w-1/5 p-2 border border-gray-300 rounded-lg shadow-sm bg-white focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-gray-700"
                 value = {dailyLogType}
                 onChange={ (e) => setDailyLogType(e.target.value)}
             >
@@ -71,6 +72,7 @@ const LogForm = () =>{
 
             <label>Observation Summary:</label><br/>
             <textarea
+                className= "w-1/3 h-40 p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus-ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out resize-none"
                 type="text"
                 value = {body}
                 onChange = { (e) =>setBody(e.target.value)}
@@ -78,6 +80,7 @@ const LogForm = () =>{
 
             <label>Date:</label><br/>
             <input
+                className= "w-2/7 p-3 border border-gray-300 rounded-lg shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-gray-700"
                 type="date"
                 value={date}
                 onChange={(e) => {
@@ -85,10 +88,7 @@ const LogForm = () =>{
                     e.target.blur()
                 }}
             /><br/>
-            {body}
-            {date}
-            {dailyLogType}
-            <button>Create Observation</button>
+            <button className= "bg-green-500 hover:bg-green-700 py-1 px-4 text-white rounded" >Create Observation</button>
             {error && <div style={{color:'red'}}>{error}</div>}
 
         </form>

@@ -30,7 +30,7 @@ const Home = () => {
     return (
         <div>
             <div>
-                <Link to="/createdailylog">Create Daily Log</Link>
+                <Link className= 'text-3xl font-bold underline' to="/createdailylog">Create Daily Log</Link>
             </div>
             {error && <div>{error} </div>}
 

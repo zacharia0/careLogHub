@@ -1,6 +1,12 @@
+//ICONS
+import {FaBeer,FaTrash,FaPencilAlt} from "react-icons/fa"
+
+
+//
 import {format, parseISO} from "date-fns";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
 import {useState} from "react";
+
 
 const DailyLogDetails = ({dailyLog}) => {
     const parseDate = parseISO(dailyLog.date)
@@ -77,6 +83,7 @@ const DailyLogDetails = ({dailyLog}) => {
                 isEditing ? (
                         <form onSubmit={handleUpdate}>
                             <select
+                                className=" w-1/7 p-2 border border-gray-300 rounded-lg shadow-sm bg-white focus:ring-2 focus:ring-blue-500 transition duration:300 ease-in-out text-gray-700"
                                 value = {updatedLog.dailyLogType}
                                 onChange={(e) => setUpdatedLog({...updatedLog, dailyLogType:e.target.value})}
                             >
@@ -85,27 +92,29 @@ const DailyLogDetails = ({dailyLog}) => {
                             </select>
 
                             <textarea
+                                className="w-1/3 h-40 border border-gray-300 rounded-lg shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out resize-none"
                                 value = {updatedLog.body}
                                 onChange={(e) => setUpdatedLog({...updatedLog,body:e.target.value})}
                             ></textarea>
 
                             <input
+                                className="w-2/7 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focust:ring-blue-500 focus:border-blue-500 transition duration-300 ease-in-out text-gray-700"
                                 type="datetime-local"
                                 value = {updatedLog.date}
                                 onChange = {(e) => setUpdatedLog({...updatedLog,date:e.target.value})}
                             />
 
-                            <button type = "submit">Save</button>
-                            <button type ="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                            <button className= "bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-7 mr-4 rounded" type = "submit">Save</button>
+                            <button className= "bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-7 rounded" type ="button" onClick={() => setIsEditing(false)}>Cancel</button>
                         </form>
                     ) :
                     (
-                        <div>
-                            <label>Type:</label><strong>{dailyLog.dailyLogType}</strong> <br/>
-                            <label>Observation:</label><p>{dailyLog.body}</p>
-                            <label>Occured:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small><br/>
-                            <button onClick={() => setIsEditing(true)}>Edit</button>
-                            <button onClick={handleDelete}>Delete</button>
+                        <div className="pl-3 mb-10">
+                            <label className= "block text-gray-700 font-medium mb-1">Type:</label><strong>{dailyLog.dailyLogType}</strong>
+                            <label className="block -text-gray-700 font-medum mb-1">Observation:</label><p>{dailyLog.body}</p>
+                            <label>Occurred:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small>
+                            <button className= "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={() => setIsEditing(true)}><FaPencilAlt/></button>
+                            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded " onClick={handleDelete}><FaTrash/></button>
                         </div>
                     )
             }
