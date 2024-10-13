@@ -58,7 +58,7 @@ const createDailyLog = asyncHandler(async(req,res) =>{
 
 const getDailyLogs = asyncHandler(async(req,res) =>{
     const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1})
-    console.log(allDailyLogs)
+    // console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
         // res.status(400)
         // throw new Error("NO DAILY LOGS")

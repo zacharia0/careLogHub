@@ -6,8 +6,7 @@ const clientSchema = mongoose.Schema({
         required:true
     },
     middleName:{
-        type:String,
-        required:true
+        type:String
     },
     lastName:{
         type:String,
@@ -48,6 +47,6 @@ const clientSchema = mongoose.Schema({
     },
 
 
-})
+},{timestamps:true})
 
-exports.module = mongoose.model("Client",clientSchema)
+module.exports = mongoose.model("Client",clientSchema)

@@ -3,6 +3,7 @@ const app = express()
 const mongoose = require("mongoose")
 require('dotenv').config()
 const dailyLog = require('./routes/dailyLogRoutes')
+const clientRoutes = require("./routes/clientRoutes")
 
 
 
@@ -14,6 +15,7 @@ app.use(cors());
 
 //Routes
 app.use("/api/dailyLogs",dailyLog)
+app.use("/api/client",clientRoutes)
 
 // Global Error Handling Middleware (after routes)
 app.use((err,req,res,next) =>{
