@@ -30,6 +30,7 @@ const LogForm = () =>{
         }
         const dailyLogObservation = {dailyLogType,body,date}
 
+
         const response = await fetch('http://localhost:4000/api/dailyLogs',{
             method:'POST',
             body: JSON.stringify(dailyLogObservation),
