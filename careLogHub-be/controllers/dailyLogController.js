@@ -1,12 +1,18 @@
 const DailyLog = require('../models/dailyLogsModel')
 const asyncHandler = require("../middleware/asyncHandler");
 const mongoose= require("mongoose")
+const CustomError = require("../utils/CustomError")
 
 const createDailyLog = asyncHandler(async(req,res) =>{
     const {dailyLogType,body,date} = req.body
-    if(!dailyLogType || !date || !body ){
-        res.status(4000)
-        throw new Error("All fields are required.")
+    if(!body ){
+       throw new CustomError("Observation is required.",400)
+    }
+    if(!dailyLogType){
+        throw new CustomError("Daily log type is required.",400)
+    }
+    if(!date){
+        throw new CustomError("Date is required.",400)
     }
 
     const currentTime = new Date();
@@ -15,14 +21,15 @@ const createDailyLog = asyncHandler(async(req,res) =>{
     logDate.setMinutes(currentTime.getMinutes())
     logDate.setSeconds(currentTime.getSeconds())
 
-    const newDailyLog = new DailyLog({dailyLogType,body,date:logDate})
+    const newDailyLog = new DailyLog({
+        dailyLogType,
+        body,
+        date:logDate
+    })
 
-    try{
-        await newDailyLog.save()
-        res.status(201).json({dailyLogType:newDailyLog.dailyLogType,body:newDailyLog.body,date:newDailyLog.date})
-    }catch(error){
-        throw new Error(error.message)
-    }
+    await newDailyLog.save()
+
+    res.status(201).json(newDailyLog)
 
 })
 
@@ -31,8 +38,9 @@ const getDailyLogs = asyncHandler(async(req,res) =>{
     const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1})
     // console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
-        res.status(400)
-        throw new Error("[Empty Daily Logs]")
+        throw new CustomError("No Daily Logs",404)
+
+
     }
     res.status(200).json(allDailyLogs)
 })
@@ -55,24 +63,24 @@ const getSingleDailyLog = asyncHandler(async(req,res) =>{
 const deleteDailyLog = asyncHandler(async(req,res) =>{
     const {dailyLogId} = req.params
     if(!mongoose.Types.ObjectId.isValid(dailyLogId)){
-        throw new Error("Not the the correct ID format!")
+        throw new CustomError("Not the correct ID format!",400)
     }
     const dailyLogExist = await DailyLog.findOneAndDelete({_id:dailyLogId})
     if(!dailyLogExist){
-        throw new Error("Daily Log does not exist.")
+        throw new CustomError("Daily Log does not exist.",404)
     }
-    res.json(dailyLogExist.dailyLogType + " has been deleted.")
+    res.json(dailyLogExist.dailyLogType)
 })
 
 
 const updateDailyLog = asyncHandler(async(req,res) =>{
     const {dailyLogId} = req.params
     if(!mongoose.Types.ObjectId.isValid(dailyLogId)){
-        throw new Error("Daily Log does not exist.")
+        throw new CustomError("Not the correct ID format!",400)
     }
     const updatedDailyLog = await DailyLog.findOneAndUpdate({_id:dailyLogId},{...req.body})
     if(!updatedDailyLog){
-        throw new Error("Daily Log does not exist.")
+        throw new CustomError("Daily Log does not exist.",404)
     }
 
     res.status(200).json(updatedDailyLog)
