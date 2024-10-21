@@ -79,7 +79,10 @@ const updateDailyLog = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(dailyLogId)){
         throw new CustomError("Not the correct ID format!",400)
     }
-    const updatedDailyLog = await DailyLog.findOneAndUpdate({_id:dailyLogId},{...req.body})
+    const updatedDailyLog = await DailyLog.findOneAndUpdate({_id:dailyLogId},{...req.body},{new:true})
+    if(updatedDailyLog.body.length <= 0){
+        throw new CustomError("The body of the observation must not be empty",400)
+    }
     if(!updatedDailyLog){
         throw new CustomError("Daily Log does not exist.",404)
     }
