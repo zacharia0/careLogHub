@@ -57,11 +57,11 @@ const deleteDailyLog = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(dailyLogId)){
         throw new Error("Not the the correct ID format!")
     }
-    const dailyLogExist = await DailyLog.findOneAndDelete({_id:dailyLogId})
-    if(!dailyLogExist){
+    const dailyLogToDelete = await DailyLog.findOneAndDelete({_id:dailyLogId})
+    if(!dailyLogToDelete){
         throw new Error("Daily Log does not exist.")
     }
-    res.json(dailyLogExist.dailyLogType + " has been deleted.")
+    res.status(200).json(dailyLogToDelete)
 })
 
 
