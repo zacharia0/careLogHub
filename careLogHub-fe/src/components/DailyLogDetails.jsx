@@ -6,13 +6,14 @@ const DailyLogDetails = ({dailyLog}) => {
     const {dispatch} = useDailyLogContext()
 
 
-    const handleDelete = async() =>{
+    const handleDelete = async(e) =>{
+        e.preventDefault()
 
         const response = await fetch("http://localhost:4000/api/dailyLogs/"+dailyLog._id,{
             method:"DELETE"
         })
         const json = await response.json()
-        console.log(json)
+        console.log( "DELETION" ,json)
         if(response.ok){
             console.log(dailyLog._id  + " deleted.")
             dispatch({type:"DELETE_DAILY_LOG",payload:json})
