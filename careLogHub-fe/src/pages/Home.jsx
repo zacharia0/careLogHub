@@ -35,7 +35,8 @@ const Home = () => {
             {error && <div>{error} </div>}
 
             {dailyLogs && dailyLogs.map((log) => (
-                <DailyLogDetails key={log._id} dailyLog={log} />
+
+                <DailyLogDetails  key={log._id} dailyLog={log}/>
             ))}
 
         </div>

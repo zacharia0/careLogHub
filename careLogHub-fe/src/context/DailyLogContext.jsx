@@ -19,7 +19,10 @@ export const dailyLogReducer = (state,action) =>{
             return{
                 dailyLogs: state.dailyLogs.filter((dailyLog) => dailyLog._id !== action.payload._id)
             }
-
+        case "UPDATE_DAILY_LOG":
+            return{
+                dailyLogs: state.dailyLogs.map((dailyLog) => dailyLog._id === action.payload._id ? action.payload : dailyLog)
+            }
 
 
     }
