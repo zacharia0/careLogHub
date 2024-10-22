@@ -5,12 +5,13 @@ import {useState} from "react";
 const DailyLogDetails = ({dailyLog}) => {
     const parseDate = parseISO(dailyLog.date)
     const {dispatch} = useDailyLogContext()
-    const [isEditing, setIsEditing] = useState(false)
-    const [updatedLog, setUpdatedLog] = useState({
-        dailyLogType: dailyLog.dailyLogType,
-        body: dailyLog.body,
+    const [isEditing,setIsEditing] = useState(false)
+    const [updateDailyLog,setUpdateDailyLog] = useState({
+        dailyLogType:dailyLog.dailyLogType,
+        body:dailyLog.body,
         date:dailyLog.date
     })
+    const [error,setError] = useState("")
 
 
 
@@ -28,49 +29,83 @@ const DailyLogDetails = ({dailyLog}) => {
 
     }
 
-    const handleUpdate = async (e) => {
-        e.preventDefault();
-        const response = await fetch("http://localhost:4000/api/dailyLogs/update/" + dailyLog._id, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedLog)
-        });
-        const json = await response.json();
-        if (response.ok) {
-            dispatch({type: "UPDATE_DAILY_LOG", payload: json})
-            setIsEditing(false)
+    // const handleUpdate = async (e) => {
+    //     e.preventDefault();
+    //     const response = await fetch("http://localhost:4000/api/dailyLogs/update/" + dailyLog._id, {
+    //         method: "PUT",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify(updatedLog)
+    //     });
+    //     const json = await response.json();
+    //     if (response.ok) {
+    //         dispatch({type: "UPDATE_DAILY_LOG", payload: json})
+    //         setIsEditing(false)
+    //
+    //     } else {
+    //         console.error("Failed to update log:", json)
+    //     }
+    //
+    // }
 
-        } else {
-            console.error("Failed to update log:", json)
+    const handleUpdate = async(e) =>{
+        e.preventDefault()
+        if(!updateDailyLog.dailyLogType){
+            setError("Daily Log Type must be selected")
+            return
         }
-
+        if(!updateDailyLog.body){
+            setError("Observation cannot be empty")
+            return
+        }
+        if(!updateDailyLog.date){
+            setError("Date must be selected")
+            return
+        }
+        const response = await fetch("http://localhost:4000/api/dailyLogs/update/"+dailyLog._id,{
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(updateDailyLog)
+        })
+        const json = await response.json()
+        if(!response.ok){
+            setError("failed to update")
+            console.log("failed to update")
+            return
+        }
+        if(response.ok){
+            dispatch({type:"UPDATE_DAILY_LOG",payload:json})
+            setIsEditing(false)
+        }
     }
 
 
     return (
+
         <div>
             {
                 isEditing ? (
                         <form onSubmit={handleUpdate}>
                             <select
-                                value = {updatedLog.dailyLogType}
-                                onChange={(e) => setUpdatedLog({...updatedLog, dailyLogType:e.target.value})}
+                                value = {updateDailyLog.dailyLogType}
+                                onChange={(e) => setUpdateDailyLog({...updateDailyLog, dailyLogType:e.target.value})}
                             >
                                 <option value="Daily Log">Daily Log</option>
                                 <option value="Incident Report">Incident Report</option>
                             </select>
 
                             <textarea
-                                value = {updatedLog.body}
-                                onChange={(e) => setUpdatedLog({...updatedLog,body:e.target.value})}
+                                value = {updateDailyLog.body}
+                                onChange={(e) => setUpdateDailyLog({...updateDailyLog,body:e.target.value})}
                             ></textarea>
 
                             <input
                                 type="datetime-local"
-                                value = {updatedLog.date}
-                                onChange = {(e) => setUpdatedLog({...updatedLog,date:e.target.value})}
+                                value = {updateDailyLog.date}
+                                onChange = {(e) => setUpdateDailyLog({...updateDailyLog,date:e.target.value})}
                             />
 
                             <button type = "submit">Save</button>
@@ -81,7 +116,7 @@ const DailyLogDetails = ({dailyLog}) => {
                         <div>
                             <label>Type:</label><strong>{dailyLog.dailyLogType}</strong> <br/>
                             <label>Observation:</label><p>{dailyLog.body}</p>
-                            <label>Occured:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small><br/>
+                            <label>Occurred:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small><br/>
                             <button onClick={() => setIsEditing(true)}>Edit</button>
                             <button onClick={handleDelete}>Delete</button>
                         </div>
