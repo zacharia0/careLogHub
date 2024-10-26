@@ -1,6 +1,7 @@
 import {useClientContext} from "../hooks/useClientContext.js";
 import {useEffect} from "react";
 import ClientDetail from "../components/ClientDetail.jsx";
+import {Link} from "react-router-dom";
 
 const ClientList = () =>{
     const {clients,dispatch} = useClientContext()
@@ -20,10 +21,11 @@ const ClientList = () =>{
          }
          fetchAllClients()
 
-    },[])
+    },[dispatch])
 
     return(
         <div>
+            <Link to = "/createClient">Add New Client</Link>
             {clients.map((client) =>(
                 <ClientDetail key = {client._id} clients={client}/>
             ))}

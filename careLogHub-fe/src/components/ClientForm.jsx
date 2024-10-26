@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {useClientContext} from "../hooks/useClientContext.js";
+import {Link} from "react-router-dom";
 
 const ClientForm = () =>{
     const {dispatch} = useClientContext()
@@ -65,6 +66,7 @@ const ClientForm = () =>{
             <div>
                 <h1>New Client</h1>
             </div>
+            <Link to= '/all-clients'>All Clients</Link>
             <div>
                 {error && <div>{error}</div>}
             </div>
