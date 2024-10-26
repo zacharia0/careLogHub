@@ -35,7 +35,7 @@ const ClientForm = () =>{
             formError.push("diagnoses")
         }
         if(formError.length > 0){
-            setError(`The following fields are required ${formError.join(" ,")}`)
+            setError(`The following fields are required ${formError.join(", ")}`)
         }
 
 
@@ -52,11 +52,21 @@ const ClientForm = () =>{
             setError("")
             console.log("New Client Created.")
             dispatch({type:"CREATE_CLIENT",payload:json})
+            setClientData(
+                {
+                    firstName: "",
+                    lastName: "",
+                    moveInDate: "",
+                    diagnoses: "",
+                    dateOfBirth: ""
+                }
+            )
 
         }
-        if(!response.ok){
-            console.log("Failed to add a new client.")
-        }
+        // if(!response.ok){
+        //     setError("Failed to add a new client.")
+        //     console.log("Failed to add a new client.")
+        // }
 
     }
 
