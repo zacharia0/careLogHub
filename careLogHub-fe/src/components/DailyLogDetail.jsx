@@ -2,7 +2,7 @@ import {format, parseISO} from "date-fns";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
 import {useState} from "react";
 
-const DailyLogDetails = ({dailyLog}) => {
+const DailyLogDetail = ({dailyLog}) => {
     const parseDate = parseISO(dailyLog.date)
     const {dispatch} = useDailyLogContext()
     const [isEditing,setIsEditing] = useState(false)
@@ -125,5 +125,5 @@ const DailyLogDetails = ({dailyLog}) => {
         </div>
     )
 }
-export default DailyLogDetails
+export default DailyLogDetail
 

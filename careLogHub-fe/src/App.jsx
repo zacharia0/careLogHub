@@ -2,6 +2,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import DailyLogList from "./pages/DailyLogList.jsx";
 import LogForm from "./components/LogForm.jsx";
 import ClientForm from "./components/ClientForm.jsx";
+import ClientList from "./pages/ClientList.jsx";
 
 const App = () =>{
 
@@ -11,6 +12,7 @@ const App = () =>{
                 <Route path ="/" element={<DailyLogList/>}></Route>
                 <Route path =  "/createDailyLog" element={<LogForm/>}></Route>
                 <Route path = "/createClient" element = {<ClientForm/>} />
+                <Route path = "/all-clients" element = {<ClientList/>}/>
             </Routes>
         </BrowserRouter>
     )

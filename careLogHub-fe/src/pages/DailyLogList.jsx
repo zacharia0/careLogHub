@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import DailyLogDetails from "../components/DailyLogDetails.jsx";
+import DailyLogDetail from "../components/DailyLogDetail.jsx";
 import {Link} from "react-router-dom";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
 import LogForm from "../components/LogForm.jsx";
@@ -36,7 +36,7 @@ const DailyLogList = () => {
 
             {dailyLogs && dailyLogs.map((log) => (
 
-                <DailyLogDetails  key={log._id} dailyLog={log}/>
+                <DailyLogDetail key={log._id} dailyLog={log}/>
             ))}
 
         </div>
