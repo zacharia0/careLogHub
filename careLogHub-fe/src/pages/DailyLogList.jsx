@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
 import LogForm from "../components/LogForm.jsx";
 
-const Home = () => {
+const DailyLogList = () => {
     const {dailyLogs,dispatch} = useDailyLogContext()
     const [error, setError] = useState(null)
 
@@ -43,4 +43,4 @@ const Home = () => {
     )
 }
 
-export default Home
+export default DailyLogList
