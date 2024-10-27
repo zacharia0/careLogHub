@@ -58,4 +58,22 @@ const deleteClientById = asyncHandler(async(req,res) =>{
     const clientToDelete = await Client.findByIdAndDelete({_id:clientId})
     res.status(200).json(clientToDelete)
 })
-module.exports = {createClient,getAllClients,deleteClientById}
+
+
+const updateClientById = asyncHandler(async(req,res) =>{
+    const {clientId} = req.params
+    if(!mongoose.Types.ObjectId.isValid(clientId)){
+        throw new CustomError("Not a valid form ID",400)
+    }
+    if(!clientId){
+        throw new CustomError("ID not found." ,404)
+    }
+    const clientToUpdate = await Client.findOneAndUpdate({_id:clientId},{...req.body},{new:true})
+    if(!clientToUpdate){
+        throw new CustomError("Daily Log does not exist",404)
+    }
+    res.status(200).json(clientToUpdate)
+})
+
+
+module.exports = {createClient,getAllClients,deleteClientById,updateClientById}
