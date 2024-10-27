@@ -30,7 +30,7 @@ const DailyLogList = () => {
     return (
         <div>
             <div>
-                <Link to="/createdailylog">Create Daily Log</Link>
+                <Link to="/create-dailylog">Create Daily Log</Link>
             </div>
             {error && <div>{error} </div>}
 

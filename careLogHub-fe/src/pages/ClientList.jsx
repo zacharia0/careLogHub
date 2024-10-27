@@ -25,7 +25,7 @@ const ClientList = () =>{
 
     return(
         <div>
-            <Link to = "/createClient">Add New Client</Link>
+            <Link to = "/create-client">Add New Client</Link>
             {clients.map((client) =>(
                 <ClientDetail key = {client._id} clients={client}/>
             ))}
