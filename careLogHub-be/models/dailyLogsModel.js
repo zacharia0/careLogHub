@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const dailyLogSchema = mongoose.Schema({
+const Schema = mongoose.Schema
+const dailyLogSchema = new Schema({
     dailyLogType:{
         type:String,
         required:true,
@@ -13,6 +14,11 @@ const dailyLogSchema = mongoose.Schema({
         type:Date,
         required:true
     },
+    client:{
+        type:Schema.Types.ObjectId,
+        ref:"Client",
+        required:true
+    }
 
 },
     {timestamps:true}

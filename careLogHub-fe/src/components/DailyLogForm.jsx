@@ -47,14 +47,13 @@ const LogForm = () =>{
                 value = {dailyLogType}
                 onChange={ (e) => setDailyLogType(e.target.value)}
             >
-                <option value="Daily Log">Select One</option>
+                <option value="">Select One</option>
                 <option value="Daily Log">Daily Log</option>
                 <option value="Incident Report">Incident Report</option>
             </select><br/>
 
             <label>Observation Summary:</label><br/>
             <textarea
-                type="text"
                 value = {body}
                 onChange = { (e) =>setBody(e.target.value)}
             /><br/>

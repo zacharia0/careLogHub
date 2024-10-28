@@ -4,7 +4,7 @@ const mongoose= require("mongoose")
 const CustomError = require("../utils/CustomError")
 
 const createDailyLog = asyncHandler(async(req,res) =>{
-    const {dailyLogType,body,date} = req.body
+    const {dailyLogType,body,date,clientId} = req.body
     if(!body ){
        throw new CustomError("Observation is required.",400)
     }
@@ -21,32 +21,27 @@ const createDailyLog = asyncHandler(async(req,res) =>{
     logDate.setMinutes(currentTime.getMinutes())
     logDate.setSeconds(currentTime.getSeconds())
 
+    // Create a new daily log with the client reference
     const newDailyLog = new DailyLog({
         dailyLogType,
         body,
-        date:logDate
+        date:logDate,
+        client:clientId
     })
 
-
-
+    // Save the nw daily log to the database.
     await newDailyLog.save()
 
-    res.status(201).json(newDailyLog)
 
-    // ANOTHER WAY OF ADDING NEW DATA TO THE DATABASE.
+    const populateLog = await DailyLog.findById(newDailyLog._id).populate('client', 'firstName lastName')
 
-    // try {
-    //     const dailyLog = DailyLog.create({dailyLogType,body,date:logDate})
-    //     res.status(200).json(dailyLog)
-    // }catch(error){
-    //     res.status(400).json({error:error.message})
-    // }
+    res.status(201).json(populateLog)
 
 })
 
 
 const getDailyLogs = asyncHandler(async(req,res) =>{
-    const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1})
+    const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1}).populate("client","firstName lastName")
     console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
         throw new CustomError("No Daily Logs",404)
