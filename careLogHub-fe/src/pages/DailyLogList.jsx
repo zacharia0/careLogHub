@@ -5,7 +5,7 @@ import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
 import LogForm from "../components/LogForm.jsx";
 
 const DailyLogList = () => {
-    const {dailyLogs,dispatch} = useDailyLogContext()
+    const {dailyLogs, dispatch} = useDailyLogContext()
     const [error, setError] = useState(null)
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const DailyLogList = () => {
             }
 
             if (response.ok) {
-                dispatch({type:"SET_DAILY_LOG",payload:json})
+                dispatch({type: "SET_DAILY_LOG", payload: json})
                 setError(null)
             }
         }
@@ -35,7 +35,6 @@ const DailyLogList = () => {
             {error && <div>{error} </div>}
 
             {dailyLogs && dailyLogs.map((log) => (
-
                 <DailyLogDetail key={log._id} dailyLog={log}/>
             ))}
 

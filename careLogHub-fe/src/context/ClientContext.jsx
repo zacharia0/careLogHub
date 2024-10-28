@@ -3,22 +3,22 @@ import {createContext, useReducer} from "react";
 
 export const ClientContext = createContext()
 
-export const clientReducer = (state,action)=>{
-    switch(action.type){
+export const clientReducer = (state, action) => {
+    switch (action.type) {
         case "SET_CLIENT":
-            return{
-                clients:action.payload
+            return {
+                clients: action.payload
             }
         case "CREATE_CLIENT":
-            return{
-                clients:[action.payload,...state.clients]
+            return {
+                clients: [action.payload, ...state.clients]
             }
         case "DELETE_CLIENT":
-            return{
-                clients: state.clients.filter((client) => client._id !== action.payload._id )
+            return {
+                clients: state.clients.filter((client) => client._id !== action.payload._id)
             }
         case "UPDATE_CLIENT":
-            return{
+            return {
                 clients: state.clients.map((client) => client._id === action.payload._id ? action.payload : client)
             }
         default:
@@ -26,13 +26,13 @@ export const clientReducer = (state,action)=>{
     }
 }
 
-export const ClientContextProvider = ({children}) =>{
-    const [state,dispatch] = useReducer(clientReducer,{
-        clients:[]
+export const ClientContextProvider = ({children}) => {
+    const [state, dispatch] = useReducer(clientReducer, {
+        clients: []
     })
 
     return (
-        <ClientContext.Provider value = {{...state,dispatch}}>
+        <ClientContext.Provider value={{...state, dispatch}}>
             {children}
         </ClientContext.Provider>
     )
