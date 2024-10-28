@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import DailyLogDetail from "../components/DailyLogDetail.jsx";
 import {Link} from "react-router-dom";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
-import LogForm from "../components/LogForm.jsx";
+import DailyLogForm from "../components/DailyLogForm.jsx";
 
 const DailyLogList = () => {
     const {dailyLogs, dispatch} = useDailyLogContext()

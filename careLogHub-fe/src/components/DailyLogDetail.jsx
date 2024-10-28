@@ -29,26 +29,6 @@ const DailyLogDetail = ({dailyLog}) => {
 
     }
 
-    // const handleUpdate = async (e) => {
-    //     e.preventDefault();
-    //     const response = await fetch("http://localhost:4000/api/dailyLogs/update/" + dailyLog._id, {
-    //         method: "PUT",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify(updatedLog)
-    //     });
-    //     const json = await response.json();
-    //     if (response.ok) {
-    //         dispatch({type: "UPDATE_DAILY_LOG", payload: json})
-    //         setIsEditing(false)
-    //
-    //     } else {
-    //         console.error("Failed to update log:", json)
-    //     }
-    //
-    // }
-
     const handleUpdate = async(e) =>{
         e.preventDefault()
         if(!updateDailyLog.dailyLogType){
@@ -117,6 +97,8 @@ const DailyLogDetail = ({dailyLog}) => {
                             <label>Type:</label><strong>{dailyLog.dailyLogType}</strong> <br/>
                             <label>Observation:</label><p>{dailyLog.body}</p>
                             <label>Occurred:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small><br/>
+                            <label> Client Name:</label>
+                            <span>{dailyLog.client?.firstName} {dailyLog.client?.lastName}</span>
                             <button onClick={() => setIsEditing(true)}>Edit</button>
                             <button onClick={handleDelete}>Delete</button>
                         </div>
