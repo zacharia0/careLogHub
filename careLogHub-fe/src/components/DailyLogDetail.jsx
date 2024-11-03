@@ -88,19 +88,19 @@ const DailyLogDetail = ({dailyLog}) => {
                                 onChange = {(e) => setUpdateDailyLog({...updateDailyLog,date:e.target.value})}
                             />
 
-                            <button type = "submit">Save</button>
-                            <button type ="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                            <button className= "bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow" type = "submit">Save</button>
+                            <button className="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded shadow" type ="button" onClick={() => setIsEditing(false)}>Cancel</button>
                         </form>
                     ) :
                     (
-                        <div>
+                        <div className="mb-6"> <hr className="mb-2 mt-4"></hr>
                             <label>Type:</label><strong>{dailyLog.dailyLogType}</strong> <br/>
                             <label>Observation:</label><p>{dailyLog.body}</p>
                             <label>Occurred:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small><br/>
                             <label> Client Name:</label>
                             <span>{dailyLog.client?.firstName} {dailyLog.client?.lastName}</span>
-                            <button onClick={() => setIsEditing(true)}>Edit</button>
-                            <button onClick={handleDelete}>Delete</button>
+                            <button className= "bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-6 rounded shadow ml-2 mr-2" onClick={() => setIsEditing(true)}>Edit</button>
+                            <button className="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow" onClick={handleDelete}>Delete</button>
                         </div>
                     )
             }

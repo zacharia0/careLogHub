@@ -28,15 +28,19 @@ const DailyLogList = () => {
     // console.log("Current dailyLogs state:", dailyLogs); // Debugging the state
 
     return (
-        <div>
-            <div>
-                <Link to="/create-dailylog">Create Daily Log</Link>
-            </div>
+        <div className="">
+            <div >
+                <Link className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow" to="/create-dailylog">Create Daily Log</Link>
+            </div >
             {error && <div>{error} </div>}
+            <div className="" >
+                {dailyLogs && dailyLogs.map((log) => (
 
-            {dailyLogs && dailyLogs.map((log) => (
-                <DailyLogDetail key={log._id} dailyLog={log}/>
-            ))}
+                        <DailyLogDetail key={log._id} dailyLog={log}/>
+                ))}
+
+            </div>
+
 
         </div>
     )

@@ -115,7 +115,7 @@ const ClientForm = () =>{
                     onChange = {(e) => setClientData({...clientData,diagnoses:e.target.value})}
                 >
                 </textarea>
-                    <button type="submit">Add Client</button>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow" type="submit">Add Client</button>
             </form>
         </div>
     )

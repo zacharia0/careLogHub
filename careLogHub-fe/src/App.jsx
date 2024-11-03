@@ -10,13 +10,16 @@ const App = () =>{
     return (
         <BrowserRouter>
             <Navbar/>
-            <Routes>
-                <Route path="/" element={<DailyLogList/>}/>
-                <Route path ="/all-daily-logs" element={<DailyLogList/>}></Route>
-                <Route path =  "/create-dailyLog" element={<DailyLogForm/>}></Route>
-                <Route path = "/create-client" element = {<ClientForm/>} />
-                <Route path = "/all-clients" element = {<ClientList/>}/>
-            </Routes>
+            <div className = "py-2">
+                <Routes >
+                    <Route path="/" element={<DailyLogList/>}/>
+                    <Route path ="/all-daily-logs" element={<DailyLogList/>}></Route>
+                    <Route path =  "/create-dailyLog" element={<DailyLogForm/>}></Route>
+                    <Route path = "/create-client" element = {<ClientForm/>} />
+                    <Route path = "/all-clients" element = {<ClientList/>}/>
+                </Routes>
+
+            </div>
         </BrowserRouter>
     )
 
