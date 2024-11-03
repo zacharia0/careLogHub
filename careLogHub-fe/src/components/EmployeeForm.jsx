@@ -1,0 +1,68 @@
+import {useEmployeeContext} from "../hooks/useEmployeeContext.js";
+import {useState} from "react";
+
+const EmployeeForm = () =>{
+    const {dispatch} = useEmployeeContext()
+    const [employee,setEmployee] = useState({
+        firstName:"",
+        lastName:"",
+        middleName:"",
+        username:""
+    })
+
+    const handleSubmit = async(e) =>{
+        e.preventDefault()
+        const response = await fetch( "http://localhost:4000/api/employee",{
+            method:"POST",
+            headers:{
+                "Content-type":"application/json"
+            },
+            body:JSON.stringify(employee)
+        })
+
+        const json = await response.json()
+        if(!response.ok){
+            console.log("Unable to create a new employee")
+        }
+        dispatch({type:"CREATE_EMPLOYEE",payload:json})
+        console.log("The following new employee has been added",json)
+    }
+
+    return(
+        <div>
+            <form>
+                <label >First Name:</label>
+                <input
+                    type="text"
+                    value = {employee.firstName}
+                    onChange={(e) => setEmployee({...employee,firstName: e.target.value})}
+                />
+                <label >Last Name:</label>
+
+                <input
+                    type="text"
+                    value = {employee.lastName}
+                    onChange = {(e) => setEmployee({...employee,lastName: e.target.value})}
+                />
+                <label >Middle Name:</label>
+
+                <input
+                    type="text"
+                    value = {employee.middleName}
+                    onChange={(e) => setEmployee({...employee,middleName: e.target.value})}
+                />
+
+                <label >username:</label>
+                <input
+                    type="text"
+                    value = {employee.username}
+                    onChange={(e) => setEmployee({...employee,username: e.target.value})}
+                />
+
+                <button className="bg-blue-500  hover:bg-blue-700 text-white py-2 px-4 rounded shadow" onClick={handleSubmit}>Add new Employee</button>
+            </form>
+        </div>
+    )
+}
+
+export default EmployeeForm

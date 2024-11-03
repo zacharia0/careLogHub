@@ -116,7 +116,7 @@ const navigation = [
     { name: 'Daily Logs', to: '/all-daily-logs', current: false },
     { name: 'Clients', to: '/all-clients', current: false },
     { name: 'Pass Medication', href: '#', current: false },
-    {name:"Staff",to:"/all-staff",current:false}
+    {name:"Staff",to:"/create-employee",current:false}
 ]
 
 function classNames(...classes) {
