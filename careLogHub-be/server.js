@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 require('dotenv').config()
 const dailyLog = require('./routes/dailyLogRoutes')
 const client = require("./routes/clientRoutes")
+const employee = require("./routes/employeeRoutes")
 
 
 
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use("/api/dailyLogs",dailyLog)
 app.use("/api/client",client)
+app.use("/api/employee",employee)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
