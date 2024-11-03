@@ -4,13 +4,16 @@ import App from './App.jsx'
 import './index.css'
 import {DailyLogContextProvider} from "./context/DailyLogContext.jsx";
 import {ClientContextProvider} from "./context/ClientContext.jsx";
+import {EmployeeContextProvider} from "./context/EmployeeContext.jsx";
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <ClientContextProvider>
-            <DailyLogContextProvider>
-                <App/>
-            </DailyLogContextProvider>
-        </ClientContextProvider>
+        <EmployeeContextProvider>
+            <ClientContextProvider>
+                <DailyLogContextProvider>
+                    <App/>
+                </DailyLogContextProvider>
+            </ClientContextProvider>
+        </EmployeeContextProvider>
     </StrictMode>,
 )
