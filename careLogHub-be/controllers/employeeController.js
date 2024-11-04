@@ -7,13 +7,13 @@ const createEmployee = asyncHandler(async(req,res) =>{
     const {firstName,lastName,middleName,username} = req.body
     let missingFields = []
     if(!firstName){
-        missingFields.push("first name ")
+        missingFields.push("first name")
     }
     if(!lastName){
-        missingFields.push("last name ")
+        missingFields.push("last name")
     }
     if(!username){
-        missingFields.push("username ")
+        missingFields.push("username")
     }
     if(missingFields.length > 0){
         throw new CustomError(`The following fields are missing: ${missingFields.join(',')}`,400)
