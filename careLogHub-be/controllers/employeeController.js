@@ -26,4 +26,17 @@ const createEmployee = asyncHandler(async(req,res) =>{
 
 })
 
-module.exports = {createEmployee}
+
+const getAllEmployees = asyncHandler(async(req,res) =>{
+    const allEmployees = await Employee.find({})
+    if(!allEmployees || allEmployees.length === 0){
+        throw new CustomError("No employees found",404)
+    }
+    console.log(allEmployees)
+    res.status(200).json(allEmployees)
+})
+
+
+
+
+module.exports = {createEmployee,getAllEmployees}
