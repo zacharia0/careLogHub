@@ -16,7 +16,7 @@ const createEmployee = asyncHandler(async(req,res) =>{
         missingFields.push("username ")
     }
     if(missingFields.length > 0){
-        CustomError(`The following fields are missing: ${missingFields.join(',')}`,400)
+        throw new CustomError(`The following fields are missing: ${missingFields.join(',')}`,400)
     }
 
     const newEmployee = await Employee.create(req.body)
