@@ -37,7 +37,7 @@ const EmployeeList = () => {
                 {error && <div>{error}</div>}
             </div>
             <div>
-                {employees && employees.map((employee) => (
+                {employees && employees?.map((employee) => (
                         <EmployeeDetail key={employee._id} employees={employee}/>
                     )
                 )}

@@ -1,21 +1,18 @@
-const EmployeeDetail = ({employees}) =>{
-    return(
+const EmployeeDetail = ({employees}) => {
+    return (
         <div>
+            <hr/>
+            <div className="font-thin">
+                <label>Name: </label>
+                <span>
+                    {employees.firstName}
 
-            <label>First Name:</label>
-            <div className= "font-thin">
-                {employees.firstName}
-            </div>
-            <label>First Last:</label>
-            <div className= "font-thin">
-                {employees.lastName}
-            </div>
-            <label>First Middle:</label>
-            <div className= "font-thin">
+                </span>
+                <span>
+                    {employees.lastName}
+
+                </span>
                 {employees.middleName}
-            </div>
-            <label>Username:</label>
-            <div className= "font-thin">
                 {employees.username}
             </div>
 
