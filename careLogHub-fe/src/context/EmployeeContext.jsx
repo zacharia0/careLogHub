@@ -18,6 +18,10 @@ export const employeeReducer = (state,action) =>{
             return{
                 employees: state.employees.map((employee) => employee._id === action.payload._id ? action.payload : employee)
             }
+        case "DELETE_EMPLOYEE":
+            return{
+                employees:state.employees.filter((employee) => action.payload._id !== employee._id)
+            }
     }
 
 }

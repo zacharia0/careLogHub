@@ -31,6 +31,23 @@ const EmployeeDetail = ({employees}) => {
         }
         if (!response.ok) {
             console.log("failed to update")
+
+        }
+    }
+
+    const handleDeleteEmployee = async() =>{
+        const employeeId = employees._id
+        const response = await fetch(`http://localhost:4000/api/employee/${employeeId}`,{
+            method:"DELETE"
+        })
+        const json = await response.json()
+        if(!response.ok){
+            console.warn("FAILED TO DELETE")
+            return
+        }
+        if(response.ok){
+            console.log("Deleted employee...")
+            dispatch({type:"DELETE_EMPLOYEE", payload:json})
         }
     }
 
@@ -102,6 +119,7 @@ const EmployeeDetail = ({employees}) => {
                                     className="  bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded shadow py-1 px-4 ml-3">Edit
                             </button>
                             <button
+                                onClick={handleDeleteEmployee}
                                 className=" bg-red-500 hover:bg-red-700 text-white font-semibold rounded shadow py-1 px-4 ml-2">Remove
                             </button>
 

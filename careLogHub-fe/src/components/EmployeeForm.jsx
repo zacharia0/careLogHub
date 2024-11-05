@@ -22,11 +22,18 @@ const EmployeeForm = () =>{
         })
 
         const json = await response.json()
-        if(!response.ok){
+        if(response.ok){
+            dispatch({type:"CREATE_EMPLOYEE",payload:json})
+            setEmployee({
+                firstName: "",
+                middleName: "",
+                lastName: "",
+                username: ""
+            })
+            console.log("The following new employee has been added",json)
+        }else{
             console.log("Unable to create a new employee")
         }
-        dispatch({type:"CREATE_EMPLOYEE",payload:json})
-        console.log("The following new employee has been added",json)
     }
 
     return(
