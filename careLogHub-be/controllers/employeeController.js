@@ -55,7 +55,22 @@ const updateEmployeeById = asyncHandler(async(req,res) =>{
     res.status(200).json(employeeToUpdate)
 })
 
+const deleteEmployeeById = asyncHandler(async(req,res) =>{
+    const {employeeId} = req.params
+    if(!mongoose.Types.ObjectId.isValid(employeeId)){
+        throw new CustomError("Not a valid Id",400)
+    }
+    if(!employeeId){
+        throw new CustomError("No employee with this Id is found. ", 404)
+    }
+
+    const employeeToDelete = await Employee.findByIdAndDelete({_id:employeeId})
+    if(!employeeToDelete){
+        throw new CustomError("Employee not found.",404)
+    }
+    res.status(200).json(employeeToDelete)
+})
 
 
 
-module.exports = {createEmployee,getAllEmployees,updateEmployeeById}
+module.exports = {createEmployee,getAllEmployees,updateEmployeeById,deleteEmployeeById}
