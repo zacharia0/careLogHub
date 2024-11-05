@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {useEmployeeContext} from "../hooks/useEmployeeContext.js";
 import EmployeeDetail from "../components/EmployeeDetail.jsx";
+import {Link} from "react-router-dom";
 
 
 const EmployeeList = () => {
@@ -33,6 +34,7 @@ const EmployeeList = () => {
 
     return (
         <div>
+            <Link to ="/create-employee">Add New Employee</Link>
             <div>
                 {error && <div>{error}</div>}
             </div>

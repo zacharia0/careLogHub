@@ -1,5 +1,6 @@
 import {useEmployeeContext} from "../hooks/useEmployeeContext.js";
 import {useState} from "react";
+import {Link} from "react-router-dom";
 
 const EmployeeForm = () =>{
     const {dispatch} = useEmployeeContext()
@@ -30,6 +31,7 @@ const EmployeeForm = () =>{
 
     return(
         <div>
+            <Link to = "/all-employees">All Employees</Link>
             <form>
                 <label >First Name:</label>
                 <input
