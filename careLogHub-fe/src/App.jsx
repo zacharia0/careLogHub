@@ -5,6 +5,8 @@ import ClientForm from "./components/ClientForm.jsx";
 import ClientList from "./pages/ClientList.jsx";
 import Navbar from "./pages/Navbar.jsx";
 import EmployeeForm from "./components/EmployeeForm.jsx";
+import EmployeeDetail from "./components/EmployeeDetail.jsx";
+import EmployeeList from "./pages/EmployeeList.jsx";
 
 const App = () =>{
 
@@ -14,6 +16,7 @@ const App = () =>{
             <div className = "py-2">
                 <Routes >
                     <Route path="/" element={<DailyLogList/>}/>
+                    <Route path="/all-employees" element ={<EmployeeList/>}/>
                     <Route path ="/all-daily-logs" element={<DailyLogList/>}></Route>
                     <Route path =  "/create-dailyLog" element={<DailyLogForm/>}></Route>
                     <Route path = "/create-client" element = {<ClientForm/>} />
