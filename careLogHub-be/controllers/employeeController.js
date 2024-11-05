@@ -37,6 +37,25 @@ const getAllEmployees = asyncHandler(async(req,res) =>{
 })
 
 
+const updateEmployeeById = asyncHandler(async(req,res) =>{
+    const {employeeId} = req.params
+
+    if(!mongoose.Types.ObjectId.isValid(employeeId)){
+        throw new CustomError("Not a valid Id.", 400)
+    }
+    if(!employeeId){
+        throw new CustomError("No employee with this Id is found.",404)
+    }
+
+    const employeeToUpdate = await Employee.findByIdAndUpdate({_id:employeeId},{...req.body},{new:true})
+    if(!employeeToUpdate){
+        throw new CustomError("This employee could not be found.",404)
+    }
+
+    res.status(200).json(employeeToUpdate)
+})
 
 
-module.exports = {createEmployee,getAllEmployees}
+
+
+module.exports = {createEmployee,getAllEmployees,updateEmployeeById}
