@@ -14,6 +14,10 @@ export const employeeReducer = (state,action) =>{
             return{
                 employees: [action.payload,...state.employees]
             }
+        case "UPDATE_EMPLOYEE":
+            return{
+                employees: state.employees.map((employee) => employee._id === action.payload._id ? action.payload : employee)
+            }
     }
 
 }
