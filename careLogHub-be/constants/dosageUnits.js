@@ -20,6 +20,7 @@ const DosageUnits = Object.freeze({
     VIALS: 'vials',
     SYRINGES: 'syringes',
     AMPOULES: 'ampoules'
+
 })
 
 module.exports = DosageUnits;

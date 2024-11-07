@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const DosageUnits = require("../constants/dosageUnits")
+const DosageUnits = require("../constants/DosageUnits")
 
 const Schema = mongoose.Schema
 const medicationSchema = new Schema({
@@ -13,7 +13,7 @@ const medicationSchema = new Schema({
     },
     dosageUnit:{
         type: String,
-        enum:[Object.keys(DosageUnits)],
+        enum:Object.keys(DosageUnits),
         require: true
     }
 },{timestamps:true})
