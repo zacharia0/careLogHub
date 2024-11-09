@@ -5,8 +5,9 @@ import ClientForm from "./components/ClientForm.jsx";
 import ClientList from "./pages/ClientList.jsx";
 import Navbar from "./pages/Navbar.jsx";
 import EmployeeForm from "./components/EmployeeForm.jsx";
-import EmployeeDetail from "./components/EmployeeDetail.jsx";
 import EmployeeList from "./pages/EmployeeList.jsx";
+import MedicationForm from "./components/MedicationForm.jsx";
+import MedicationList from "./pages/MedicationList.jsx";
 
 const App = () =>{
 
@@ -18,10 +19,13 @@ const App = () =>{
                     <Route path="/" element={<DailyLogList/>}/>
                     <Route path="/all-employees" element ={<EmployeeList/>}/>
                     <Route path ="/all-daily-logs" element={<DailyLogList/>}></Route>
-                    <Route path =  "/create-dailyLog" element={<DailyLogForm/>}></Route>
-                    <Route path = "/create-client" element = {<ClientForm/>} />
-                    <Route path = "/create-employee" element = {<EmployeeForm/> }/>
                     <Route path = "/all-clients" element = {<ClientList/>}/>
+                    <Route path = "/all-medication" element ={<MedicationList/>}/>
+                    <Route path =  "/create-dailyLog" element={<DailyLogForm/>}></Route>
+                    <Route path = "/create-employee" element = {<EmployeeForm/> }/>
+                    <Route path = "/create-medication" element={<MedicationForm/>}/>
+                    <Route path = "/create-client" element = {<ClientForm/>} />
+
                 </Routes>
 
             </div>

@@ -1,0 +1,23 @@
+export const DosageUnits = Object.freeze({
+    MG: 'MG',
+    G: 'G',
+    MCG: 'MCG',
+    KG: 'KG',
+    ML: 'ML',
+    L: 'L',
+    IU: 'IU',
+    CC: 'CC',
+    OZ: 'OZ',
+    TSP: 'TSP',
+    TBSP: 'TBSP',
+    DROPS: 'DROPS',
+    UNITS: 'UNITS',
+    PUFFS: 'PUFFS',
+    PATCHES: 'PATCHES',
+    SUPPOSITORIES: 'SUPPOSITORIES',
+    CAPS: 'CAPS',
+    TABS: 'TABS',
+    VIALS: 'VIALS',
+    SYRINGES: 'SYRINGES',
+    AMPOULES: 'AMPOULES'
+})

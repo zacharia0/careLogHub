@@ -30,7 +30,7 @@ const EmployeeList = () => {
         getAllEmployees()
 
 
-    }, [])
+    }, [dispatch])
 
     return (
         <div>

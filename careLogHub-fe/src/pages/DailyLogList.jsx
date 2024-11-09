@@ -24,7 +24,7 @@ const DailyLogList = () => {
             }
         }
         fetchDailyLogs()
-    }, [])
+    }, [dispatch])
     // console.log("Current dailyLogs state:", dailyLogs); // Debugging the state
 
     return (
