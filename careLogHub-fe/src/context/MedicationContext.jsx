@@ -12,6 +12,13 @@ const medicationReducer = (state,action) =>{
             return{
                 medications: [...state.medications,action.payload]
             }
+        case "UPDATE_MEDICATION":
+            return{
+                medications: state.medications.map((medication) => medication._id === action.payload._id? action.payload: medication)
+            }
+        default:
+            return state
+
     }
 }
 

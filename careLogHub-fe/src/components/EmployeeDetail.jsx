@@ -53,7 +53,7 @@ const EmployeeDetail = ({employees}) => {
 
 
     return (
-        <div>
+        <div className={"mb-1"}>
 
             <hr/>
             {

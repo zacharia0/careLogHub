@@ -22,6 +22,9 @@ export const employeeReducer = (state,action) =>{
             return{
                 employees:state.employees.filter((employee) => action.payload._id !== employee._id)
             }
+        default:
+            return state
+
     }
 
 }
