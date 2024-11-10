@@ -35,4 +35,19 @@ const getAllMedications = asyncHandler(async(req,res)=>{
     res.status(200).json(allMedications)
 })
 
-module.exports = {createMed,getAllMedications}
+
+const updateMedicationById = asyncHandler(async(req,res,next) =>{
+    const {medicationId} = req.params
+    if(!mongoose.Types.ObjectId.isValid(medicationId)){
+        throw new CustomError("Invalid medication ID format.", 400)
+    }
+
+    const medicationToUpdate = await MedicationModel.findOneAndUpdate({_id:medicationId},{...req.body}, {new:true})
+    if(!medicationToUpdate){
+        throw new CustomError("Medication not found.",404)
+    }
+    res.status(200).json(medicationToUpdate)
+
+})
+
+module.exports = {createMed,getAllMedications,updateMedicationById}
