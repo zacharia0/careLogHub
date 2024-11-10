@@ -50,4 +50,17 @@ const updateMedicationById = asyncHandler(async(req,res,next) =>{
 
 })
 
-module.exports = {createMed,getAllMedications,updateMedicationById}
+const deleteMedicationById = asyncHandler(async(req,res) =>{
+    const {medicationId} = req.params
+    if(!mongoose.Types.ObjectId.isValid(medicationId)){
+        throw new CustomError("Invalid medication format.",400)
+    }
+    const deletedMedication = await MedicationModel.findOneAndDelete(medicationId)
+    if(!deletedMedication){
+        throw new CustomError("Medication not found.",404)
+    }
+    res.status(200).json(deletedMedication)
+
+})
+
+module.exports = {createMed,getAllMedications,updateMedicationById,deleteMedicationById}
