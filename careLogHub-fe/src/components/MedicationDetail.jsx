@@ -27,6 +27,18 @@ const MedicationDetail = ({medications}) => {
         setIsEditing(false)
 
     }
+
+    const handleDelete = async() =>{
+        const response = await fetch(`http://localhost:4000/api/med/${medications._id}`,{
+            method:"DELETE"
+        })
+        const json = await response.json()
+        if(!response.ok){
+            console.log("Failed to delete Medication")
+        }
+        dispatch({type:"DELETE_MEDICATION",payload:json})
+    }
+
     return (
 
         <div className={"mb-2"}>
@@ -59,7 +71,7 @@ const MedicationDetail = ({medications}) => {
                             }
 
                         </select>
-                        <button type ="submit">Update</button>
+                        <button type = "submit">Update</button>
                         <button onClick={(e) =>{
                             e.preventDefault()
                             setIsEditing(false)}
@@ -82,6 +94,10 @@ const MedicationDetail = ({medications}) => {
                                 className={"bg-orange-500 hover:bg-orange-700 text-white font-semibold rounded shadow py-1 px-2"}
                                 onClick={(e) => setIsEditing(true)}
                             >Edit</button>
+                        <button
+                            className={"bg-red-500 hover:bg-red-700 text-white font-semibold rounded shadow py-1 px-2 ml-1"}
+                            onClick={handleDelete}
+                        >Delete</button>
                     </div>
 
                 )

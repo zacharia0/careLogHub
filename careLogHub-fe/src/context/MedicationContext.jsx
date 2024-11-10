@@ -16,6 +16,10 @@ const medicationReducer = (state,action) =>{
             return{
                 medications: state.medications.map((medication) => medication._id === action.payload._id? action.payload: medication)
             }
+        case "DELETE_MEDICATION":
+            return{
+                medications: state.medications.filter((med) => med._id !== action.payload._id)
+            }
         default:
             return state
 
