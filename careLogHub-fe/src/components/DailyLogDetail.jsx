@@ -69,6 +69,7 @@ const DailyLogDetail = ({dailyLog}) => {
             {
                 isEditing ? (
                         <form onSubmit={handleUpdate}>
+                            <div>EDITING FORM</div>
                             <select
                                 value = {updateDailyLog.dailyLogType}
                                 onChange={(e) => setUpdateDailyLog({...updateDailyLog, dailyLogType:e.target.value})}
@@ -88,8 +89,8 @@ const DailyLogDetail = ({dailyLog}) => {
                                 onChange = {(e) => setUpdateDailyLog({...updateDailyLog,date:e.target.value})}
                             />
 
-                            <button className= "bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow" type = "submit">Save</button>
-                            <button className="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded shadow" type ="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                            <button className= "save-btn" type = "submit">Save</button>
+                            <button className="cancel-btn" type ="button" onClick={() => setIsEditing(false)}>Cancel</button>
                         </form>
                     ) :
                     (
@@ -99,8 +100,8 @@ const DailyLogDetail = ({dailyLog}) => {
                             <label>Occurred:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small><br/>
                             <label> Client Name:</label>
                             <span>{dailyLog.client?.firstName} {dailyLog.client?.lastName}</span>
-                            <button className= "bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-6 rounded shadow ml-2 mr-2" onClick={() => setIsEditing(true)}>Edit</button>
-                            <button className="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow" onClick={handleDelete}>Delete</button>
+                            <button className= "edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+                            <button className="delete-btn" onClick={handleDelete}>Delete</button>
                         </div>
                     )
             }

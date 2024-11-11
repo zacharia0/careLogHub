@@ -88,8 +88,8 @@ const ClientDetail = ({clients}) => {
                                 value={updateClient.diagnoses}
                                 onChange={(e) => setUpdateClient({...updateClient, diagnoses: e.target.value})}
                             ></textarea>
-                            <button className="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow" type="submit">Save</button>
-                            <button className="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded shadow" onClick={() => setIsEditing(false)}>Cancel</button>
+                            <button className="save-btn" type="submit">Save</button>
+                            <button className="cancel-btn" onClick={() => setIsEditing(false)}>Cancel</button>
                         </form>
 
                     ) :
@@ -98,8 +98,8 @@ const ClientDetail = ({clients}) => {
 
 
                             <span>Full Name: {clients.firstName} {clients.lastName}</span>
-                            <button className="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow ml-2 mr-2" onClick={handleDelete}>Delete</button>
-                            <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded shadow ml-2" onClick={() => setIsEditing(true)}>Edit</button>
+                            <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+                            <button className="delete-btn" onClick={handleDelete}>Delete</button>
                         </div>
                     )
 

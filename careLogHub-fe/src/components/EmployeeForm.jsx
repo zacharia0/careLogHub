@@ -38,7 +38,7 @@ const EmployeeForm = () =>{
 
     return(
         <div>
-            <Link to = "/all-employees">All Employees</Link>
+            <Link className={"navigation-btn"} to = "/all-employees">All Employees</Link>
             <form>
                 <label >First Name:</label>
                 <input
@@ -68,7 +68,7 @@ const EmployeeForm = () =>{
                     onChange={(e) => setEmployee({...employee,username: e.target.value})}
                 />
 
-                <button className="bg-blue-500  hover:bg-blue-700 text-white py-2 px-4 rounded shadow" onClick={handleSubmit}>Add new Employee</button>
+                <button className="create-btn" onClick={handleSubmit}>Add new Employee</button>
             </form>
         </div>
     )

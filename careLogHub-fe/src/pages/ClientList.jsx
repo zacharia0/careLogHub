@@ -25,7 +25,7 @@ const ClientList = () => {
 
     return (
         <div>
-            <Link className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow" to="/create-client">Add New Client</Link>
+            <Link className="add-new-btn-link" to="/create-client">Add New Client</Link>
             {clients && clients.map((client) => (
                 <ClientDetail key={client._id} clients={client}/>
             ))}

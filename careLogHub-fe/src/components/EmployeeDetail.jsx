@@ -90,10 +90,10 @@ const EmployeeDetail = ({employees}) => {
                             />
 
                             <button type="submit"
-                                    className="bg-green-500 hover:bg-green-700 text-white font-semibold rounded py-1 px 3 shadow mr-2">Update
+                                    className="save-btn">Save
                             </button>
                             <button onClick={(e) => setIsEditing(false)}
-                                    className="bg-gray-500 hover:bg-gray-700 text-white font-semibold rounded py-1 px-3 shadow ml-2">cancel
+                                    className="cancel">cancel
                             </button>
 
 
@@ -115,12 +115,13 @@ const EmployeeDetail = ({employees}) => {
                             {employees.middleName}
                             {employees.username}
 
-                            <button onClick={(e) => setIsEditing(true)}
-                                    className="  bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded shadow py-1 px-4 ml-3">Edit
+                            <button
+                                onClick={(e) => setIsEditing(true)}
+                                className={"edit-btn"}>Edit
                             </button>
                             <button
                                 onClick={handleDeleteEmployee}
-                                className=" bg-red-500 hover:bg-red-700 text-white font-semibold rounded shadow py-1 px-4 ml-2">Remove
+                                className=" delete-btn ">Delete
                             </button>
 
                         </div>

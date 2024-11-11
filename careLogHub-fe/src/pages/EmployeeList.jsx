@@ -26,7 +26,6 @@ const EmployeeList = () => {
 
         }
 
-
         getAllEmployees()
 
 
@@ -34,7 +33,7 @@ const EmployeeList = () => {
 
     return (
         <div>
-            <Link to ="/create-employee">Add New Employee</Link>
+            <Link className={"add-new-btn-link"} to ="/create-employee">Add New Employee</Link>
             <div>
                 {error && <div>{error}</div>}
             </div>

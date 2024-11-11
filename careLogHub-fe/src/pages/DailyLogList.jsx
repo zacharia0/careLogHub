@@ -30,7 +30,7 @@ const DailyLogList = () => {
     return (
         <div className="">
             <div >
-                <Link className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow" to="/create-dailylog">Create Daily Log</Link>
+                <Link className="add-new-btn-link" to="/create-dailylog">Create New Daily Log</Link>
             </div >
             {error && <div>{error} </div>}
             <div className="" >

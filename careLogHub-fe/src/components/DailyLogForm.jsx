@@ -61,7 +61,7 @@ const DailyLogForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Link className = "bg-gray-700 hober:bggray-800 text-white font-semibold py-2 px-4 rounded shadow" to="/">View Logs</Link>
+            <Link className = "navigation-btn" to="/">View Logs</Link>
             <h3><strong>Create Daily Log</strong></h3>
             <label>Type:</label><br/>
             <select
@@ -104,7 +104,7 @@ const DailyLogForm = () => {
             {body}
             {date}
             {dailyLogType}
-            <button className="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow">Create Observation</button>
+            <button className="create-btn">Create Observation</button>
             {error && <div>{error}</div>}
 
         </form>

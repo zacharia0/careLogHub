@@ -63,11 +63,6 @@ const ClientForm = () =>{
             )
 
         }
-        // if(!response.ok){
-        //     setError("Failed to add a new client.")
-        //     console.log("Failed to add a new client.")
-        // }
-
     }
 
 
@@ -76,7 +71,10 @@ const ClientForm = () =>{
             <div>
                 <h1>New Client</h1>
             </div>
-            <Link to= '/all-clients'>All Clients</Link>
+            <div className={"ml-1 mr-1 mt-1 mb-1"}>
+            <Link className= "navigation-btn" to= '/all-clients'>All Clients</Link>
+
+            </div>
             <div>
                 {error && <div>{error}</div>}
             </div>

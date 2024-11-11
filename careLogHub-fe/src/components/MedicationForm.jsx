@@ -1,6 +1,7 @@
 import {useMedicationContext} from "../hooks/useMedicationContext.js";
 import {useState} from "react";
 import{DosageUnits} from "../constants/dosageUnits.js";
+import {Link} from "react-router-dom";
 
 const MedicationForm = () => {
     const {dispatch} = useMedicationContext()
@@ -48,6 +49,7 @@ const MedicationForm = () => {
     return (
         <div>
             <h1>Medication Form</h1>
+            <Link className={"navigation-btn"} to ="/all-medication">All Medications</Link>
             <form onSubmit={handleSubmit}>
                 <label>Medication Name</label>
                 <input
@@ -75,7 +77,7 @@ const MedicationForm = () => {
                 </select>
 
                 <button
-                    className="bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded shadow">Add
+                    className="create-btn">Add
                     New Med
                 </button>
             </form>

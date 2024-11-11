@@ -71,8 +71,10 @@ const MedicationDetail = ({medications}) => {
                             }
 
                         </select>
-                        <button type = "submit">Update</button>
-                        <button onClick={(e) =>{
+                        <button className={"save-btn"} type = "submit">Save</button>
+                        <button
+                            className={"cancel-btn"}
+                            onClick={(e) =>{
                             e.preventDefault()
                             setIsEditing(false)}
                         }
@@ -91,11 +93,11 @@ const MedicationDetail = ({medications}) => {
                             <span className={"mr-1"}>{medications.medDosage}</span>
                             <span>({medications.dosageUnit})</span>
                             <button
-                                className={"bg-orange-500 hover:bg-orange-700 text-white font-semibold rounded shadow py-1 px-2"}
+                                className={"edit-btn"}
                                 onClick={(e) => setIsEditing(true)}
                             >Edit</button>
                         <button
-                            className={"bg-red-500 hover:bg-red-700 text-white font-semibold rounded shadow py-1 px-2 ml-1"}
+                            className={"delete-btn"}
                             onClick={handleDelete}
                         >Delete</button>
                     </div>

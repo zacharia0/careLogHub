@@ -1,6 +1,7 @@
 import {useMedicationContext} from "../hooks/useMedicationContext.js";
 import {useEffect, useState} from "react";
 import MedicationDetail from "../components/MedicationDetail.jsx";
+import {Link} from "react-router-dom";
 
 const MedicationList = () =>{
     const {medications,dispatch} = useMedicationContext()
@@ -27,6 +28,7 @@ const MedicationList = () =>{
     console.log(medications)
     return(
         <div>
+            <Link className={"add-new-btn-link"} to ="/create-medication">Add New Medication</Link>
             {medications && medications.map((med) =>(
                 <MedicationDetail key = {med._id} medications={med}/>
             ))}
