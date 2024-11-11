@@ -8,6 +8,7 @@ import EmployeeForm from "./components/EmployeeForm.jsx";
 import EmployeeList from "./pages/EmployeeList.jsx";
 import MedicationForm from "./components/MedicationForm.jsx";
 import MedicationList from "./pages/MedicationList.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 
 const App = () =>{
 
@@ -16,6 +17,7 @@ const App = () =>{
             <Navbar/>
             <div className = "py-2">
                 <Routes >
+                    <Route path = "/dashboard" element={<Dashboard/>}/>
                     <Route path="/" element={<DailyLogList/>}/>
                     <Route path="/all-employees" element ={<EmployeeList/>}/>
                     <Route path ="/all-daily-logs" element={<DailyLogList/>}></Route>
