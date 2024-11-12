@@ -8,7 +8,7 @@ const MedicationForm = () => {
     const [medication, setMedication] = useState({
         medName: "",
         medDosage: "",
-        dosageUnit: ""
+        dosageUnit: "MG"
     })
 
     const handleSubmit = async (e) => {

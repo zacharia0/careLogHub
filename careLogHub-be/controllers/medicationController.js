@@ -2,10 +2,14 @@ const mongoose = require("mongoose")
 const MedicationModel = require("../models/medicationModel")
 const asyncHandler = require("../middleware/asyncHandler")
 const CustomError = require('../utils/CustomError')
+const ClientModel = require("../models/clientModel")
 
 const createMed = asyncHandler(async(req,res)=>{
-    const {medName,medDosage,dosageUnit}= req.body
+    const {medName,medDosage,dosageUnit,clientId}= req.body
 
+    if(!mongoose.Types.ObjectId.isValid(clientId)){
+        throw new CustomError("Invalid client ID format.")
+    }
     let missingFields = []
     if(!medName){
         missingFields.push("Medication name")
@@ -15,6 +19,9 @@ const createMed = asyncHandler(async(req,res)=>{
     }
     if(!dosageUnit){
         missingFields.push("Dosage Unit")
+    }
+    if(!clientId){
+        missingFields.push("Client")
     }
     if(missingFields.length > 0){
         throw new CustomError(`The following fields are required: ${missingFields.join(", ")}`)

@@ -15,6 +15,11 @@ const medicationSchema = new Schema({
         type: String,
         enum:Object.keys(DosageUnits),
         require: true
+    },
+    clientId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Client",
+        required:true
     }
 },{timestamps:true})
 
