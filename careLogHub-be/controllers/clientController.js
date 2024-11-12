@@ -1,4 +1,4 @@
-const Client = require("../models/clientModel")
+const ClientModel = require("../models/clientModel")
 const CustomError = require("../utils/CustomError")
 const asyncHandler = require("../middleware/asyncHandler")
 const mongoose = require("mongoose")
@@ -26,7 +26,7 @@ const createClient = asyncHandler(async(req,res) =>{
         throw new CustomError(`Please enter the following fields:${missingFields.join(", ")}`,400)
     }
 
-    const newClient = await Client.create(req.body)
+    const newClient = await ClientModel.create(req.body)
 
     res.status(201).json({success:true,data:newClient})
 
@@ -36,7 +36,7 @@ const createClient = asyncHandler(async(req,res) =>{
 
 
 const getAllClients = asyncHandler(async(req,res) =>{
-    const allClients = await Client.find({}).select("firstName lastName middleName").sort({createdAt:-1})
+    const allClients = await ClientModel.find({}).select("firstName lastName middleName").sort({createdAt:-1})
     if(!allClients){
         throw new CustomError("No clients found", 404)
     }
@@ -55,7 +55,7 @@ const deleteClientById = asyncHandler(async(req,res) =>{
     if(!clientId){
         throw new CustomError("ID not found.",404)
     }
-    const clientToDelete = await Client.findByIdAndDelete({_id:clientId})
+    const clientToDelete = await ClientModel.findByIdAndDelete({_id:clientId})
     res.status(200).json(clientToDelete)
 })
 
@@ -68,12 +68,25 @@ const updateClientById = asyncHandler(async(req,res) =>{
     if(!clientId){
         throw new CustomError("ID not found." ,404)
     }
-    const clientToUpdate = await Client.findOneAndUpdate({_id:clientId},{...req.body},{new:true})
+    const clientToUpdate = await Client.ClientModel({_id:clientId},{...req.body},{new:true})
     if(!clientToUpdate){
         throw new CustomError("Daily Log does not exist",404)
     }
     res.status(200).json(clientToUpdate)
 })
 
+const getClientById = asyncHandler(async(req,res) =>{
+    const {clientId} = req.params;
+    if(!mongoose.Types.ObjectId.isValid(clientId)){
+        throw new CustomError("Invalid client ID format.",400)
+    }
+    const client = await ClientModel.findById(clientId, 'firstName middleName lastName')
+    if(!clientId){
+        throw new CustomError("Client not found", 404)
+    }
+    res.status(200).json(client)
 
-module.exports = {createClient,getAllClients,deleteClientById,updateClientById}
+})
+
+
+module.exports = {createClient,getAllClients,deleteClientById,updateClientById,getClientById}
