@@ -9,6 +9,7 @@ import EmployeeList from "./pages/EmployeeList.jsx";
 import MedicationForm from "./components/MedicationForm.jsx";
 import MedicationList from "./pages/MedicationList.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import ClientProfile from "./pages/ClientProfile.jsx";
 
 const App = () =>{
 
@@ -18,15 +19,21 @@ const App = () =>{
             <div className = "py-2">
                 <Routes >
                     <Route path = "/dashboard" element={<Dashboard/>}/>
+                    {/*Daily Log*/}
                     <Route path="/" element={<DailyLogList/>}/>
-                    <Route path="/all-employees" element ={<EmployeeList/>}/>
                     <Route path ="/all-daily-logs" element={<DailyLogList/>}></Route>
-                    <Route path = "/all-clients" element = {<ClientList/>}/>
-                    <Route path = "/all-medication" element ={<MedicationList/>}/>
                     <Route path =  "/create-dailyLog" element={<DailyLogForm/>}></Route>
+                    {/*Employee*/}
+                    <Route path="/all-employees" element ={<EmployeeList/>}/>
                     <Route path = "/create-employee" element = {<EmployeeForm/> }/>
-                    <Route path = "/create-medication" element={<MedicationForm/>}/>
+                    {/*Client*/}
+                    <Route path = "/all-clients" element = {<ClientList/>}/>
                     <Route path = "/create-client" element = {<ClientForm/>} />
+                    <Route path = "/:clientId" element={<ClientProfile/>}/>
+                    {/*Medication*/}
+                    <Route path = "/all-medication" element ={<MedicationList/>}/>
+                    <Route path = "/create-medication" element={<MedicationForm/>}/>
+
 
                 </Routes>
 

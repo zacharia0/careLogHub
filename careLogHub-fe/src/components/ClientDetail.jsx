@@ -1,5 +1,6 @@
 import {useClientContext} from "../hooks/useClientContext.js";
 import {useState} from "react";
+import {Link} from "react-router-dom";
 
 const ClientDetail = ({clients}) => {
     const {dispatch} = useClientContext()
@@ -100,6 +101,8 @@ const ClientDetail = ({clients}) => {
                             <span>Full Name: {clients.firstName} {clients.lastName}</span>
                             <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
                             <button className="delete-btn" onClick={handleDelete}>Delete</button>
+                            <Link to ={`/${clients._id}`}>View Client Detail</Link>
+
                         </div>
                     )
 
