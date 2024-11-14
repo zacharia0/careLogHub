@@ -10,13 +10,14 @@ import {MedicationContextProvider} from "./context/MedicationContext.jsx";
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <EmployeeContextProvider>
-            <MedicationContextProvider>
-                <ClientContextProvider>
+            <ClientContextProvider>
+                <MedicationContextProvider>
+
                     <DailyLogContextProvider>
                         <App/>
                     </DailyLogContextProvider>
-                </ClientContextProvider>
-            </MedicationContextProvider>
+                </MedicationContextProvider>
+            </ClientContextProvider>
         </EmployeeContextProvider>
     </StrictMode>,
 )

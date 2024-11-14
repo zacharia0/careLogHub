@@ -98,7 +98,7 @@ const getClientById = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(clientId)){
         throw new CustomError("Invalid client ID format.",400)
     }
-    const client = await ClientModel.findById(clientId, 'firstName middleName lastName')
+    const client = await ClientModel.findById(clientId)
     if(!clientId){
         throw new CustomError("Client not found", 404)
     }

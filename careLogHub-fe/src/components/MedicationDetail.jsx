@@ -87,6 +87,10 @@ const MedicationDetail = ({medications}) => {
 
                     <div>
 
+                        <label> First Name: </label>
+                        {medications.client.firstName + " "} <br/>
+                        <label >Last Name:</label>
+                        {medications.client.lastName +" " }
                             <label>Medication Name: </label>
                             <span className={"mr-1"}>{medications.medName}</span>
                             <label>Dosage: </label>

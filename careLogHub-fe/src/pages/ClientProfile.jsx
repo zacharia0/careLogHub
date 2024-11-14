@@ -1,10 +1,14 @@
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
+import {useClientContext} from "../hooks/useClientContext.js";
 
 const ClientProfile = () => {
-    const [singleClient, setSingleClient] = useState("")
+    const {singleClient,dispatch} = useClientContext()
+    // const [singleClient, setSingleClient] = useState("")
     const {clientId} = useParams()
 
+
+    console.log( "Printing client information" , singleClient)
 
     useEffect(() => {
         const getSingleClient = async () => {
@@ -15,25 +19,27 @@ const ClientProfile = () => {
             if (!response.ok) {
                 console.error("Failed to fetch a single client")
             }
-            setSingleClient(json)
-            console.log(singleClient)
+            // setSingleClient(json)
+            dispatch({type:"SET_SINGLE_CLIENT",payload:json})
 
         }
-
         getSingleClient()
-    }, [clientId])
 
+    }, [clientId])
     return (
         <div>
             {singleClient &&
                 (
-                    <div>
+                    <div className={"ml-2"}>
                         <label>First Name: </label>
                         {singleClient.firstName + " "}<br/>
                         <label>last Name: </label>
                         {singleClient.lastName} <br/>
                         <label >Client Id: </label>
                         {singleClient._id}
+                        <label>Move In Date</label>
+                        {singleClient.moveInDate} <br/>
+                        <Link to = {`/create-medication/${singleClient._id}`} className={"create-btn"}>Add New Medication</Link>
                     </div>
                 )
 

@@ -29,10 +29,10 @@ const App = () =>{
                     {/*Client*/}
                     <Route path = "/all-clients" element = {<ClientList/>}/>
                     <Route path = "/create-client" element = {<ClientForm/>} />
-                    <Route path = "/:clientId" element={<ClientProfile/>}/>
+                    <Route path = "/all-clients/:clientId" element={<ClientProfile/>}/>
                     {/*Medication*/}
                     <Route path = "/all-medication" element ={<MedicationList/>}/>
-                    <Route path = "/create-medication" element={<MedicationForm/>}/>
+                    <Route path = "/create-medication/:clientId" element={<MedicationForm/>}/>
 
 
                 </Routes>

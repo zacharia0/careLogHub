@@ -46,7 +46,7 @@ const createMed = asyncHandler(async(req,res)=>{
 })
 
 const getAllMedications = asyncHandler(async(req,res)=>{
-    const allMedications = await MedicationModel.find({})
+    const allMedications = await MedicationModel.find({}).populate("client","firstName lastName")
     if(!allMedications || allMedications.length === 0){
         throw new CustomError("Medication(s) is empty",404)
     }
