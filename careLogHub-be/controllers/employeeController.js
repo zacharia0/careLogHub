@@ -19,7 +19,17 @@ const createEmployee = asyncHandler(async(req,res) =>{
         throw new CustomError(`The following fields are missing: ${missingFields.join(',')}`,400)
     }
 
-    const newEmployee = await Employee.create(req.body)
+    const newEmployee = new Employee({
+        firstName,
+        lastName,
+        middleName,
+        username
+
+    })
+
+    await newEmployee.save()
+
+    // const newEmployee = await Employee.create(req.body)
 
     res.status(201).json(newEmployee)
 

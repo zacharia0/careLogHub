@@ -27,7 +27,18 @@ const createMed = asyncHandler(async(req,res)=>{
         throw new CustomError(`The following fields are required: ${missingFields.join(", ")}`)
     }
 
-    const newMed = await MedicationModel.create(req.body)
+    const newMed = new MedicationModel({
+        medName,
+        medDosage,
+        dosageUnit,
+        client:clientId
+
+    })
+    console.log(newMed)
+
+    await newMed.save()
+
+    // const newMed = await MedicationModel.create(req.body)
     if(!newMed){
         throw new CustomError("Failed to add new med",400)
     }

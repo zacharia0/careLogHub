@@ -5,7 +5,7 @@ const mongoose = require("mongoose")
 
 
 const createClient = asyncHandler(async(req,res) =>{
-    const {firstName,lastName,dateOfBirth,diagnoses,moveInDate} = req.body
+    const {firstName, middleName, lastName, dateOfBirth, moveInDate, roomNumber, foodAllergy, medicalAllergy, emergencyContact, diagnoses, primaryMedicalContact, guardian} = req.body
     const missingFields = []
     if(!firstName){
         missingFields.push("first name")
@@ -26,7 +26,25 @@ const createClient = asyncHandler(async(req,res) =>{
         throw new CustomError(`Please enter the following fields:${missingFields.join(", ")}`,400)
     }
 
-    const newClient = await ClientModel.create(req.body)
+    const newClient = new ClientModel({
+        firstName,
+        middleName,
+        lastName,
+        dateOfBirth,
+        moveInDate,
+        roomNumber,
+        foodAllergy,
+        medicalAllergy,
+        emergencyContact,
+        diagnoses,
+        primaryMedicalContact,
+        guardian
+
+    })
+    await newClient.save()
+
+
+    // const newClient = await ClientModel.create(req.body)
 
     res.status(201).json({success:true,data:newClient})
 
