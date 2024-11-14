@@ -34,6 +34,8 @@ const ClientProfile = () => {
                         {singleClient.lastName} <br/>
                         <label >Client Id: </label>
                         {singleClient._id}
+                        <label>Move In Date</label>
+                        {singleClient.moveInDate}
                     </div>
                 )
 
