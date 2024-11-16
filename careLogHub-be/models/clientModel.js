@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
+const MedicationModel = require("../models/medicationModel")
 const clientSchema = new Schema({
     firstName:{
         type:String,
@@ -47,6 +48,13 @@ const clientSchema = new Schema({
         type:String
     },
 },{timestamps:true})
+
+//Middleware to delete medication when a client is deleted
+clientSchema.pre("findOneAndDelete",async function(next){
+    const clientId = this.getQuery()._id; // Get the client ID being deleted.
+    await MedicationModel.deleteMany({client:clientId}) // Delete all medications associated with this client
+    next()
+})
 
 
 module.exports = mongoose.model("Client",clientSchema)

@@ -70,11 +70,11 @@ const deleteClientById = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(clientId)){
         throw new CustomError("Not a valid format ID",400)
     }
-    if(!clientId){
-        throw new CustomError("ID not found.",404)
-    }
     const clientToDelete = await ClientModel.findByIdAndDelete({_id:clientId})
-    res.status(200).json(clientToDelete)
+    if(!clientToDelete){
+        throw new CustomError("Client not found.",404)
+    }
+    res.status(200).json({message:"Client and associated medications deleted successfully",client:clientToDelete})
 })
 
 
@@ -83,12 +83,9 @@ const updateClientById = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(clientId)){
         throw new CustomError("Not a valid form ID",400)
     }
-    if(!clientId){
-        throw new CustomError("ID not found." ,404)
-    }
-    const clientToUpdate = await Client.ClientModel({_id:clientId},{...req.body},{new:true})
+    const clientToUpdate = await ClientModel.findOneAndUpdate({_id:clientId},{...req.body},{new:true})
     if(!clientToUpdate){
-        throw new CustomError("Daily Log does not exist",404)
+        throw new CustomError("Client does not exist",404)
     }
     res.status(200).json(clientToUpdate)
 })
@@ -99,7 +96,7 @@ const getClientById = asyncHandler(async(req,res) =>{
         throw new CustomError("Invalid client ID format.",400)
     }
     const client = await ClientModel.findById(clientId)
-    if(!clientId){
+    if(!client){
         throw new CustomError("Client not found", 404)
     }
     res.status(200).json(client)
