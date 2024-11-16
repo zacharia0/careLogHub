@@ -1,9 +1,16 @@
 import {useMedicationContext} from "../hooks/useMedicationContext.js";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import{DosageUnits} from "../constants/dosageUnits.js";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
+import {useClientContext} from "../hooks/useClientContext.js";
 
 const MedicationForm = () => {
+    const {clientId} = useParams()
+    const {clients} = useClientContext()
+    if (!clients || clients.length === 0) {
+        console.log("Clients not loaded yet:", clients); // This will help confirm the timing issue
+        return null; // Or a loading indicator
+    }
     const {dispatch} = useMedicationContext()
     const [medication, setMedication] = useState({
         medName: "",
@@ -32,7 +39,7 @@ const MedicationForm = () => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(medication)
+            body: JSON.stringify({...medication,clientId})
         })
         const json = await response.json()
         if (!response.ok) {
@@ -40,11 +47,15 @@ const MedicationForm = () => {
         }
 
         if (response.ok) {
-            dispatch({type: "CREATE_MEDICATION"})
+            dispatch({type: "CREATE_MEDICATION",payload:json})
             console.log("Created new meds")
         }
 
     }
+
+    useEffect(()=>{
+
+    },[clients])
 
     return (
         <div>
@@ -77,8 +88,8 @@ const MedicationForm = () => {
                 </select>
 
                 <button
-                    className="create-btn">Add
-                    New Med
+                    className="create-btn">
+                    Add New Med
                 </button>
             </form>
 

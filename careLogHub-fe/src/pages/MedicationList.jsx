@@ -27,8 +27,10 @@ const MedicationList = () =>{
     },[dispatch])
     console.log(medications)
     return(
-        <div>
-            <Link className={"add-new-btn-link"} to ="/create-medication">Add New Medication</Link>
+        <div className={"ml-2"}>
+            <p>To add or remove a medication, first visit teh All Clients Page.</p>
+            <Link className={"add-new-btn-link"} to ={`/all-clients`}>Go to All Clients</Link>
+            <p>Once there, click "View Detail" next to a client to manage their medications</p>
             {medications && medications.map((med) =>(
                 <MedicationDetail key = {med._id} medications={med}/>
             ))}

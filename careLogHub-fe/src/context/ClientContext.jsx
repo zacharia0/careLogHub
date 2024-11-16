@@ -5,7 +5,7 @@ export const ClientContext = createContext()
 
 export const clientReducer = (state, action) => {
     switch (action.type) {
-        case "SET_CLIENT":
+        case "SET_CLIENT": console.log("Setting clients with:", action.payload);
             return {
                 clients: action.payload
             }
@@ -21,6 +21,10 @@ export const clientReducer = (state, action) => {
             return {
                 clients: state.clients.map((client) => client._id === action.payload._id ? action.payload : client)
             }
+        case "SET_SINGLE_CLIENT":
+            return{
+                singleClient:action.payload
+            }
         default:
             return state
     }
@@ -28,7 +32,8 @@ export const clientReducer = (state, action) => {
 
 export const ClientContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(clientReducer, {
-        clients: []
+        clients: [],
+        singleClient:null
     })
 
     return (

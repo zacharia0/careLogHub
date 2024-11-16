@@ -12,7 +12,7 @@ const ClientList = () => {
             const response = await fetch("http://localhost:4000/api/client/all-clients")
             const json = await response.json()
             if (response.ok) {
-                console.log("Fetched all Clients...")
+                console.log("Fetched all Clients...", json)
                 dispatch({type: "SET_CLIENT", payload: json})
             }
             if (!response) {
