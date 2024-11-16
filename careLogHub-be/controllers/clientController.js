@@ -74,7 +74,7 @@ const deleteClientById = asyncHandler(async(req,res) =>{
     if(!clientToDelete){
         throw new CustomError("Client not found.",404)
     }
-    res.status(200).json({message:"Client and associated medications deleted successfully",client:clientToDelete})
+    res.status(200).json(clientToDelete)
 })
 
 
