@@ -6,11 +6,6 @@ import {useClientContext} from "../hooks/useClientContext.js";
 
 const MedicationForm = () => {
     const {clientId} = useParams()
-    const {clients} = useClientContext()
-    if (!clients || clients.length === 0) {
-        console.log("Clients not loaded yet:", clients); // This will help confirm the timing issue
-        return null; // Or a loading indicator
-    }
     const {dispatch} = useMedicationContext()
     const [medication, setMedication] = useState({
         medName: "",
@@ -52,10 +47,6 @@ const MedicationForm = () => {
         }
 
     }
-
-    useEffect(()=>{
-
-    },[clients])
 
     return (
         <div>

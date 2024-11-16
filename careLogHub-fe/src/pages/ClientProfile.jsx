@@ -7,8 +7,8 @@ const ClientProfile = () => {
     // const [singleClient, setSingleClient] = useState("")
     const {clientId} = useParams()
 
+    console.log(singleClient?._id)
 
-    console.log( "Printing client information" , singleClient)
 
     useEffect(() => {
         const getSingleClient = async () => {
@@ -39,8 +39,10 @@ const ClientProfile = () => {
                         {singleClient._id}
                         <label>Move In Date</label>
 
+
+
                         {singleClient.moveInDate} <br/>
-                        <Link to = {`/create-medication/${singleClient._id}`} className={"create-btn"}>Add New Medication</Link>
+                        <Link to = {`/create-medication/${singleClient?._id}`} className={"create-btn"}>Add New Medication</Link>
                     </div>
                 )
 
