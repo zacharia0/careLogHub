@@ -42,7 +42,7 @@ const createDailyLog = asyncHandler(async(req,res) =>{
 
 const getDailyLogs = asyncHandler(async(req,res) =>{
     const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1}).populate("client","firstName lastName")
-    console.log(allDailyLogs)
+    // console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
         throw new CustomError("No Daily Logs",404)
     }

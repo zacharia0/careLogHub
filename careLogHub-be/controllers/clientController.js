@@ -54,6 +54,7 @@ const createClient = asyncHandler(async(req,res) =>{
 
 
 const getAllClients = asyncHandler(async(req,res) =>{
+    // console.log(req)
     const allClients = await ClientModel.find({}).select("firstName lastName middleName").sort({createdAt:-1})
     if(!allClients){
         throw new CustomError("No clients found", 404)
