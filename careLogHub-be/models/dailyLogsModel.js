@@ -18,6 +18,14 @@ const dailyLogSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"Client",
         required:true
+    },
+    deleted:{
+        type:Boolean,
+        default:false
+    },
+    deletedAt:{
+        type:Date,
+        default:null
     }
 
 },

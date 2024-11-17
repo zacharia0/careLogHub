@@ -46,7 +46,8 @@ const createMed = asyncHandler(async(req,res)=>{
 })
 
 const getAllMedications = asyncHandler(async(req,res)=>{
-    const allMedications = await MedicationModel.find({}).populate("client","firstName lastName")
+    const deleted = req.query.deleted === "true"? true: false
+    const allMedications = await MedicationModel.find({deleted}).populate("client","firstName lastName deleted")
     if(!allMedications || allMedications.length === 0){
         throw new CustomError("Medication(s) is empty",404)
     }
@@ -73,10 +74,13 @@ const deleteMedicationById = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(medicationId)){
         throw new CustomError("Invalid medication format.",400)
     }
-    const deletedMedication = await MedicationModel.findOneAndDelete(medicationId)
+    const deletedMedication = await MedicationModel.findById(medicationId)
     if(!deletedMedication){
         throw new CustomError("Medication not found.",404)
     }
+     deletedMedication.deleted = true
+     deletedMedication.deletedAt = new Date()
+    await deletedMedication.save({validateModifiedOnly:true})
     res.status(200).json(deletedMedication)
 
 })

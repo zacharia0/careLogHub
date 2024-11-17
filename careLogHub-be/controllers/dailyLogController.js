@@ -41,7 +41,9 @@ const createDailyLog = asyncHandler(async(req,res) =>{
 
 
 const getDailyLogs = asyncHandler(async(req,res) =>{
-    const allDailyLogs = await DailyLog.find({}).sort({createdAt:-1}).populate("client","firstName lastName")
+    // const deleted = req.query.deleted === "true"? true : false
+    const deleted = req.query.deleted === 'true'
+    const allDailyLogs = await DailyLog.find({deleted}).sort({createdAt:-1}).populate("client","firstName lastName deleted")
     // console.log(allDailyLogs)
     if(!allDailyLogs || allDailyLogs.length === 0) {
         throw new CustomError("No Daily Logs",404)
@@ -71,10 +73,15 @@ const deleteDailyLog = asyncHandler(async(req,res) =>{
         throw new CustomError("Not the correct ID format!",400)
     }
 
-    const dailyLogToDelete = await DailyLog.findOneAndDelete({_id:dailyLogId})
+    const dailyLogToDelete = await DailyLog.findById({_id:dailyLogId})
     if(!dailyLogToDelete){
         throw new Error("Daily Log does not exist.")
     }
+
+    dailyLogToDelete.deleted = true
+    dailyLogToDelete.deletedAt = new Date()
+    await dailyLogToDelete.save({validateModifiedOnly:true})
+
     res.status(200).json(dailyLogToDelete)
 
 })

@@ -2,6 +2,8 @@ const ClientModel = require("../models/clientModel")
 const CustomError = require("../utils/CustomError")
 const asyncHandler = require("../middleware/asyncHandler")
 const mongoose = require("mongoose")
+const MedicationModel = require("../models/medicationModel")
+const DailyLogModel = require("../models/dailyLogsModel")
 
 
 const createClient = asyncHandler(async(req,res) =>{
@@ -25,6 +27,7 @@ const createClient = asyncHandler(async(req,res) =>{
     if(missingFields.length > 0){
         throw new CustomError(`Please enter the following fields:${missingFields.join(", ")}`,400)
     }
+
 
     const newClient = new ClientModel({
         firstName,
@@ -55,7 +58,10 @@ const createClient = asyncHandler(async(req,res) =>{
 
 const getAllClients = asyncHandler(async(req,res) =>{
     // console.log(req)
-    const allClients = await ClientModel.find({}).select("firstName lastName middleName").sort({createdAt:-1})
+
+    const deleted = req.query.deleted === 'true'
+    // const filter = {deleted}
+    const allClients = await ClientModel.find({deleted}).select("firstName lastName middleName deleted").sort({createdAt:-1})
     if(!allClients){
         throw new CustomError("No clients found", 404)
     }
@@ -71,10 +77,19 @@ const deleteClientById = asyncHandler(async(req,res) =>{
     if(!mongoose.Types.ObjectId.isValid(clientId)){
         throw new CustomError("Not a valid format ID",400)
     }
-    const clientToDelete = await ClientModel.findByIdAndDelete({_id:clientId})
+
+    const clientToDelete = await ClientModel.findById({_id:clientId})
     if(!clientToDelete){
         throw new CustomError("Client not found.",404)
     }
+    clientToDelete.deleted = true
+    clientToDelete.deletedAt = new Date()
+
+    await clientToDelete.save({validateModifiedOnly:true});
+
+    await MedicationModel.updateMany({client:clientId},{$set:{deleted:true,deletedAt:new Date()}})
+    await DailyLogModel.updateMany({client:clientId},{$set:{deleted:true,deletedAt:new Date()}})
+
     res.status(200).json(clientToDelete)
 })
 

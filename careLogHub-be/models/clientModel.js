@@ -47,6 +47,14 @@ const clientSchema = new Schema({
     guardian:{
         type:String
     },
+    deleted:{
+        type:Boolean,
+        default:false
+    },
+    deletedAt:{
+        type:Date,
+        default:null
+    }
 },{timestamps:true})
 
 //Middleware to delete medication when a client is deleted
