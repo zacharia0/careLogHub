@@ -10,7 +10,7 @@ const DailyLogList = () => {
 
     useEffect(() => {
         const fetchDailyLogs = async () => {
-            const response = await fetch("http://localhost:4000/api/dailyLogs")
+            const response = await fetch("http://localhost:4000/api/dailyLogs?deleted=false")
             const json = await response.json()
 
             if (!response.ok) {

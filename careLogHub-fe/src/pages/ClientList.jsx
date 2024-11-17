@@ -9,7 +9,7 @@ const ClientList = () => {
     useEffect(() => {
 
         const fetchAllClients = async () => {
-            const response = await fetch("http://localhost:4000/api/client/all-clients")
+            const response = await fetch("http://localhost:4000/api/client/all-clients?deleted=false")
             const json = await response.json()
             if (response.ok) {
                 console.log("Fetched all Clients...", json)

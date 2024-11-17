@@ -10,7 +10,7 @@ const MedicationList = () =>{
 
         const getAllMedication = async( ) =>{
 
-            const response = await fetch("http://localhost:4000/api/med/all-medications",{
+            const response = await fetch("http://localhost:4000/api/med/all-medications?deleted=false",{
                 method:"GET"
             })
             const json = await response.json()
