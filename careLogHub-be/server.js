@@ -6,6 +6,7 @@ const dailyLog = require('./routes/dailyLogRoutes')
 const client = require("./routes/clientRoutes")
 const employee = require("./routes/employeeRoutes")
 const medication = require("./routes/medicationRoutes")
+const passMeds = require("./routes/passMedsRoutes")
 
 
 
@@ -18,6 +19,7 @@ app.use("/api/dailyLogs",dailyLog)
 app.use("/api/client",client)
 app.use("/api/employee",employee)
 app.use("/api/med",medication)
+app.use("/api/pass-meds",passMeds)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
