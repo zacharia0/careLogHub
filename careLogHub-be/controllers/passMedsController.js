@@ -1,19 +1,21 @@
 const asyncHandler = require("../middleware/asyncHandler")
-const PassMedsModel = require("../models/passMeds")
+const PassMedsModel = require("../models/passMedsModel")
 const mongoose = require("mongoose")
 const CustomError = require("../utils/CustomError")
 const MedicationModel = require("../models/medicationModel")
+const ClientModel = require("../models/clientModel")
 
 const createPassMeds = asyncHandler(async(req,res)=>{
-    const {medicationId,pass,refused,otherReason,adverseReaction,comment,dosageGiven} = req.body
-    if(!mongoose.Types.ObjectId.isValid(medicationId)){
+    const {clientId,medicationId,pass,refused,otherReason,adverseReaction,comment,dosageGiven} = req.body
+    if(!mongoose.Types.ObjectId.isValid(medicationId) && !mongoose.Types.ObjectId(clientId)){
         throw new CustomError("Not a valid ID format",400)
     }
 
-    const medication = await MedicationModel.findById(medicationId)
-    if(!medication) {
-        throw new CustomError("Medication Does not exist")
-    }
+    // const client = await ClientModel.findById(clientId)
+    // const medication = await MedicationModel.findById(medicationId)
+    // if(!medication) {
+    //     throw new CustomError("Medication Does not exist")
+    // }
 
     if(!pass && !refused && !otherReason && !adverseReaction){
         throw new CustomError("At least one action (Pass, Refused, Adverse Reaction, or Other Reason) must be selected.", 400)
@@ -35,7 +37,8 @@ const createPassMeds = asyncHandler(async(req,res)=>{
         refused,
         adverseReaction,
         otherReason,
-        comment
+        comment,
+        client:clientId
     })
     await newPassMed.save()
 
@@ -44,4 +47,26 @@ const createPassMeds = asyncHandler(async(req,res)=>{
 })
 
 
-module.exports = {createPassMeds}
+
+const getAllPassMeds = asyncHandler(async(req,res) =>{
+    const allPassMeds = await PassMedsModel.find({})
+        .populate({
+            path:"medication",
+            select:"medName medDosage dosageUnit",
+            populate:{
+                path:"client",
+                select:"firstName lastName"
+            }
+        })
+    console.log(allPassMeds.pass)
+    if(!allPassMeds){
+        throw new CustomError("Cannot find any medications to pass.",400)
+    }
+
+
+    res.status(200).json(allPassMeds)
+
+})
+
+
+module.exports = {createPassMeds,getAllPassMeds}
