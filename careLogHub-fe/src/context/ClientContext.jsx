@@ -5,7 +5,7 @@ export const ClientContext = createContext()
 
 export const clientReducer = (state, action) => {
     switch (action.type) {
-        case "SET_CLIENT": console.log("Setting clients with:", action.payload);
+        case "SET_CLIENT":
             return {
                 clients: action.payload
             }
