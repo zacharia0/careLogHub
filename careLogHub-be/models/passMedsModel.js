@@ -12,21 +12,10 @@ const passMedSchema = new Schema({
     //   ref:"Client",
     //   required:true
     // },
-    pass:{
-        type:Boolean,
-        default:false
-    },
-    refused:{
-        type:Boolean,
-        default:false
-    },
-    otherReason:{
-        type:Boolean,
-        default:false
-    },
-    adverseReaction:{
-        type:Boolean,
-        default:false
+    status:{
+        type:String,
+        enum:["pass","refuse","adverseReaction","otherReason"],
+        required:true,
     },
     comment:{
         type:String

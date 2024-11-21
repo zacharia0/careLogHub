@@ -6,16 +6,19 @@ import {DailyLogContextProvider} from "./context/DailyLogContext.jsx";
 import {ClientContextProvider} from "./context/ClientContext.jsx";
 import {EmployeeContextProvider} from "./context/EmployeeContext.jsx";
 import {MedicationContextProvider} from "./context/MedicationContext.jsx";
+import {PassMedsContextProvider} from "./context/PassMedsContext.jsx";
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
+
         <EmployeeContextProvider>
             <ClientContextProvider>
                 <MedicationContextProvider>
-
-                    <DailyLogContextProvider>
-                        <App/>
-                    </DailyLogContextProvider>
+                    <PassMedsContextProvider>
+                        <DailyLogContextProvider>
+                            <App/>
+                        </DailyLogContextProvider>
+                    </PassMedsContextProvider>
                 </MedicationContextProvider>
             </ClientContextProvider>
         </EmployeeContextProvider>

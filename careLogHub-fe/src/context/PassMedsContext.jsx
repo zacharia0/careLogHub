@@ -2,16 +2,16 @@ import {createContext, useReducer} from "react";
 
 export const PassMedsContext = createContext()
 
-export const passMedsReducer = (state,action)=>{
-    switch(action.payload){
+const passMedsReducer = (state,action)=>{
+    switch(action.type){
         case "SET_PASS_MEDS":
             return{
-                passMeds:state.action.payload
+                passMeds:action.payload
             }
 
         case "CREATE_PASS_MEDS":
             return{
-                passMeds: [state.action.payload,...state.passMeds]
+                passMeds: [...state.passMeds, action.payload]
             }
         default:
             return state

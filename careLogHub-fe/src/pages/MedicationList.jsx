@@ -23,6 +23,8 @@ const MedicationList = () =>{
         }
         getAllMedication()
 
+        console.log("MEDICATION LIST" , medications)
+
 
     },[dispatch])
     console.log(medications)
@@ -34,6 +36,10 @@ const MedicationList = () =>{
             {medications && medications.map((med) =>(
                 <MedicationDetail key = {med._id} medications={med}/>
             ))}
+
+            <button>ADMINISTER MEDICATION</button>
+            
+
         </div>
 
     )

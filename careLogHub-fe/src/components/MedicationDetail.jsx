@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {useMedicationContext} from "../hooks/useMedicationContext.js";
-import{DosageUnits} from "../constants/dosageUnits.js";
+import {DosageUnits} from "../constants/dosageUnits.js";
 
 const MedicationDetail = ({medications}) => {
     const {dispatch} = useMedicationContext()
@@ -28,15 +28,15 @@ const MedicationDetail = ({medications}) => {
 
     }
 
-    const handleDelete = async() =>{
-        const response = await fetch(`http://localhost:4000/api/med/${medications._id}`,{
-            method:"DELETE"
+    const handleDelete = async () => {
+        const response = await fetch(`http://localhost:4000/api/med/${medications._id}`, {
+            method: "DELETE"
         })
         const json = await response.json()
-        if(!response.ok){
+        if (!response.ok) {
             console.log("Failed to delete Medication")
         }
-        dispatch({type:"DELETE_MEDICATION",payload:json})
+        dispatch({type: "DELETE_MEDICATION", payload: json})
     }
 
     return (
@@ -44,73 +44,83 @@ const MedicationDetail = ({medications}) => {
         <div className={"mb-2"}>
             {
 
-            isEditing ?
-                (
-                    <form onSubmit={handleUpdate}>
-                        <label>Medication Name: </label>
-                        <input
-                            type="text"
-                            value = {updateMedication.medName}
-                            onChange={(e)=> setUpdateMedication({...updateMedication,medName: e.target.value})}
-                        />
-                        <label>Dosage: </label>
-                        <input
-                            type="text"
-                            value = {updateMedication.medDosage}
-                            onChange={(e) => setUpdateMedication({...updateMedication,medDosage: e.target.value})}
-                        />
-                        <label>Dosage Unit</label>
-                        <select
-                            value = {updateMedication.dosageUnit}
-                            onChange={(e) => setUpdateMedication({...updateMedication,dosageUnit: e.target.value})}
-                        >
-                            {
-                                Object.values(DosageUnits).map((unit) => (
-                                    <option value ={ unit} key ={unit}>{unit}</option>
-                                ))
-                            }
+                isEditing ?
+                    (
+                        <form onSubmit={handleUpdate}>
+                            <label>Medication Name: </label>
+                            <input
+                                type="text"
+                                value={updateMedication.medName}
+                                onChange={(e) => setUpdateMedication({...updateMedication, medName: e.target.value})}
+                            />
+                            <label>Dosage: </label>
+                            <input
+                                type="text"
+                                value={updateMedication.medDosage}
+                                onChange={(e) => setUpdateMedication({...updateMedication, medDosage: e.target.value})}
+                            />
+                            <label>Dosage Unit</label>
+                            <select
+                                value={updateMedication.dosageUnit}
+                                onChange={(e) => setUpdateMedication({...updateMedication, dosageUnit: e.target.value})}
+                            >
+                                {
+                                    Object.values(DosageUnits).map((unit) => (
+                                        <option value={unit} key={unit}>{unit}</option>
+                                    ))
+                                }
 
-                        </select>
-                        <button className={"save-btn"} type = "submit">Save</button>
-                        <button
-                            className={"cancel-btn"}
-                            onClick={(e) =>{
-                            e.preventDefault()
-                            setIsEditing(false)}
-                        }
-                        >Cancel</button>
-
-
-                    </form>
-                )  :(
+                            </select>
+                            <button className={"save-btn"} type="submit">Save</button>
+                            <button
+                                className={"cancel-btn"}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    setIsEditing(false)
+                                }
+                                }
+                            >Cancel
+                            </button>
 
 
-                    <div>
+                        </form>
+                    ) : (
 
-                        <label> First Name: </label>
-                        {medications.client.firstName + " "} <br/>
-                        <label >Last Name:</label>
-                        {medications.client.lastName +" " }
+
+                        <div>
+
+                            <label> First Name: </label>
+                            {medications.client.firstName + " "} <br/>
+                            <label>Last Name:</label>
+                            {medications.client.lastName + " "}
                             <label>Medication Name: </label>
                             <span className={"mr-1"}>{medications.medName}</span>
                             <label>Dosage: </label>
                             <span className={"mr-1"}>{medications.medDosage}</span>
                             <span>({medications.dosageUnit})</span>
+
+                            <button>Pass</button>
+                            <button>Refused</button>
+                            <button>Adverse Reaction</button>
+                            <button>Other</button>
+
+
                             <button
                                 className={"edit-btn"}
                                 onClick={(e) => setIsEditing(true)}
-                            >Edit</button>
-                        <button
-                            className={"delete-btn"}
-                            onClick={handleDelete}
-                        >Delete</button>
-                    </div>
+                            >Edit
+                            </button>
+                            <button
+                                className={"delete-btn"}
+                                onClick={handleDelete}
+                            >Delete
+                            </button>
+                        </div>
 
-                )
+                    )
 
 
             }
-
 
 
         </div>

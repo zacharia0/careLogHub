@@ -6,7 +6,7 @@ const MedicationModel = require("../models/medicationModel")
 const ClientModel = require("../models/clientModel")
 
 const createPassMeds = asyncHandler(async(req,res)=>{
-    const {clientId,medicationId,pass,refused,otherReason,adverseReaction,comment,dosageGiven} = req.body
+    const {clientId,medicationId,status,comment,dosageGiven} = req.body
     if(!mongoose.Types.ObjectId.isValid(medicationId) && !mongoose.Types.ObjectId(clientId)){
         throw new CustomError("Not a valid ID format",400)
     }
@@ -17,26 +17,23 @@ const createPassMeds = asyncHandler(async(req,res)=>{
     //     throw new CustomError("Medication Does not exist")
     // }
 
-    if(!pass && !refused && !otherReason && !adverseReaction){
+    if(!status){
         throw new CustomError("At least one action (Pass, Refused, Adverse Reaction, or Other Reason) must be selected.", 400)
     }
-    if(pass && !dosageGiven){
+    if(status === "pass" && !dosageGiven){
         throw new CustomError("Dosage is required")
     }
     // if(refused && ! comments){
     //     throw new CustomError("Refused Re")
     // }
-    if(otherReason && !comment){
+    if(status === "otherReason" && (!comment || comment.trim() === "")){
         throw new CustomError("Reason not given is required")
     }
 
     const newPassMed = new PassMedsModel({
-        pass,
         dosageGiven,
         medication:medicationId,
-        refused,
-        adverseReaction,
-        otherReason,
+        status,
         comment,
         client:clientId
     })
