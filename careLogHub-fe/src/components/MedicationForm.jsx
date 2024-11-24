@@ -6,12 +6,13 @@ import {useClientContext} from "../hooks/useClientContext.js";
 
 const MedicationForm = () => {
     const {clientId} = useParams()
-    const {dispatch} = useMedicationContext()
+    const {medications,dispatch} = useMedicationContext()
     const [medication, setMedication] = useState({
         medName: "",
         medDosage: "",
         dosageUnit: "MG"
     })
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()

@@ -7,8 +7,12 @@ const ClientModel = require("../models/clientModel")
 
 const createPassMeds = asyncHandler(async(req,res)=>{
     const {clientId,medicationId,status,comment,dosageGiven} = req.body
-    if(!mongoose.Types.ObjectId.isValid(medicationId) && !mongoose.Types.ObjectId(clientId)){
+
+    if(!mongoose.Types.ObjectId.isValid(medicationId) ){
         throw new CustomError("Not a valid ID format",400)
+    }
+    if(!medicationId){
+        throw new CustomError("Not Medication Id",400)
     }
 
     // const client = await ClientModel.findById(clientId)
@@ -20,12 +24,10 @@ const createPassMeds = asyncHandler(async(req,res)=>{
     if(!status){
         throw new CustomError("At least one action (Pass, Refused, Adverse Reaction, or Other Reason) must be selected.", 400)
     }
-    if(status === "pass" && !dosageGiven){
-        throw new CustomError("Dosage is required")
-    }
-    // if(refused && ! comments){
-    //     throw new CustomError("Refused Re")
+    // if(status === "pass" && !dosageGiven){
+    //     throw new CustomError("Dosage is required")
     // }
+
     if(status === "otherReason" && (!comment || comment.trim() === "")){
         throw new CustomError("Reason not given is required")
     }

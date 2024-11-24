@@ -2,7 +2,8 @@ import {useEffect, useState} from "react";
 import DailyLogDetail from "../components/DailyLogDetail.jsx";
 import {Link} from "react-router-dom";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
-import DailyLogForm from "../components/DailyLogForm.jsx";
+import { IoAdd } from "react-icons/io5";
+
 
 const DailyLogList = () => {
     const {dailyLogs, dispatch} = useDailyLogContext()
@@ -30,7 +31,7 @@ const DailyLogList = () => {
     return (
         <div className="">
             <div >
-                <Link className="add-new-btn-link" to="/create-dailylog">Create New Daily Log</Link>
+                <Link className="add-new-btn-link" to="/create-dailylog"><IoAdd className={"mr-2 text-2xl"}/>Create New Daily Log</Link>
             </div >
             {error && <div>{error} </div>}
             <div className="" >

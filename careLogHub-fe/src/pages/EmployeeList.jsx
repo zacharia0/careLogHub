@@ -2,6 +2,8 @@ import {useEffect, useState} from "react";
 import {useEmployeeContext} from "../hooks/useEmployeeContext.js";
 import EmployeeDetail from "../components/EmployeeDetail.jsx";
 import {Link} from "react-router-dom";
+import { IoAdd } from "react-icons/io5";
+
 
 
 const EmployeeList = () => {
@@ -33,7 +35,7 @@ const EmployeeList = () => {
 
     return (
         <div>
-            <Link className={"add-new-btn-link"} to ="/create-employee">Add New Employee</Link>
+            <Link className={"add-new-btn-link"} to ="/create-employee"> <IoAdd className={"mr-2 text-2xl"}/>Add New Employee</Link>
             <div>
                 {error && <div>{error}</div>}
             </div>

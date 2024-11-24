@@ -7,7 +7,8 @@ const navigation = [
     { name: 'Dashboard', to: '/dashboard', current: true },
     { name: 'Daily Logs', to: '/all-daily-logs', current: false },
     { name: 'Clients', to: '/all-clients', current: false },
-    { name: 'Pass Medication', to:'/all-medication', current: false },
+    { name: 'All Medication', to:'/all-medication', current: false },
+    {name:"Pass Medications", to:"/administer-med",current:false},
     {name:"Staff",to:"/all-employees",current:false}
 ]
 

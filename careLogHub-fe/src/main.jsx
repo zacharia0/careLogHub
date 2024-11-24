@@ -11,16 +11,16 @@ import {PassMedsContextProvider} from "./context/PassMedsContext.jsx";
 createRoot(document.getElementById('root')).render(
     <StrictMode>
 
-        <EmployeeContextProvider>
-            <ClientContextProvider>
-                <MedicationContextProvider>
-                    <PassMedsContextProvider>
-                        <DailyLogContextProvider>
+        <ClientContextProvider>
+            <MedicationContextProvider>
+                <PassMedsContextProvider>
+                    <DailyLogContextProvider>
+                        <EmployeeContextProvider>
                             <App/>
-                        </DailyLogContextProvider>
-                    </PassMedsContextProvider>
-                </MedicationContextProvider>
-            </ClientContextProvider>
-        </EmployeeContextProvider>
+                        </EmployeeContextProvider>
+                    </DailyLogContextProvider>
+                </PassMedsContextProvider>
+            </MedicationContextProvider>
+        </ClientContextProvider>
     </StrictMode>,
 )
