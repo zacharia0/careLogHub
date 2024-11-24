@@ -5,7 +5,7 @@ const CustomError = require('../utils/CustomError')
 const ClientModel = require("../models/clientModel")
 
 const createMed = asyncHandler(async(req,res)=>{
-    const {medName,medDosage,dosageUnit,clientId}= req.body
+    const {medName,medDosage,dosageUnit,timeSlot,clientId}= req.body
 
     if(!mongoose.Types.ObjectId.isValid(clientId)){
         throw new CustomError("Invalid client ID format.")
@@ -23,6 +23,9 @@ const createMed = asyncHandler(async(req,res)=>{
     if(!clientId){
         missingFields.push("Client")
     }
+    // if(!timeSlot){
+    //     missingFields.push("Timeslot")
+    // }
     if(missingFields.length > 0){
         throw new CustomError(`The following fields are required: ${missingFields.join(", ")}`)
     }
@@ -31,6 +34,7 @@ const createMed = asyncHandler(async(req,res)=>{
         medName,
         medDosage,
         dosageUnit,
+        timeSlot,
         client:clientId
 
     })
@@ -69,6 +73,7 @@ const updateMedicationById = asyncHandler(async(req,res,next) =>{
 
 })
 
+
 const deleteMedicationById = asyncHandler(async(req,res) =>{
     const {medicationId} = req.params
     if(!mongoose.Types.ObjectId.isValid(medicationId)){
@@ -85,4 +90,22 @@ const deleteMedicationById = asyncHandler(async(req,res) =>{
 
 })
 
-module.exports = {createMed,getAllMedications,updateMedicationById,deleteMedicationById}
+const getMedicationByClientId = asyncHandler(async(req,res) =>{
+    const {clientId} = req.params
+
+    console.log("req.params.clientId",req.params.clientId)
+    const medications = await MedicationModel.find({client:clientId}).populate(
+       "client","firstName lastName deleted"
+    )
+
+    console.log("client Id in MedicationController line 96:",clientId)
+    console.log(medications)
+    const filterMedications = medications.filter((med) => med.client !== null)
+    if(filterMedications.length === 0){
+        throw new CustomError("No Medications found for the specified client.",404)
+    }
+
+    res.status(200).json(filterMedications)
+})
+
+module.exports = {createMed,getAllMedications,updateMedicationById,deleteMedicationById,getMedicationByClientId}

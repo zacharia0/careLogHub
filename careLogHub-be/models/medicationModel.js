@@ -19,7 +19,8 @@ const medicationSchema = new Schema({
     client:{
         type: mongoose.Schema.Types.ObjectId,
         ref:"Client",
-        required:true
+        required:true,
+        alias: "clientId",
     },
     deleted:{
         type:Boolean,
@@ -28,6 +29,16 @@ const medicationSchema = new Schema({
     deletedAt:{
         type:Date,
         default:null
+    },
+    timeSlot:{
+        type:[String],
+        enum:["morning","afternoon","evening", "Bedtime"],
+        validate: {
+            validator: (v) => v && v.length > 0, // Ensure array is not empty
+            message: "At least one timeslot must be specified.",
+        },
+        required:true
+
     }
 },{timestamps:true})
 
