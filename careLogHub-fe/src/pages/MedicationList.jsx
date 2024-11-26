@@ -1,12 +1,11 @@
 import {useMedicationContext} from "../hooks/useMedicationContext.js";
-import {useEffect, useState} from "react";
 import MedicationDetail from "../components/MedicationDetail.jsx";
 import {Link} from "react-router-dom";
 import { IoAdd } from "react-icons/io5";
 
 
 const MedicationList = () =>{
-    const {medications,dispatch} = useMedicationContext()
+    const {medications} = useMedicationContext()
     console.log("Current medication in context" ,medications)
     return(
         <div className={"ml-2"}>

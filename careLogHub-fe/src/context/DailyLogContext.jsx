@@ -9,18 +9,22 @@ export const dailyLogReducer = (state,action) =>{
     switch(action.type){
         case "SET_DAILY_LOG":
             return{
+                ...state,
                 dailyLogs:action.payload
             }
         case "CREATE_DAILY_LOG":
             return{
+                ...state,
                 dailyLogs: [action.payload,...state.dailyLogs]
             }
         case "DELETE_DAILY_LOG":
             return{
+                ...state,
                 dailyLogs: state.dailyLogs.filter((dailyLog) => dailyLog._id !== action.payload._id)
             }
         case "UPDATE_DAILY_LOG":
             return{
+                ...state,
                 dailyLogs: state.dailyLogs.map((dailyLog) => dailyLog._id === action.payload._id ? action.payload : dailyLog)
             }
         default:

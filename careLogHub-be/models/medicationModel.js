@@ -32,7 +32,7 @@ const medicationSchema = new Schema({
     },
     timeSlot:{
         type:[String],
-        enum:["morning","afternoon","evening", "Bedtime"],
+        enum:["morning","afternoon","evening", "bedtime"],
         validate: {
             validator: (v) => v && v.length > 0, // Ensure array is not empty
             message: "At least one timeslot must be specified.",

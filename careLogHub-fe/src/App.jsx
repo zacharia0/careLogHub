@@ -10,7 +10,8 @@ import MedicationForm from "./components/MedicationForm.jsx";
 import MedicationList from "./pages/MedicationList.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ClientProfile from "./pages/ClientProfile.jsx";
-import PassMedForm from "./components/PassMedForm.jsx";
+import AdministerMed from "./components/AdministerMed.jsx";
+import PassMedsList from "./pages/PassMedsList.jsx";
 // import PassMedsList from "./pages/PassMedsList.jsx";
 
 const App = () =>{
@@ -38,7 +39,9 @@ const App = () =>{
                     <Route path = "/create-medication/:clientId" element={<MedicationForm/>}/>
 
                 {/*    ADMINISTER MED */}
-                    <Route path = "/administer-med" element = {<PassMedForm/>}/>
+                    <Route path = "/administer-med" element = {<AdministerMed/>}/>
+
+                    <Route path = "/pass-med-list/:clientId" element={<PassMedsList/>}/>
 
 
 

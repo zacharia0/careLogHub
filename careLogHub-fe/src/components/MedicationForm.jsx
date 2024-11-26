@@ -10,7 +10,8 @@ const MedicationForm = () => {
     const [medication, setMedication] = useState({
         medName: "",
         medDosage: "",
-        dosageUnit: "MG"
+        dosageUnit: "MG",
+        timeSlot:[]
     })
 
 
@@ -25,6 +26,9 @@ const MedicationForm = () => {
         }
         if (!medication.dosageUnit) {
             missingFields.push("Dosage Unit")
+        }
+        if(medication.timeSlot.length === 0){
+            missingFields.push("timeslot")
         }
         if (missingFields.length > 0) {
             throw new Error(`The following fields are required: ${missingFields.join(", ")}`)
@@ -47,6 +51,17 @@ const MedicationForm = () => {
             console.log("Created new meds")
         }
 
+
+    }
+
+    const handleTimeslotChange = (e) => {
+        const selectedTimeslot = e.target.value;
+        setMedication(prevState => {
+            const updatedTimeSlots = prevState.timeSlot.includes(selectedTimeslot)
+                ? prevState.timeSlot.filter(slot => slot !== selectedTimeslot) // Remove if already selected
+                : [...prevState.timeSlot, selectedTimeslot]; // Add if not selected
+            return {...prevState, timeSlot: updatedTimeSlots};
+        });
     }
 
     return (
@@ -70,14 +85,63 @@ const MedicationForm = () => {
                 <label>Dosage Unit</label>
                 <select
                     value={medication.dosageUnit}
-                    onChange={(e) => setMedication({...medication,dosageUnit: e.target.value})}
+                    onChange={(e) => setMedication({...medication, dosageUnit: e.target.value})}
                 >
                     {
-                        Object.values(DosageUnits).map((unit) =>(
-                            <option key = {unit} value={unit}>{unit}</option>
+                        Object.values(DosageUnits).map((unit) => (
+                            <option key={unit} value={unit}>{unit}</option>
                         ))
                     }
                 </select>
+                <label>Timeslot: </label>
+                {/*<select*/}
+                {/*    value={medication.timeSlot}*/}
+                {/*    onChange={(e) => setMedication({...medication, timeSlot: [e.target.value]})}*/}
+                {/*>*/}
+                {/*    <option value="morning">Morning</option>*/}
+                {/*    <option value="afternoon">Afternoon</option>*/}
+                {/*    <option value="evening">Evening</option>*/}
+                {/*    <option value="bedtime">Bedtime</option>*/}
+                {/*</select>*/}
+                <label>Timeslot: </label>
+                <div>
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="morning"
+                            checked={medication.timeSlot.includes("morning")}
+                            onChange={handleTimeslotChange}
+                        />
+                        Morning
+                    </label>
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="afternoon"
+                            checked={medication.timeSlot.includes("afternoon")}
+                            onChange={handleTimeslotChange}
+                        />
+                        Afternoon
+                    </label>
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="evening"
+                            checked={medication.timeSlot.includes("evening")}
+                            onChange={handleTimeslotChange}
+                        />
+                        Evening
+                    </label>
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="bedtime"
+                            checked={medication.timeSlot.includes("bedtime")}
+                            onChange={handleTimeslotChange}
+                        />
+                        Bedtime
+                    </label>
+                </div>
 
                 <button
                     className="create-btn">

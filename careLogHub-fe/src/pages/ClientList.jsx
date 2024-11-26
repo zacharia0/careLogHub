@@ -4,24 +4,7 @@ import ClientDetail from "../components/ClientDetail.jsx";
 import {Link} from "react-router-dom";
 import { IoAdd } from "react-icons/io5";
 const ClientList = () => {
-    const {clients, dispatch} = useClientContext()
-
-    useEffect(() => {
-
-        const fetchAllClients = async () => {
-            const response = await fetch("http://localhost:4000/api/client/all-clients?deleted=false")
-            const json = await response.json()
-            if (response.ok) {
-                console.log("Fetched all Clients...", json)
-                dispatch({type: "SET_CLIENT", payload: json})
-            }
-            if (!response) {
-                console.log("Failed to fetch all clients...")
-            }
-        }
-        fetchAllClients()
-
-    }, [dispatch])
+    const {clients} = useClientContext()
 
     return (
         <div>
