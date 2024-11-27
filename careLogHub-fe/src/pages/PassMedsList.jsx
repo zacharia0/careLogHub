@@ -7,9 +7,27 @@ const PassMedsList = () => {
 
     const {medicationByClient, dispatch} = useMedicationContext()
     const [loading, setLoading] = useState(true)
-    const [activeTab,setActiveTab] = useState("morning")
+    const [activeTab,setActiveTab] = useState("")
 
     const {clientId} = useParams()
+
+    const determineActiveTab = () =>{
+        const currentHour = new Date().getHours();
+        if(currentHour >= 0 && currentHour <12){
+            return "morning"
+        }
+        if(currentHour >= 12 && currentHour <16 ){
+            return "afternoon"
+        }
+        if(currentHour >= 16 && currentHour < 20){
+            return "evening"
+        }
+        return "bedtime"
+    }
+
+    useEffect(() =>{
+        setActiveTab(determineActiveTab())
+    },[])
 
     useEffect(() => {
         if (medicationByClient) {
