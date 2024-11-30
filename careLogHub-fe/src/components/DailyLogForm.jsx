@@ -12,8 +12,6 @@ const DailyLogForm = () => {
     const [clientId,setClientId] = useState("")
 
     const [error, setError] = useState('')
-    const navigate = useNavigate()
-
     const [dailyLogForm,setDailyLogForm] = useState({
         dailyLogType:"",
         body:"",
@@ -21,21 +19,6 @@ const DailyLogForm = () => {
         clientFirstName:"",
         clientLastName:""
     })
-
-
-    // useEffect(() => {
-    //     const fetchClients = async () => {
-    //         const response = await fetch("http://localhost:4000/api/client/all-clients")
-    //         const json = await response.json()
-    //         if(response.ok){
-    //             setClient(json)
-    //         }else{
-    //             setError("Failed to fetch clients")
-    //         }
-    //     }
-    //     fetchClients()
-    // },[])
-
 
 
     const handleClientChange = (e) =>{
@@ -56,7 +39,6 @@ const DailyLogForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        // const dailyLogForm = {dailyLogType, body, date,clientId}
 
         const response = await fetch('http://localhost:4000/api/dailyLogs', {
             method: 'POST',
@@ -72,9 +54,6 @@ const DailyLogForm = () => {
         }
         if (response.ok) {
             setError('')
-            // setBody('')
-            // setDate('')
-            // setDailyLogType('')
             setDailyLogForm({
                 body: "",
                 dailyLogType: "",
@@ -83,8 +62,6 @@ const DailyLogForm = () => {
             })
             dispatch({type: "CREATE_DAILY_LOG", payload: json.data})
             console.log("New Observation added")
-            // navigate("/")
-
         }
 
     }

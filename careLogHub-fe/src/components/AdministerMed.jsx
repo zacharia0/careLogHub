@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 const AdministerMed = () =>{
     const {clients} = useClientContext()
     const [loading,setLoading] = useState(true)
+    const [error,setError] = useState("")
 
     useEffect(() =>{
         if(clients){

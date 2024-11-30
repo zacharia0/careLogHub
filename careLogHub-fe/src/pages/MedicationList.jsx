@@ -7,7 +7,7 @@ import {useClientContext} from "../hooks/useClientContext.js";
 
 const MedicationList = () =>{
     const {medications} = useMedicationContext()
-    const {clients} = useClientContext()
+    // const {clients} = useClientContext()
 
     // cons {filter}
     console.log("Current medication in context" ,medications)
