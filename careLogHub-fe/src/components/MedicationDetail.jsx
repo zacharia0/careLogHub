@@ -1,8 +1,9 @@
 import {useState} from "react";
 import {useMedicationContext} from "../hooks/useMedicationContext.js";
 import {DosageUnits} from "../constants/dosageUnits.js";
+import {useClientContext} from "../hooks/useClientContext.js";
 
-const MedicationDetail = ({medications}) => {
+const MedicationDetail = ({medications,clients}) => {
     const {dispatch} = useMedicationContext()
     const [isEditing, setIsEditing] = useState(false)
     const [updateMedication, setUpdateMedication] = useState({
@@ -10,6 +11,10 @@ const MedicationDetail = ({medications}) => {
         medDosage: medications.medDosage,
         dosageUnit: medications.dosageUnit
     })
+
+    // const filterClientById = clients.filter((client) => client._id !== medications.client._id)
+    console.log(medications)
+    // console.log("FILTER CLIENT BY ID: ",filterClientById)
     const handleUpdate = async (e) => {
         e.preventDefault()
         const response = await fetch(`http://localhost:4000/api/med/${medications._id}`, {
@@ -90,20 +95,14 @@ const MedicationDetail = ({medications}) => {
                         <div>
 
                             <label> First Name: </label>
-                            {medications.client.firstName + " "} <br/>
+                            {medications.clientFirstName+ " "} <br/>
                             <label>Last Name:</label>
-                            {medications.client.lastName + " "}
+                            {medications.clientLastName + " "}
                             <label>Medication Name: </label>
                             <span className={"mr-1"}>{medications.medName}</span>
                             <label>Dosage: </label>
                             <span className={"mr-1"}>{medications.medDosage}</span>
                             <span>({medications.dosageUnit})</span>
-
-                            <button>Pass</button>
-                            <button>Refused</button>
-                            <button>Adverse Reaction</button>
-                            <button>Other</button>
-
 
                             <button
                                 className={"edit-btn"}

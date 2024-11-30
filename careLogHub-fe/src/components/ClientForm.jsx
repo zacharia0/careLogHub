@@ -51,7 +51,7 @@ const ClientForm = () =>{
         if(response.ok){
             setError("")
             console.log("New Client Created.")
-            dispatch({type:"CREATE_CLIENT",payload:json})
+            dispatch({type:"CREATE_CLIENT",payload:json.data})
             setClientData(
                 {
                     firstName: "",

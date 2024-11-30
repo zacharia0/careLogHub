@@ -26,10 +26,16 @@ const dailyLogSchema = new Schema({
     deletedAt:{
         type:Date,
         default:null
+    },
+    clientFirstName:{
+        type:String,
+        required:true
+    },
+    clientLastName:{
+        type:String,
+        required:true
     }
 
-},
-    {timestamps:true}
-)
+}, {timestamps:true})
 
 module.exports = mongoose.model("DailyLog",dailyLogSchema)

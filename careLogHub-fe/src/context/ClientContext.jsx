@@ -54,7 +54,12 @@ export const ClientContextProvider = ({children}) => {
                 console.log("Failed to fetch all clients...")
             }
         }
-        fetchAllClients()
+        fetchAllClients().then(() => {
+            console.log("Client successfully fetched.");
+        })
+            .catch((error) => {
+                console.error("Error during Client fetch", error);
+            });
 
     }, [])
 

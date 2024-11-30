@@ -39,6 +39,14 @@ const medicationSchema = new Schema({
         },
         required:true
 
+    },
+    clientFirstName:{
+        type:String,
+        required:true
+    },
+    clientLastName:{
+        type:String,
+        required:true
     }
 },{timestamps:true})
 

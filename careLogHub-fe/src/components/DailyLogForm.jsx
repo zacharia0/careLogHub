@@ -1,42 +1,66 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useDailyLogContext} from "../hooks/useDailyLogContext.js";
+import {useClientContext} from "../hooks/useClientContext.js";
 
 const DailyLogForm = () => {
 
     const {dispatch} = useDailyLogContext()
     //Client
-    const [client, setClient] = useState([])
+    const {clients} = useClientContext()
     //Form
     const [clientId,setClientId] = useState("")
-    const [dailyLogType, setDailyLogType] = useState("")
-    const [body, setBody] = useState("")
-    const [date, setDate] = useState("")
+
     const [error, setError] = useState('')
     const navigate = useNavigate()
 
+    const [dailyLogForm,setDailyLogForm] = useState({
+        dailyLogType:"",
+        body:"",
+        date:"",
+        clientFirstName:"",
+        clientLastName:""
+    })
 
-    useEffect(() => {
-        const fetchClients = async () => {
-            const response = await fetch("http://localhost:4000/api/client/all-clients")
-            const json = await response.json()
-            if(response.ok){
-                setClient(json)
-            }else{
-                setError("Failed to fetch clients")
-            }
+
+    // useEffect(() => {
+    //     const fetchClients = async () => {
+    //         const response = await fetch("http://localhost:4000/api/client/all-clients")
+    //         const json = await response.json()
+    //         if(response.ok){
+    //             setClient(json)
+    //         }else{
+    //             setError("Failed to fetch clients")
+    //         }
+    //     }
+    //     fetchClients()
+    // },[])
+
+
+
+    const handleClientChange = (e) =>{
+        const selectedId = e.target.value;
+        setClientId(selectedId)
+
+        const selectedClient = clients.find((client) => client._id === selectedId)
+        if(selectedClient){
+            setDailyLogForm({
+                ...dailyLogForm,
+                clientFirstName: selectedClient.firstName,
+                clientLastName:selectedClient.lastName
+            })
         }
-        fetchClients()
-    },[])
+    }
+
 
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const dailyLogObservation = {dailyLogType, body, date,clientId}
+        // const dailyLogForm = {dailyLogType, body, date,clientId}
 
         const response = await fetch('http://localhost:4000/api/dailyLogs', {
             method: 'POST',
-            body: JSON.stringify(dailyLogObservation),
+            body: JSON.stringify({...dailyLogForm,clientId}),
             headers: {
                 'Content-Type': "application/json"
             }
@@ -48,10 +72,16 @@ const DailyLogForm = () => {
         }
         if (response.ok) {
             setError('')
-            setBody('')
-            setDate('')
-            setDailyLogType('')
-            dispatch({type: "CREATE_DAILY_LOG", payload: json})
+            // setBody('')
+            // setDate('')
+            // setDailyLogType('')
+            setDailyLogForm({
+                body: "",
+                dailyLogType: "",
+                clientFirstName: "",
+                clientLastName: ""
+            })
+            dispatch({type: "CREATE_DAILY_LOG", payload: json.data})
             console.log("New Observation added")
             // navigate("/")
 
@@ -65,8 +95,8 @@ const DailyLogForm = () => {
             <h3><strong>Create Daily Log</strong></h3>
             <label>Type:</label><br/>
             <select
-                value={dailyLogType}
-                onChange={(e) => setDailyLogType(e.target.value)}
+                value={dailyLogForm.dailyLogType}
+                onChange={(e) => setDailyLogForm({...dailyLogForm,dailyLogType:e.target.value})}
             >
                 <option value="">Select Log Type</option>
                 <option value="Daily Log">Daily Log</option>
@@ -76,11 +106,11 @@ const DailyLogForm = () => {
             <label>Client:</label>
             <select
                 value = {clientId}
-                onChange={(e) => setClientId(e.target.value)}
+                onChange={handleClientChange}
             >
                 <option value= ''>Select Client</option>
                 {
-                    client.map((client) => (
+                    clients.map((client) => (
                         <option key = {client._id} value = {client._id}>{client.firstName} {client.lastName}</option>
                     ))
                 }
@@ -88,22 +118,19 @@ const DailyLogForm = () => {
 
             <label>Observation Summary:</label><br/>
             <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
+                value={dailyLogForm.body}
+                onChange={(e) => setDailyLogForm({...dailyLogForm,body:e.target.value})}
             /><br/>
 
             <label>Date:</label><br/>
             <input
                 type="date"
-                value={date}
+                value={dailyLogForm.date}
                 onChange={(e) => {
-                    setDate(e.target.value);
+                    setDailyLogForm({...dailyLogForm,date:e.target.value});
                     e.target.blur()
                 }}
             /><br/>
-            {body}
-            {date}
-            {dailyLogType}
             <button className="create-btn">Create Observation</button>
             {error && <div>{error}</div>}
 

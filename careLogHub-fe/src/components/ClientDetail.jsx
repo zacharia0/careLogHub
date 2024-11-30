@@ -3,19 +3,34 @@ import {useState} from "react";
 import {Link} from "react-router-dom";
 
 const ClientDetail = ({clients}) => {
+    //Helper function to format date.
+    const formatDate= (date) =>{
+        if(!date) return ""
+
+        const d = new Date(date);
+        return d.toISOString().split("T")[0] // Formats as YYYY-MM-DD
+    }
+
+
     const {dispatch} = useClientContext()
+    console.log(clients)
     const [isEditing, setIsEditing] = useState(false)
     const [updateClient, setUpdateClient] = useState({
         firstName: clients.firstName || "",
         lastName: clients.lastName || "",
-        moveInDate: clients.moveInDate || "",
-        dateOfBirth: clients.dateOfBirth || "",
+        moveInDate: formatDate(clients.moveInDate ),
+        dateOfBirth: formatDate(clients.dateOfBirth) ,
         diagnoses: clients.diagnoses || ""
 
     })
 
+
+
+
     const handleDelete = async () => {
+
         const id = clients._id
+        // console.log("Id: ",id)
         const response = await fetch(`http://localhost:4000/api/client/${id}`, {
             method: "DELETE"
         })
@@ -30,7 +45,7 @@ const ClientDetail = ({clients}) => {
     }
 
     const handleUpdate = async (e) => {
-        e.preventDefault()
+        // e.preventDefault()
         const clientId = clients._id
 
         const response = await fetch(`http://localhost:4000/api/client/${clientId}`, {
@@ -70,22 +85,25 @@ const ClientDetail = ({clients}) => {
                                 value={updateClient.lastName}
                                 onChange={(e) => setUpdateClient({...updateClient, lastName: e.target.value})}
                             />
-                            <label>Move-In Date: </label>
-                            <input
-                                type="date"
-                                value={updateClient.moveInDate}
-                                onChange={(e) => setUpdateClient({...updateClient, moveInDate: e.target.value})}
 
-                            />
-                            <label>Date Of Birth: </label>
+                            <label>date of Birth:</label>
                             <input
                                 type="date"
-                                value={updateClient.dateOfBirth}
-                                onChange={(e) => setUpdateClient({...updateClient, dateOfBirth: e.target.value})}
+                                value = {updateClient.dateOfBirth}
+                                onChange={(e) => setUpdateClient({...updateClient,dateOfBirth: e.target.value})}
                             />
+
+                            <label>Move in Date:</label>
+                            <input
+                                type="date"
+                                value ={updateClient.moveInDate}
+                                onChange={(e) => setUpdateClient({...updateClient,moveInDate: e.target.value})}
+                            />
+
 
                             <label>Diagnoses: </label>
                             <textarea
+                                type="text"
                                 value={updateClient.diagnoses}
                                 onChange={(e) => setUpdateClient({...updateClient, diagnoses: e.target.value})}
                             ></textarea>
@@ -98,10 +116,17 @@ const ClientDetail = ({clients}) => {
                         <div className="mt-2 "> <hr className="mt-6 mb-2"></hr>
 
 
-                            <span>Full Name: {clients.firstName} {clients.lastName}</span>
-                            <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
-                            <button className="delete-btn" onClick={handleDelete}>Delete</button>
-                            <Link to ={`/all-clients/${clients._id}`}>View Client Detail</Link>
+
+                                <div>
+
+                                    <span>Full Name: {clients.firstName} {clients.lastName}</span>
+                                    <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+                                    <button className="delete-btn" onClick={handleDelete}>Delete</button>
+                                    <Link to ={`/all-clients/${clients._id}`}>View Client Detail</Link>
+                                </div>
+
+
+
 
                         </div>
                     )

@@ -41,7 +41,7 @@ const createPassMeds = asyncHandler(async(req,res)=>{
     })
     await newPassMed.save()
 
-    res.status(200).json(newPassMed)
+    res.status(200).json({success:true, data: newPassMed})
 
 })
 

@@ -6,13 +6,19 @@ import {useClientContext} from "../hooks/useClientContext.js";
 
 const MedicationForm = () => {
     const {clientId} = useParams()
+    const {clients} = useClientContext()
     const {medications,dispatch} = useMedicationContext()
     const [medication, setMedication] = useState({
         medName: "",
         medDosage: "",
         dosageUnit: "MG",
-        timeSlot:[]
+        timeSlot:[],
+        clientFirstName:"",
+        clientLastName:""
     })
+
+    const filterClientById = clients.filter((client) => client._id === clientId)
+    console.log("CLIENT FROM MEDICATION FORM",filterClientById)
 
 
     const handleSubmit = async (e) => {
@@ -39,15 +45,16 @@ const MedicationForm = () => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({...medication,clientId})
+            body: JSON.stringify({...medication,clientFirstName:filterClientById[0]?.firstName,clientLastName:filterClientById[0].lastName,clientId:filterClientById[0]._id})
         })
+        console.log("CLIENT ID::::::",clientId)
         const json = await response.json()
         if (!response.ok) {
             console.log("Failed to create new medication")
         }
 
         if (response.ok) {
-            dispatch({type: "CREATE_MEDICATION",payload:json})
+            dispatch({type: "CREATE_MEDICATION",payload:json.data})
             console.log("Created new meds")
         }
 

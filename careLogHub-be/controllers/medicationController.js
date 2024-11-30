@@ -5,7 +5,7 @@ const CustomError = require('../utils/CustomError')
 const ClientModel = require("../models/clientModel")
 
 const createMed = asyncHandler(async(req,res)=>{
-    const {medName,medDosage,dosageUnit,timeSlot,clientId}= req.body
+    const {medName,medDosage,dosageUnit,timeSlot,clientId,clientFirstName,clientLastName}= req.body
 
     if(!mongoose.Types.ObjectId.isValid(clientId)){
         throw new CustomError("Invalid client ID format.")
@@ -35,7 +35,9 @@ const createMed = asyncHandler(async(req,res)=>{
         medDosage,
         dosageUnit,
         timeSlot,
-        client:clientId
+        client:clientId,
+        clientFirstName,
+        clientLastName
 
     })
     console.log(newMed)
@@ -46,12 +48,12 @@ const createMed = asyncHandler(async(req,res)=>{
     if(!newMed){
         throw new CustomError("Failed to add new med",400)
     }
-    res.status(201).json(newMed)
+    res.status(201).json({success:true,data:newMed})
 })
 
 const getAllMedications = asyncHandler(async(req,res)=>{
     const deleted = req.query.deleted === "true"? true: false
-    const allMedications = await MedicationModel.find({deleted}).populate("client","firstName lastName deleted")
+    const allMedications = await MedicationModel.find({deleted}).populate("client","deleted")
     if(!allMedications || allMedications.length === 0){
         throw new CustomError("Medication(s) is empty",404)
     }

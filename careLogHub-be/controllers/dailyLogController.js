@@ -4,7 +4,7 @@ const mongoose= require("mongoose")
 const CustomError = require("../utils/CustomError")
 
 const createDailyLog = asyncHandler(async(req,res) =>{
-    const {dailyLogType,body,date,clientId} = req.body
+    const {dailyLogType,body,date,clientId,clientFirstName,clientLastName} = req.body
     if(!body ){
        throw new CustomError("Observation is required.",400)
     }
@@ -26,16 +26,19 @@ const createDailyLog = asyncHandler(async(req,res) =>{
         dailyLogType,
         body,
         date:logDate,
-        client:clientId
+        client:clientId,
+        clientFirstName,
+        clientLastName
     })
 
     // Save the nw daily log to the database.
     await newDailyLog.save()
 
 
-    const populateLog = await DailyLog.findById(newDailyLog._id).populate('client', 'firstName lastName')
+    // const populateLog = await DailyLog.findById(newDailyLog._id).populate('client', 'firstName lastName')
+    const populateLog = await DailyLog.findById(newDailyLog._id)
 
-    res.status(201).json(populateLog)
+    res.status(201).json({success:true,data:populateLog})
 
 })
 

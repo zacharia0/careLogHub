@@ -99,7 +99,7 @@ const DailyLogDetail = ({dailyLog}) => {
                             <label>Observation:</label><p>{dailyLog.body}</p>
                             <label>Occurred:</label><small> {format(parseDate, "MMMM dd, yyyy h:mm a")}</small><br/>
                             <label> Client Name:</label>
-                            <span>{dailyLog.client?.firstName} {dailyLog.client?.lastName}</span>
+                            <span>{dailyLog.clientFirstName} {dailyLog.clientLastName}</span>
                             <button className= "edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
                             <button className="delete-btn" onClick={handleDelete}>Delete</button>
                         </div>

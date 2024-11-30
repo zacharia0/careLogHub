@@ -31,7 +31,7 @@ const createEmployee = asyncHandler(async(req,res) =>{
 
     // const newEmployee = await Employee.create(req.body)
 
-    res.status(201).json(newEmployee)
+    res.status(201).json({success:true, data: newEmployee})
 
 
 })

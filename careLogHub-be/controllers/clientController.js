@@ -61,7 +61,7 @@ const getAllClients = asyncHandler(async(req,res) =>{
 
     const deleted = req.query.deleted === 'true'
     // const filter = {deleted}
-    const allClients = await ClientModel.find({deleted}).select("firstName lastName middleName deleted").sort({createdAt:-1})
+    const allClients = await ClientModel.find({deleted}).sort({createdAt:-1})
     if(!allClients){
         throw new CustomError("No clients found", 404)
     }

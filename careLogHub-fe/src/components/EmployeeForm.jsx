@@ -23,7 +23,7 @@ const EmployeeForm = () =>{
 
         const json = await response.json()
         if(response.ok){
-            dispatch({type:"CREATE_EMPLOYEE",payload:json})
+            dispatch({type:"CREATE_EMPLOYEE",payload:json.data})
             setEmployee({
                 firstName: "",
                 middleName: "",
