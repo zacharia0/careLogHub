@@ -51,15 +51,16 @@ const DailyLogForm = () => {
         const json = await response.json();
         if (!response.ok) {
             setError(json.error)
-        }
-        if (response.ok) {
+        } else {
             setError('')
             setDailyLogForm({
                 body: "",
                 dailyLogType: "",
+                date:"",
                 clientFirstName: "",
                 clientLastName: ""
             })
+            setClientId("") //Reset Client selection
             dispatch({type: "CREATE_DAILY_LOG", payload: json.data})
             console.log("New Observation added")
         }
@@ -70,6 +71,8 @@ const DailyLogForm = () => {
         <form onSubmit={handleSubmit}>
             <Link className = "navigation-btn" to="/">View Logs</Link>
             <h3><strong>Create Daily Log</strong></h3>
+
+            {/*Log Type*/}
             <label>Type:</label><br/>
             <select
                 value={dailyLogForm.dailyLogType}
@@ -80,6 +83,7 @@ const DailyLogForm = () => {
                 <option value="Incident Report">Incident Report</option>
             </select><br/>
 
+            {/*Client Selection*/}
             <label>Client:</label>
             <select
                 value = {clientId}
@@ -93,12 +97,16 @@ const DailyLogForm = () => {
                 }
             </select>
 
+
+
+            {/*Observation Summary*/}
             <label>Observation Summary:</label><br/>
             <textarea
                 value={dailyLogForm.body}
                 onChange={(e) => setDailyLogForm({...dailyLogForm,body:e.target.value})}
             /><br/>
 
+            {/*Date*/}
             <label>Date:</label><br/>
             <input
                 type="date"
@@ -108,6 +116,8 @@ const DailyLogForm = () => {
                     e.target.blur()
                 }}
             /><br/>
+
+            {/*Submit*/}
             <button className="create-btn">Create Observation</button>
             {error && <div>{error}</div>}
 

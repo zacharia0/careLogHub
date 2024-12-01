@@ -12,7 +12,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import ClientProfile from "./pages/ClientProfile.jsx";
 import AdministerMed from "./components/AdministerMed.jsx";
 import PassMedsList from "./components/PassMeds/PassMedsList.jsx";
-// import PassMedsList from "./pages/PassMedsList.jsx";
+// import PassMedsList from "./pages/PassMedsList2.jsx";
 
 const App = () =>{
 
