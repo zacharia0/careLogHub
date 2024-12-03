@@ -40,7 +40,7 @@ const createMed = asyncHandler(async(req,res)=>{
         clientLastName
 
     })
-    console.log(newMed)
+    // console.log(newMed)
 
     await newMed.save()
 
@@ -95,13 +95,13 @@ const deleteMedicationById = asyncHandler(async(req,res) =>{
 const getMedicationByClientId = asyncHandler(async(req,res) =>{
     const {clientId} = req.params
 
-    console.log("req.params.clientId",req.params.clientId)
+    // console.log("req.params.clientId",req.params.clientId)
     const medications = await MedicationModel.find({client:clientId}).populate(
        "client","firstName lastName deleted"
     )
 
-    console.log("client Id in MedicationController line 96:",clientId)
-    console.log(medications)
+    // console.log("client Id in MedicationController line 96:",clientId)
+    // console.log(medications)
     const filterMedications = medications.filter((med) => med.client !== null)
     if(filterMedications.length === 0){
         throw new CustomError("No Medications found for the specified client.",404)

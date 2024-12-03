@@ -75,7 +75,7 @@ const getAllClients = asyncHandler(async(req,res) =>{
 const deleteClientById = asyncHandler(async(req,res) =>{
     const {clientId} = req.params
     if(!mongoose.Types.ObjectId.isValid(clientId)){
-        throw new CustomError("Not a valid format ID",400)
+        throw new CustomError("Not a valid client format ID",400)
     }
 
     const clientToDelete = await ClientModel.findById({_id:clientId})

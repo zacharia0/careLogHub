@@ -7,11 +7,11 @@ const passMedSchema = new Schema({
         ref:"Medication",
         required:true
     },
-    // client:{
-    //   type:mongoose.Schema.Types.ObjectId,
-    //   ref:"Client",
-    //   required:true
-    // },
+    client:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"Client",
+      required:true
+    },
     status:{
         type:String,
         enum:["pass","refuse","adverseReaction","otherReason"],
@@ -21,7 +21,8 @@ const passMedSchema = new Schema({
         type:String
     },
     dosageGiven:{
-        type:String
+        type:String,
+        required:true
 
     }
 

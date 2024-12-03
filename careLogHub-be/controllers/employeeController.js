@@ -51,7 +51,7 @@ const updateEmployeeById = asyncHandler(async(req,res) =>{
     const {employeeId} = req.params
 
     if(!mongoose.Types.ObjectId.isValid(employeeId)){
-        throw new CustomError("Not a valid Id.", 400)
+        throw new CustomError("Not a valid employee Id.", 400)
     }
     if(!employeeId){
         throw new CustomError("No employee with this Id is found.",404)

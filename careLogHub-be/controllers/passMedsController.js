@@ -7,10 +7,12 @@ const ClientModel = require("../models/clientModel")
 
 const createPassMeds = asyncHandler(async(req,res)=>{
     const {clientId,medicationId,status,comment,dosageGiven} = req.body
+    console.log(medicationId)
 
     if(!mongoose.Types.ObjectId.isValid(medicationId) ){
-        throw new CustomError("Not a valid ID format",400)
+        throw new CustomError("Not a valid Medication ID format",400)
     }
+
     if(!medicationId){
         throw new CustomError("Not Medication Id",400)
     }
