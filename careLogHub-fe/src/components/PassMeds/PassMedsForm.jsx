@@ -1,173 +1,187 @@
-import {usePassMedsContext} from "../../hooks/usePassMedsContext.js";
-import {useEffect, useState} from "react";
 
-const PassMedsForm = ({filteredMeds, setActiveTab, clientInfo}) => {
+import { useState, useMemo } from "react";
 
-    const statusMapping = {
-        refuse: "Refuse",
-        pass: "Pass",
-        adverseReaction: "Adverse Reaction",
-        otherReason: "Other"
+const PassMedsForm = ({ filteredMeds = [], clientInfo, onMedicationSubmit }) => {
+    const [err, setErr] = useState("");
 
-    }
+    const initialMedicationsState = useMemo(() =>
+        filteredMeds.map((med) => ({
+                medicationId: med._id,
+                dosageGiven: med.medDosage,
+                status: "",
+                comment: "",
+                clientId: clientInfo,
+            }),
+            [filteredMeds, clientInfo]
+        ));
 
-    const {dispatch} = usePassMedsContext()
-    const [err, setErr] = useState("")
-    const [administerMed, setAdministerMed] = useState({
-        dosageGiven: "",
-        medicationId: "",
-        status: "",
-        comment: "",
-        clientId: ""
-    })
+    const [medicationsState, setMedicationsState] = useState(initialMedicationsState);
 
+    const handleStatusChange = (medicationId, status) => {
+        setErr("");
+        setMedicationsState((prevState) =>
+            prevState.map((med) =>
+                med.medicationId === medicationId
+                    ? {
+                        ...med,
+                        status: med.status === status ? "" : status,
+                        comment: status === "otherReason" ? "" : med.comment
+                    }
+                    : med
+            )
+        );
+    };
 
-    useEffect(() => {
-        if(filteredMeds && filteredMeds.length > 0){
-           setAdministerMed((prev) =>({
-               ...prev,
-               medicationId: filteredMeds[0]._id ,
-               clientId: clientInfo,
-               dosageGiven: filteredMeds[0].medDosage
-           }))
-        }
-    }, [filteredMeds,clientInfo]);
+    const handleCommentChange = (medicationId, comment) => {
+        setMedicationsState((prevState) =>
+            prevState.map((med) =>
+                med.medicationId === medicationId
+                    ? { ...med, comment }
+                    : med
+            )
+        );
+    };
 
-    const handFormSubmit = async(e) => {
-        e.preventDefault()
-        const missingField = []
-        if (!administerMed.dosageGiven) {
-            missingField.push("Dosage ")
-        }
-        if (!administerMed.medication) {
-            missingField.push("medication ")
-        }
-        if (!administerMed.status) {
-            missingField.push("status ")
-        }
-        if (administerMed.status === "other" && !administerMed.comment) {
-            missingField.push('Comment required for selecting "Other" ')
-        }
-        if (!administerMed.client) {
-            missingField.push("client ")
-        }
-        if (missingField > 0) {
-            setErr(`The following fields are required: ${missingField.join(" ")}`)
-            return
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+
+        const medicationsToSubmit = medicationsState.filter(med => med.status);
+
+        if (medicationsToSubmit.length === 0) {
+            setErr("Please select at least one medication to administer.");
+            return;
         }
 
-        console.log(clientInfo)
-        if (filteredMeds) {
+        const missingFields = medicationsToSubmit.filter(
+            (med) =>
+                !med.status ||
+                (med.status === "otherReason" && !med.comment)
+        );
 
-            console.log(filteredMeds)
-            console.log(filteredMeds[0]._id)
+        if (missingFields.length > 0) {
+            setErr("Please provide a complete status for selected medications. 'Other' requires a comment.");
+            return;
         }
 
+        const submissionData = medicationsToSubmit.map(med => ({
+            ...med,
+            administeredTimeAndDate: new Date().toISOString()
+        }));
 
+        try {
             const response = await fetch("http://localhost:4000/api/pass-meds", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(administerMed)
-            })
-            const json = await response.json()
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ medications: submissionData }),
+            });
+            const json = await response.json();
+
             if (response.ok) {
-                dispatch({type: "CREATE_PASS_MEDS", payload: json.data})
+                if (onMedicationSubmit) {
+                    onMedicationSubmit(json.data);
+                }
+
+                setMedicationsState(prevState =>
+                    prevState.map(med =>
+                        medicationsToSubmit.some(submittedMed =>
+                            submittedMed.medicationId === med.medicationId
+                        )
+                            ? { ...med, status: "", comment: "" }
+                            : med
+                    )
+                );
+                setErr("");
             } else {
-                setErr(json.error)
-
+                setErr(json.error);
             }
+        } catch (error) {
+            console.error("Error submitting medications:", error);
+            setErr("Failed to submit medications.");
+        }
+    };
 
-
-
+    if (filteredMeds.length === 0) {
+        return (
+            <div className="text-center text-gray-500 py-4">
+                No medications available to administer.
+            </div>
+        );
     }
-    console.log(Object.entries(statusMapping).map(([statusKey, statusVal]) => statusVal))
-
-    // const firstName = filteredMeds[0].clientFirstName
-    // const lastName = filteredMeds[0].clientLastName
-
 
     return (
-        <form onSubmit={handFormSubmit}>
-            <div>
+        <form onSubmit={handleFormSubmit} className="space-y-4">
+            {filteredMeds.map((med) => {
+                const currentMedState = medicationsState.find(
+                    (m) => m.medicationId === med._id
+                );
 
-                {
-                    filteredMeds && filteredMeds.length > 0 ? filteredMeds.map((med) => (
-                        <div key={med._id}>
-                            <label>Medication Name: </label>
-                            <div className={"inline-flex ml-2 font-bold text-white text-2xl"}>
-                                {med.medName}
-                            </div>
-                                <div className={"inline-flex  ml-1  "}>
-                                    {med.medDosage}{med.dosageUnit}
-                                </div>
-
-
+                return (
+                    <div key={med._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div className="flex items-center justify-between mb-3">
                             <div>
-
-                                {
-                                    Object.entries(statusMapping).map(([statusKey, statusValue]) => (
-                                        <div key={statusKey} className={"inline-flex"}>
-
-                                            <button
-                                                value={administerMed.status}
-                                                onClick={(e) => setAdministerMed({...administerMed, status: statusKey})}
-                                                type={"button"}
-                                                key={statusKey}
-                                                className={"inline-flex py-1 px-2 ml-1 border border-green-500 rounded bg-gray-200 hover:bg-blue-400 hover:text-white hover:border-blue-400 mt-2"}
-                                                // onClick={() => setActiveTab()}
-                                            >
-                                                {statusValue}
-
-                                            </button>
-
-
-                                        </div>
-                                    ))
-
-
-                                }
-
-                                <div className={"block mt-2"}>
-                                    <label>Comment:</label>
-                                    <input
-                                        value={administerMed.comment}
-                                        onChange={(e) => setAdministerMed({...administerMed, comment: e.target.value})}
-                                        type="text"
-                                        className={"input-form"}
-                                    />
-                                </div>
-
+                                <span className="font-bold text-xl">{med.medName}</span>
+                                <span className="ml-2 text-gray-600">
+                                    {med.medDosage} {med.dosageUnit}
+                                </span>
                             </div>
-
-
                         </div>
-                    )) : (
-                        <div>
-                            {err || "No medications to pass at this time."}
+
+                        <div className="flex space-x-2 mb-3">
+                            {Object.entries({
+                                refuse: "Refuse",
+                                pass: "Pass",
+                                adverseReaction: "Adverse Reaction",
+                                otherReason: "Other",
+                            }).map(([statusKey, statusValue]) => (
+                                <button
+                                    key={statusKey}
+                                    type="button"
+                                    onClick={() => handleStatusChange(med._id, statusKey)}
+                                    className={`
+                                        flex-1 py-2 px-3 rounded-md transition-colors
+                                        ${currentMedState?.status === statusKey
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-gray-200 hover:bg-blue-100'
+                                    }
+                                    `}
+                                >
+                                    {statusValue}
+                                </button>
+                            ))}
                         </div>
-                    )
-                }
 
-                {
+                        {currentMedState?.status === "otherReason" && (
+                            <div className="mt-2">
+                                <input
+                                    type="text"
+                                    placeholder="Please specify reason..."
+                                    value={currentMedState.comment || ""}
+                                    onChange={(e) =>
+                                        handleCommentChange(med._id, e.target.value)
+                                    }
+                                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-300"
+                                    required
+                                />
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
 
+            {err && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    {err}
+                </div>
+            )}
 
-                }
-
-            </div>
-
-
-            <div>
-
-                <button type={"submit"}
-                        className={" bg-green-600 hover:bg-green-700 font-medium rounded-2xl px-6 py-4 text-black mt-2 hover:border-green-100 hover:border-2"}>Administer
-                </button>
-
-            </div>
-
+            <button
+                type="submit"
+                className="w-full py-3 rounded-lg text-white font-bold bg-green-600 hover:bg-green-700"
+            >
+                Administer Selected Medications
+            </button>
         </form>
-    )
-}
+    );
+};
 
-export default PassMedsForm
+export default PassMedsForm;
