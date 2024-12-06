@@ -63,6 +63,7 @@ const getAllMedications = asyncHandler(async(req,res)=>{
 
 const updateMedicationById = asyncHandler(async(req,res,next) =>{
     const {medicationId} = req.params
+    console.log("medication :66" ,req.body)
     if(!mongoose.Types.ObjectId.isValid(medicationId)){
         throw new CustomError("Invalid medication ID format.", 400)
     }

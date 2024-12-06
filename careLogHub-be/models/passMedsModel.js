@@ -24,6 +24,10 @@ const passMedSchema = new Schema({
         type:String,
         required:true
 
+    },
+    administeredTimeAndDate:{
+        type: Date,
+        default:  Date.now()
     }
 
 })

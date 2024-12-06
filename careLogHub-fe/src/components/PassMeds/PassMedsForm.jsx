@@ -1,21 +1,24 @@
 
-import { useState, useMemo } from "react";
+// PassMedsForm.jsx
+import { useState, useEffect } from "react";
 
 const PassMedsForm = ({ filteredMeds = [], clientInfo, onMedicationSubmit }) => {
     const [err, setErr] = useState("");
+    const [medicationsState, setMedicationsState] = useState([]);
 
-    const initialMedicationsState = useMemo(() =>
-        filteredMeds.map((med) => ({
-                medicationId: med._id,
-                dosageGiven: med.medDosage,
-                status: "",
-                comment: "",
-                clientId: clientInfo,
-            }),
-            [filteredMeds, clientInfo]
-        ));
+    useEffect(() => {
+        setErr("")
+        const initialMedicationsState = filteredMeds.map((med) => ({
+            medicationId: med._id,
+            dosageGiven: med.medDosage,
+            status: "",
+            comment: "",
+            clientId: clientInfo,
+        }));
+        setMedicationsState(initialMedicationsState);
+    }, [filteredMeds,clientInfo]);
 
-    const [medicationsState, setMedicationsState] = useState(initialMedicationsState);
+
 
     const handleStatusChange = (medicationId, status) => {
         setErr("");
@@ -25,12 +28,16 @@ const PassMedsForm = ({ filteredMeds = [], clientInfo, onMedicationSubmit }) => 
                     ? {
                         ...med,
                         status: med.status === status ? "" : status,
-                        comment: status === "otherReason" ? "" : med.comment
+                        comment: status === "otherReason" ? "" : med.comment,
                     }
                     : med
             )
         );
     };
+
+    // console.log("MEDICATION STATE:", medicationsState)
+
+
 
     const handleCommentChange = (medicationId, comment) => {
         setMedicationsState((prevState) =>
@@ -45,58 +52,50 @@ const PassMedsForm = ({ filteredMeds = [], clientInfo, onMedicationSubmit }) => 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
-        const medicationsToSubmit = medicationsState.filter(med => med.status);
+        const medicationsToSubmit = medicationsState
+            .filter(med => med.status)
+            .map(med => ({
+                ...med,
+                administeredTimeAndDate: new Date().toISOString()
+            }));
+        console.log("medicationsToSubmit",medicationsToSubmit)
+
 
         if (medicationsToSubmit.length === 0) {
-            setErr("Please select at least one medication to administer.");
+            setErr("Please select a status for at least one medication.");
             return;
         }
-
-        const missingFields = medicationsToSubmit.filter(
-            (med) =>
-                !med.status ||
-                (med.status === "otherReason" && !med.comment)
-        );
-
-        if (missingFields.length > 0) {
-            setErr("Please provide a complete status for selected medications. 'Other' requires a comment.");
-            return;
-        }
-
-        const submissionData = medicationsToSubmit.map(med => ({
-            ...med,
-            administeredTimeAndDate: new Date().toISOString()
-        }));
 
         try {
             const response = await fetch("http://localhost:4000/api/pass-meds", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ medications: submissionData }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ medications: medicationsToSubmit }),
             });
+
             const json = await response.json();
 
             if (response.ok) {
                 if (onMedicationSubmit) {
-                    onMedicationSubmit(json.data);
+                    onMedicationSubmit(json);
                 }
 
                 setMedicationsState(prevState =>
-                    prevState.map(med =>
-                        medicationsToSubmit.some(submittedMed =>
-                            submittedMed.medicationId === med.medicationId
-                        )
-                            ? { ...med, status: "", comment: "" }
-                            : med
-                    )
+                    prevState.map(med => ({
+                        ...med,
+                        status: "",
+                        comment: ""
+                    }))
                 );
                 setErr("");
             } else {
-                setErr(json.error);
+                setErr(json.error || "Failed to administer medications");
             }
         } catch (error) {
-            console.error("Error submitting medications:", error);
-            setErr("Failed to submit medications.");
+            console.error("Submission error:", error);
+            setErr("An error occurred. Please try again.");
         }
     };
 
