@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import ClientProfile from "./pages/ClientProfile.jsx";
 import AdministerMed from "./components/AdministerMed.jsx";
 import PassMedsList from "./components/PassMeds/PassMedsList.jsx";
+import PassedMedsDetail from "./components/PassMeds/PassedMedsDetail.jsx";
 // import PassMedsList from "./pages/PassMedsList2.jsx";
 
 const App = () =>{
@@ -40,8 +41,10 @@ const App = () =>{
 
                 {/*    ADMINISTER MED */}
                     <Route path = "/administer-med" element = {<AdministerMed/>}/>
-
                     <Route path = "/pass-med-list/:clientId" element={<PassMedsList/>}/>
+
+                {/*    PASSED MED*/}
+                    <Route path ="/update-pass-med" element={<PassedMedsDetail/>}/>
 
 
 
