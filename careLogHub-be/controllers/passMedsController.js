@@ -63,6 +63,7 @@ const getAllPassMeds = asyncHandler(async(req,res) =>{
 
 const updateAdministeredMedById = asyncHandler(async(req,res) =>{
     const {administeredMedId} = req.params
+    const {status,comment} = req.body
     console.log("administeredMedId",administeredMedId)
     // const {administeredMed} = req.body
     console.log("administered Med",req.body)
@@ -72,7 +73,7 @@ const updateAdministeredMedById = asyncHandler(async(req,res) =>{
     if(!administeredMedId || !mongoose.Types.ObjectId.isValid(administeredMedId)){
         throw new CustomError("No a valid medication ID",400)
     }
-    const updateAdministeredMed = await PassMedsModel.findOneAndUpdate({_id:administeredMedId},{...req.body},{new:true})
+    const updateAdministeredMed = await PassMedsModel.findOneAndUpdate({_id:administeredMedId},{status,comment,administeredTimeAndDate:new Date()},{new:true})
     if(!updateAdministeredMed){
         throw new CustomError("Updated Medication not found." ,404)
     }

@@ -32,7 +32,7 @@ const PassedMedsDetail = () =>{
 
             <input
                 type="text"
-                value = {updatePassMed.status}
+                // value = {updatePassMed.status}
             />
         </div>
     )

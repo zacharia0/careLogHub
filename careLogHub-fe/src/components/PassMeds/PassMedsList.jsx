@@ -94,6 +94,7 @@ const PassMedsList = () => {
                         clientInfo={clientId}
                         onMedicationSubmit={handleMedicationSubmit}
                     />
+
                 </div>
             </div>
         </div>
