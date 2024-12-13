@@ -3,16 +3,31 @@ import {createContext, useEffect, useReducer} from "react";
 export const PassMedsContext = createContext()
 
 const passMedsReducer = (state,action)=>{
+    console.log("Hello From the Context",...state.passMeds,action.payload)
     switch(action.type){
         case "SET_PASS_MEDS":
             return{
+                ...state,
                 passMeds:action.payload
             }
 
+        // case "CREATE_PASS_MEDS":
+        //     return{
+        //
+        //         ...state,
+        //         // passMeds: [...state.passMeds, ...action.payload]
+        //         passMeds: Array.isArray(action.payload) ? [...state.passMeds, ...action.payload] : [...state.passMeds, action.payload],
+        //     }
+
+
         case "CREATE_PASS_MEDS":
-            return{
-                passMeds: [...state.passMeds, action.payload]
-            }
+            // Ensure new pass meds are added to the existing array
+            return {
+                ...state,
+                passMeds: Array.isArray(action.payload)
+                    ? [...state.passMeds, ...action.payload]
+                    : [...state.passMeds, action.payload]
+            };
 
         case "UPDATE_PASS_MEDS":
             return{
@@ -32,10 +47,15 @@ export const PassMedsContextProvider = ({children}) =>{
 
     useEffect(() =>{
         const fetchPassedMeds = async() =>{
-            const response = await fetch("http://localhost:4000/api/pass-meds/all-pass-meds")
-            const json = await response.json()
-            if(response.ok){
-                dispatch({type:"SET_PASS_MEDS",payload:json})
+            try{
+
+                const response = await fetch("http://localhost:4000/api/pass-meds/all-pass-meds")
+                const json = await response.json()
+                if(response.ok){
+                    dispatch({type:"SET_PASS_MEDS",payload:json})
+                }
+            }catch(error){
+                console.error("Failed to fetch passed medications:", error)
             }
         }
         fetchPassedMeds()
@@ -43,7 +63,7 @@ export const PassMedsContextProvider = ({children}) =>{
 
 
     return(
-        <PassMedsContext.Provider value={{...state,dispatch}}>
+        <PassMedsContext.Provider value={{...state,dispatch,passMeds:state.passMeds}}>
             {
                 children
             }

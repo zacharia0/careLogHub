@@ -2,7 +2,7 @@ import {usePassMedsContext} from "../../hooks/usePassMedsContext.js";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 
-const PassedMedsDetail = () =>{
+const UpdatePassMeds = () =>{
     const {passMeds} = usePassMedsContext()
     const {passMedId} = useParams()
 
@@ -39,4 +39,4 @@ const PassedMedsDetail = () =>{
 
 }
 
-export default PassedMedsDetail
+export default UpdatePassMeds

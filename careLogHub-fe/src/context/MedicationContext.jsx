@@ -66,20 +66,6 @@ export const MedicationContextProvider = ({children}) => {
             });
     }, []); // Fetch all medications only on mount
 
-    // const fetchMedicationByClientId = async ({ clientId }) => {
-    //     try {
-    //         const response = await fetch(`http://localhost:4000/api/med/${clientId}`);
-    //         const json = await response.json();
-    //         if (response.ok) {
-    //             console.log("fetch Medication By CLIENT ID line:77", json); // Ensure this runs only when needed
-    //             dispatch({ type: "SET_MEDICATION_BY_CLIENT_ID", payload: json });
-    //         }
-    //     } catch (error) {
-    //         console.log("MedicationContext.jsx line 69:", error);
-    //     }
-    // };
-
-
 
     return (
         <MedicationContext.Provider value={{...state, dispatch}}>

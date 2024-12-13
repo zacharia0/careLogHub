@@ -1,195 +1,13 @@
+import {useMedicationContext} from "../../hooks/useMedicationContext.js";
 
-// PassMedsForm.jsx
-import { useState, useEffect } from "react";
-import {usePassMedsContext} from "../../hooks/usePassMedsContext.js";
-import {comment} from "postcss";
+const PassMedsForm = () =>{
 
-const PassMedsForm = ({ filteredMeds = [], clientInfo, onMedicationSubmit }) => {
-    const {dispatch} = usePassMedsContext()
-    const [err, setErr] = useState("");
-    const [medicationsState, setMedicationsState] = useState([]);
+    const {medications} = useMedicationContext()
+    const
 
-    useEffect(() => {
-        setErr("")
-        const initialMedicationsState = filteredMeds.map((med) => ({
-            medicationId: med._id,
-            dosageGiven: med.medDosage,
-            status: "",
-            comment: "",
-            clientId: clientInfo,
-        }));
-        setMedicationsState(initialMedicationsState);
-    }, [filteredMeds,clientInfo]);
+}
 
-
-
-    const handleStatusChange = (medicationId, status) => {
-        setErr("");
-        setMedicationsState((prevState) =>
-            prevState.map((med) =>
-                med.medicationId === medicationId
-                    ? {
-                        ...med,
-                        status: med.status === status ? "" : status,
-                        comment: status === "otherReason" ? "" : med.comment,
-                    }
-                    : med
-            )
-        );
-    };
-
-    // console.log("MEDICATION STATE:", medicationsState)
-
-
-
-    const handleCommentChange = (medicationId, comment) => {
-        setMedicationsState((prevState) =>
-            prevState.map((med) =>
-                med.medicationId === medicationId
-                    ? { ...med, comment }
-                    : med
-            )
-        );
-    };
-
-    const handleFormSubmit = async (e) => {
-        e.preventDefault();
-
-        const medicationsToSubmit = medicationsState
-            .filter(med => med.status)
-            .map(med => ({
-                ...med,
-                administeredTimeAndDate: new Date().toISOString()
-
-            }));
-        console.log("medicationsToSubmit",medicationsToSubmit)
-
-
-        if (medicationsToSubmit.length === 0) {
-            setErr("Please select a status for at least one medication.");
-            return;
-        }
-
-        try {
-            const response = await fetch("http://localhost:4000/api/pass-meds", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ medications: medicationsToSubmit }),
-            });
-
-            const json = await response.json();
-
-            if (response.ok) {
-                dispatch({type:"CREATE_PASS_MEDS",payload:json})
-                if (onMedicationSubmit) {
-                    onMedicationSubmit(json);
-                }
-
-                setMedicationsState(prevState =>
-                    prevState.map(med => ({
-                        ...med,
-                        status: "",
-                        comment: ""
-                    }))
-                );
-                setErr("");
-            } else {
-                setErr(json.error || "Failed to administer medications");
-            }
-        } catch (error) {
-            console.error("Submission error:", error);
-            setErr("An error occurred. Please try again.");
-        }
-    };
-
-    if (filteredMeds.length === 0) {
-        return (
-            <div className="text-center text-gray-500 py-4">
-                No medications available to administer.
-            </div>
-        );
-    }
-
-    return (
-        <form onSubmit={handleFormSubmit} className="space-y-4">
-            {filteredMeds.map((med) => {
-                const currentMedState = medicationsState.find(
-                    (m) => m.medicationId === med._id
-                );
-
-                return (
-                    <div key={med._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-                        <div className="flex items-center justify-between mb-3">
-                            <div>
-                                <span className="font-bold text-xl">{med.medName}</span>
-                                <span className="ml-2 text-gray-600">
-                                    {med.medDosage} {med.dosageUnit}
-                                </span>
-                            </div>
-                        </div>
-
-
-                        <div className="flex space-x-2 mb-3">
-                            {Object.entries({
-                                refuse: "Refuse",
-                                pass: "Pass",
-                                adverseReaction: "Adverse Reaction",
-                                otherReason: "Other",
-                            }).map(([statusKey, statusValue]) => (
-                                <button
-                                    key={statusKey}
-                                    type="button"
-                                    onClick={() => handleStatusChange(med._id, statusKey)}
-                                    className={`
-                                        flex-1 py-2 px-3 rounded-md transition-colors
-                                        ${currentMedState?.status === statusKey
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-200 hover:bg-blue-100'
-                                    }
-                                    `}
-                                >
-                                    {statusValue}
-                                </button>
-                            ))}
-                        </div>
-
-                        {currentMedState?.status === "otherReason" && (
-                            <div className="mt-2">
-                                <input
-                                    type="text"
-                                    placeholder="Please specify reason..."
-                                    value={currentMedState.comment || ""}
-                                    onChange={(e) =>
-                                        handleCommentChange(med._id, e.target.value)
-                                    }
-                                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-300"
-                                    required
-                                />
-                            </div>
-                        )}
-                    </div>
-                );
-            })}
-
-            {err && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    {err}
-                </div>
-            )}
-
-            <button
-                type="submit"
-                className="w-full py-3 rounded-lg text-white font-bold bg-green-600 hover:bg-green-700"
-            >
-                Administer Selected Medications
-            </button>
-        </form>
-    );
-};
-
-export default PassMedsForm;
+export default PassMedsForm
 
 
 
@@ -202,29 +20,85 @@ export default PassMedsForm;
 
 
 
-//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // import { useState, useEffect } from "react";
-// import {usePassMedsContext} from "../../hooks/usePassMedsContext.js";
+// import { usePassMedsContext } from "../../hooks/usePassMedsContext.js";
+// import { useActiveTimeSlot } from "./PassMedsList.jsx"; // Make sure the path is correct
 //
 // const PassMedsForm = ({ filteredMeds = [], clientInfo, onMedicationSubmit }) => {
-//     const {dispatch} = usePassMedsContext()
+//     const { activeTimeSlot } = useActiveTimeSlot();
+//     const { passMeds, dispatch: passMedsDispatch } = usePassMedsContext();
 //     const [err, setErr] = useState("");
 //     const [medicationsState, setMedicationsState] = useState([]);
-//     const [isPassed, setIsPassed] = useState(false)
-//     const [administeredMeds, setAdministeredMeds] = useState({});
 //
+//
+//     console.log(passMeds)
 //     useEffect(() => {
-//         setErr("")
-//         const initialMedicationsState = filteredMeds.map((med) => ({
-//             medicationId: med._id,
-//             dosageGiven: med.medDosage,
-//             status: "",
-//             comment: "",
-//             clientId: clientInfo,
-//             timeSlots: med.timeSlot || [] // Ensure timeSlots is always an array
-//         }));
-//         setMedicationsState(initialMedicationsState);
-//     }, [filteredMeds, clientInfo]);
+//
+//         setErr("");
+//         setMedicationsState((prevMedicationsState) =>
+//             filteredMeds.map((med) => {
+//                 const administeredMed = passMeds.find(
+//                     (passMed) =>
+//                         passMed?.medication &&
+//                         passMed.medication._id === med._id &&
+//                         passMed.timeSlot === activeTimeSlot
+//                 );
+//                 const prevMedState = prevMedicationsState.find(
+//
+//                     (m) => m.medicationId === med._id
+//                 );
+//                 const wasAdministered = prevMedState?.administered;
+//                 const prevStatus = prevMedState?.status;
+//
+//                 if (
+//                     wasAdministered !== !!administeredMed ||
+//                     prevStatus !== (administeredMed ? administeredMed.status : "")
+//                 ) {
+//                     return {
+//                         medicationId: med._id,
+//                         dosageGiven: med.medDosage,
+//                         status: administeredMed ? administeredMed.status : "",
+//                         comment: administeredMed ? administeredMed.comment : "",
+//                         clientId: clientInfo,
+//                         administered: !!administeredMed,
+//                     };
+//                 } else {
+//                     return prevMedState;
+//                 }
+//             })
+//         );
+//     }, [filteredMeds, clientInfo, passMeds, activeTimeSlot]);
+//
+//     const handleDosageUnitChange = (medicationId, medDosage) => {
+//         setMedicationsState((prevState) =>
+//             prevState.map((med) =>
+//                 med._id === medicationId ? { ...med, medDosage } : med
+//             )
+//         );
+//     };
 //
 //     const handleStatusChange = (medicationId, status) => {
 //         setErr("");
@@ -244,9 +118,7 @@ export default PassMedsForm;
 //     const handleCommentChange = (medicationId, comment) => {
 //         setMedicationsState((prevState) =>
 //             prevState.map((med) =>
-//                 med.medicationId === medicationId
-//                     ? { ...med, comment }
-//                     : med
+//                 med.medicationId === medicationId ? { ...med, comment } : med
 //             )
 //         );
 //     };
@@ -255,10 +127,11 @@ export default PassMedsForm;
 //         e.preventDefault();
 //
 //         const medicationsToSubmit = medicationsState
-//             .filter(med => med.status)
-//             .map(med => ({
+//             .filter((med) => med.status)
+//             .map((med) => ({
 //                 ...med,
-//                 administeredTimeAndDate: new Date().toISOString()
+//                 administeredTimeAndDate: new Date().toISOString(),
+//                 timeSlot: activeTimeSlot,
 //             }));
 //
 //         if (medicationsToSubmit.length === 0) {
@@ -278,34 +151,47 @@ export default PassMedsForm;
 //             const json = await response.json();
 //
 //             if (response.ok) {
-//                 dispatch({type:"CREATE_PASS_MEDS", payload:json})
-//                 setIsPassed(true)
 //
-//                 // Create a map of administered medications
-//                 const newAdministeredMeds = medicationsToSubmit.reduce((acc, med) => {
-//                     acc[med.medicationId] = {
-//                         time: new Date().toLocaleString(),
-//                         timeSlots: med.timeSlots || []
-//                     };
-//                     return acc;
-//                 }, {});
 //
-//                 setAdministeredMeds(prevState => ({
-//                     ...prevState,
-//                     ...newAdministeredMeds
-//                 }));
+//                 const updatedPassMeds = Array.isArray(json.data)
+//                     ? [...passMeds, ...json.data]
+//                     : [...passMeds, json.data];
+//
+//                 passMedsDispatch({
+//                     type: "CREATE_PASS_MEDS",
+//                     payload: json.data,
+//                 });
 //
 //                 if (onMedicationSubmit) {
-//                     onMedicationSubmit(json);
+//                     onMedicationSubmit(updatedPassMeds);
 //                 }
 //
-//                 setMedicationsState(prevState =>
-//                     prevState.map(med => ({
-//                         ...med,
-//                         status: "",
-//                         comment: ""
-//                     }))
-//                 );
+//                 setMedicationsState((prevState) => {
+//                     const updatedState = prevState.map((med) => {
+//                         const wasSubmitted = medicationsToSubmit.some(
+//                             (submittedMed) =>
+//                                 submittedMed.medicationId === med.medicationId &&
+//                                 submittedMed.timeSlot === activeTimeSlot
+//                         );
+//
+//                         if (wasSubmitted) {
+//                             const submittedMed = medicationsToSubmit.find(
+//                                 (submittedMed) =>
+//                                     submittedMed.medicationId === med.medicationId &&
+//                                     submittedMed.timeSlot === activeTimeSlot
+//                             );
+//                             return {
+//                                 ...med,
+//                                 administered: true,
+//                                 status: submittedMed.status,
+//                                 comment: submittedMed.comment
+//                             };
+//                         }
+//                         return med;
+//                     });
+//                     return updatedState; // Return the new state to update state
+//                 });
+//
 //                 setErr("");
 //             } else {
 //                 setErr(json.error || "Failed to administer medications");
@@ -316,13 +202,18 @@ export default PassMedsForm;
 //         }
 //     };
 //
-//     if (filteredMeds.length === 0) {
-//         return (
-//             <div className="text-center text-gray-500 py-4">
-//                 No medications available to administer.
-//             </div>
-//         );
-//     }
+//     const formatDate = (dateString) => {
+//         const date = new Date(dateString);
+//         const options = {
+//             year: "numeric",
+//             month: "2-digit",
+//             day: "2-digit",
+//             hour: "numeric",
+//             minute: "2-digit",
+//             hour12: true,
+//         };
+//         return date.toLocaleString("en-US", options);
+//     };
 //
 //     return (
 //         <form onSubmit={handleFormSubmit} className="space-y-4">
@@ -330,92 +221,119 @@ export default PassMedsForm;
 //                 const currentMedState = medicationsState.find(
 //                     (m) => m.medicationId === med._id
 //                 );
-//
-//                 // Safe checking for administered medications
-//                 const administeredMedInfo = administeredMeds[med._id];
-//                 const hasBeenAdministered = administeredMedInfo && currentMedState
-//                     ? administeredMedInfo.timeSlots.some(
-//                         slot => currentMedState.timeSlots.includes(slot)
-//                     )
-//                     : false;
+//                 const isMedicationAdministered = currentMedState?.administered;
 //
 //                 return (
-//                     <div key={med._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+//                     <div
+//                         key={med._id}
+//                         className="bg-white p-4 rounded-lg shadow-md border border-gray-200"
+//                     >
 //                         <div className="flex items-center justify-between mb-3">
 //                             <div>
 //                                 <span className="font-bold text-xl">{med.medName}</span>
-//                                 <span className="ml-2 text-gray-600">
-//                                     {med.medDosage} {med.dosageUnit}
-//                                 </span>
+//                                 <div className=" inline-flex ml-2 text-gray-600">
+//                                     <input
+//                                         className={"border-2 px-0 w-10"}
+//                                         value={med.medDosage || ""}
+//                                         onChange={(e) =>
+//                                             handleDosageUnitChange(med._id, e.target.value)
+//                                         }
+//                                         type="text"
+//                                     />
+//                                     {med.dosageUnit}
+//                                 </div>
 //                             </div>
 //                         </div>
 //
-//                         {administeredMedInfo ? (
-//                             <div className="bg-green-100 p-3 rounded-md text-green-800">
-//                                 {hasBeenAdministered
-//                                     ? "Medication has already been administered in this time slot"
-//                                     : `Medication administered on ${administeredMedInfo.time}`}
+//                         {isMedicationAdministered ? (
+//                             <div className="flex items-center justify-center">
+//                                 {currentMedState.status && (
+//                                     <p className="text-lg font-semibold">
+//                                         Status:{" "}
+//                                         <span
+//                                             className={
+//                                                 currentMedState.status === "pass"
+//                                                     ? "text-green-600"
+//                                                     : currentMedState.status === "refuse"
+//                                                         ? "text-red-600"
+//                                                         : currentMedState.status === "adverseReaction"
+//                                                             ? "text-yellow-600"
+//                                                             : "text-blue-600"
+//                                             }
+//                                         >
+//                       {currentMedState.status.toUpperCase()}
+//                     </span>
+//                                     </p>
+//                                 )}
+//                                 <p className="ml-4 text-lg">
+//                                     Administered on:{" "}
+//                                     <span className="font-semibold">
+//                     {formatDate(
+//                         passMeds.find(
+//                             (passMed) =>
+//                                 passMed?.medication &&
+//                                 passMed.medication._id === med._id &&
+//                                 passMed.timeSlot === activeTimeSlot
+//                         )?.administeredTimeAndDate
+//                     )}
+//                   </span>
+//                                 </p>
 //                             </div>
 //                         ) : (
-//                             <>
-//                                 <div className="flex space-x-2 mb-3">
-//                                     {Object.entries({
-//                                         refuse: "Refuse",
-//                                         pass: "Pass",
-//                                         adverseReaction: "Adverse Reaction",
-//                                         otherReason: "Other",
-//                                     }).map(([statusKey, statusValue]) => (
-//                                         <button
-//                                             key={statusKey}
-//                                             type="button"
-//                                             onClick={() => handleStatusChange(med._id, statusKey)}
-//                                             className={`
-//                                                 flex-1 py-2 px-3 rounded-md transition-colors
-//                                                 ${currentMedState?.status === statusKey
-//                                                 ? 'bg-blue-500 text-white'
-//                                                 : 'bg-gray-200 hover:bg-blue-100'
-//                                             }
-//                                             `}
-//                                         >
-//                                             {statusValue}
-//                                         </button>
-//                                     ))}
-//                                 </div>
+//                             <div className="flex space-x-2 mb-3">
+//                                 {Object.entries({
+//                                     refuse: "Refuse",
+//                                     pass: "Pass",
+//                                     adverseReaction: "Adverse Reaction",
+//                                     otherReason: "Other",
+//                                 }).map(([statusKey, statusValue]) => (
+//                                     <button
+//                                         key={statusKey}
+//                                         type="button"
+//                                         onClick={() => handleStatusChange(med._id, statusKey)}
+//                                         className={`flex-1 py-2 px-3 rounded-md transition-colors ${
+//                                             currentMedState?.status === statusKey
+//                                                 ? "bg-blue-500 text-white"
+//                                                 : "bg-gray-200 hover:bg-blue-100"
+//                                         }`}
+//                                     >
+//                                         {statusValue}
+//                                     </button>
+//                                 ))}
+//                             </div>
+//                         )}
 //
-//                                 {currentMedState?.status === "otherReason" && (
-//                                     <div className="mt-2">
-//                                         <input
-//                                             type="text"
-//                                             placeholder="Please specify reason..."
-//                                             value={currentMedState.comment || ""}
-//                                             onChange={(e) =>
-//                                                 handleCommentChange(med._id, e.target.value)
-//                                             }
-//                                             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-300"
-//                                             required
-//                                         />
-//                                     </div>
-//                                 )}
-//                             </>
+//                         {currentMedState?.status === "otherReason" && (
+//                             <div className="mt-2">
+//                                 <input
+//                                     type="text"
+//                                     placeholder="Please specify reason..."
+//                                     value={currentMedState.comment || ""}
+//                                     onChange={(e) => handleCommentChange(med._id, e.target.value)}
+//                                     className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-300"
+//                                     required
+//                                 />
+//                             </div>
 //                         )}
 //                     </div>
 //                 );
 //             })}
 //
 //             {err && (
-//                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+//                 <div
+//                     className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+//                     role="alert"
+//                 >
 //                     {err}
 //                 </div>
 //             )}
 //
-//             {Object.keys(administeredMeds).length === 0 && (
-//                 <button
-//                     type="submit"
-//                     className="w-full py-3 rounded-lg text-white font-bold bg-green-600 hover:bg-green-700"
-//                 >
-//                     Administer Selected Medications
-//                 </button>
-//             )}
+//             <button
+//                 type="submit"
+//                 className="w-full py-3 rounded-lg text-white font-bold bg-green-600 hover:bg-green-700"
+//             >
+//                 Administer Selected Medications
+//             </button>
 //         </form>
 //     );
 // };
@@ -423,225 +341,3 @@ export default PassMedsForm;
 // export default PassMedsForm;
 //
 //
-
-
-
-
-
-
-
-// import { useState, useEffect } from "react";
-// import {usePassMedsContext} from "../../hooks/usePassMedsContext.js";
-//
-// const PassMedsForm = ({ filteredMeds = [], clientInfo, onMedicationSubmit }) => {
-//     const {dispatch} = usePassMedsContext()
-//     const [err, setErr] = useState("");
-//     const [medicationsState, setMedicationsState] = useState([]);
-//     const [isPassed, setIsPassed] = useState(false)
-//     const [administeredMeds, setAdministeredMeds] = useState({});
-//
-//     useEffect(() => {
-//         setErr("")
-//         const initialMedicationsState = filteredMeds.map((med) => ({
-//             medicationId: med._id,
-//             dosageGiven: med.medDosage,
-//             status: "",
-//             comment: "",
-//             clientId: clientInfo,
-//             timeSlots: med.timeSlot || [] // Ensure timeSlots is always an array
-//         }));
-//         setMedicationsState(initialMedicationsState);
-//     }, [filteredMeds, clientInfo]);
-//
-//     const handleStatusChange = (medicationId, status) => {
-//         setErr("");
-//         setMedicationsState((prevState) =>
-//             prevState.map((med) =>
-//                 med.medicationId === medicationId
-//                     ? {
-//                         ...med,
-//                         status: med.status === status ? "" : status,
-//                         comment: status === "otherReason" ? "" : med.comment,
-//                     }
-//                     : med
-//             )
-//         );
-//     };
-//
-//     const handleCommentChange = (medicationId, comment) => {
-//         setMedicationsState((prevState) =>
-//             prevState.map((med) =>
-//                 med.medicationId === medicationId
-//                     ? { ...med, comment }
-//                     : med
-//             )
-//         );
-//     };
-//
-//     const handleFormSubmit = async (e) => {
-//         e.preventDefault();
-//
-//         const medicationsToSubmit = medicationsState
-//             .filter(med => med.status)
-//             .map(med => ({
-//                 ...med,
-//                 administeredTimeAndDate: new Date().toISOString()
-//             }));
-//
-//         if (medicationsToSubmit.length === 0) {
-//             setErr("Please select a status for at least one medication.");
-//             return;
-//         }
-//
-//         try {
-//             const response = await fetch("http://localhost:4000/api/pass-meds", {
-//                 method: "POST",
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 body: JSON.stringify({ medications: medicationsToSubmit }),
-//             });
-//
-//             const json = await response.json();
-//
-//             if (response.ok) {
-//                 dispatch({type:"CREATE_PASS_MEDS", payload:json})
-//                 setIsPassed(true)
-//
-//                 // Create a map of administered medications
-//                 const newAdministeredMeds = medicationsToSubmit.reduce((acc, med) => {
-//                     acc[med.medicationId] = {
-//                         time: new Date().toLocaleString(),
-//                         timeSlots: med.timeSlots || [],
-//                         status: med.status
-//                     };
-//                     return acc;
-//                 }, {});
-//
-//                 setAdministeredMeds(prevState => ({
-//                     ...prevState,
-//                     ...newAdministeredMeds
-//                 }));
-//
-//                 if (onMedicationSubmit) {
-//                     onMedicationSubmit(json);
-//                 }
-//
-//                 setMedicationsState(prevState =>
-//                     prevState.map(med => ({
-//                         ...med,
-//                         status: "",
-//                         comment: ""
-//                     }))
-//                 );
-//                 setErr("");
-//             } else {
-//                 setErr(json.error || "Failed to administer medications");
-//             }
-//         } catch (error) {
-//             console.error("Submission error:", error);
-//             setErr("An error occurred. Please try again.");
-//         }
-//     };
-//
-//     if (filteredMeds.length === 0) {
-//         return (
-//             <div className="text-center text-gray-500 py-4">
-//                 No medications available to administer.
-//             </div>
-//         );
-//     }
-//
-//     return (
-//         <form onSubmit={handleFormSubmit} className="space-y-4">
-//             {filteredMeds.map((med) => {
-//                 const currentMedState = medicationsState.find(
-//                     (m) => m.medicationId === med._id
-//                 );
-//
-//                 // Safe checking for administered medications in the current time slot
-//                 const administeredMedInfo = administeredMeds[med._id];
-//                 const hasBeenAdministered = administeredMedInfo
-//                     ? administeredMedInfo.timeSlots.includes(currentMedState.timeSlots[0])
-//                     : false;
-//
-//                 return (
-//                     <div key={med._id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-//                         <div className="flex items-center justify-between mb-3">
-//                             <div>
-//                                 <span className="font-bold text-xl">{med.medName}</span>
-//                                 <span className="ml-2 text-gray-600">
-//                                     {med.medDosage} {med.dosageUnit}
-//                                 </span>
-//                             </div>
-//                         </div>
-//
-//                         {hasBeenAdministered ? (
-//                             <div className="bg-green-100 p-3 rounded-md text-green-800">
-//                                 {`Medication administered on ${administeredMedInfo.time} (${currentMedState.timeSlots[0]} dose)`}
-//                             </div>
-//                         ) : (
-//                             <>
-//                                 <div className="flex space-x-2 mb-3">
-//                                     {Object.entries({
-//                                         refuse: "Refuse",
-//                                         pass: "Pass",
-//                                         adverseReaction: "Adverse Reaction",
-//                                         otherReason: "Other",
-//                                     }).map(([statusKey, statusValue]) => (
-//                                         <button
-//                                             key={statusKey}
-//                                             type="button"
-//                                             onClick={() => handleStatusChange(med._id, statusKey)}
-//                                             className={`
-//                                                 flex-1 py-2 px-3 rounded-md transition-colors
-//                                                 ${currentMedState?.status === statusKey
-//                                                 ? 'bg-blue-500 text-white'
-//                                                 : 'bg-gray-200 hover:bg-blue-100'
-//                                             }
-//                                             `}
-//                                         >
-//                                             {statusValue}
-//                                         </button>
-//                                     ))}
-//                                 </div>
-//
-//                                 {currentMedState?.status === "otherReason" && (
-//                                     <div className="mt-2">
-//                                         <input
-//                                             type="text"
-//                                             placeholder="Please specify reason..."
-//                                             value={currentMedState.comment || ""}
-//                                             onChange={(e) =>
-//                                                 handleCommentChange(med._id, e.target.value)
-//                                             }
-//                                             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-300"
-//                                             required
-//                                         />
-//                                     </div>
-//                                 )}
-//                             </>
-//                         )}
-//                     </div>
-//                 );
-//             })}
-//
-//             {err && (
-//                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-//                     {err}
-//                 </div>
-//             )}
-//
-//             {Object.keys(administeredMeds).length === 0 && (
-//                 <button
-//                     type="submit"
-//                     className="w-full py-3 rounded-lg text-white font-bold bg-green-600 hover:bg-green-700"
-//                 >
-//                     Administer Selected Medications
-//                 </button>
-//             )}
-//         </form>
-//     );
-// };
-//
-// export default PassMedsForm;

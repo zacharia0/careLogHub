@@ -5,47 +5,107 @@ import {Link, useParams} from "react-router-dom";
 import {useClientContext} from "../hooks/useClientContext.js";
 
 const MedicationForm = () => {
+
+
     const {clientId} = useParams()
     const {clients} = useClientContext()
     const {medications,dispatch} = useMedicationContext()
-    const [medication, setMedication] = useState({
-        medName: "",
-        medDosage: "",
-        dosageUnit: "MG",
-        timeSlot:[],
-        clientFirstName:"",
-        clientLastName:""
+    const [scheduleData,setScheduleData] = useState([])
+    const [medicationData, setMedicationData] = useState({
+        medication_name: "",
+        medication_dosage: "",
+        dosage_unit: "MG",
+        medication_instruction:""
+
     })
 
-    const filterClientById = clients.filter((client) => client._id === clientId)
-    console.log("CLIENT FROM MEDICATION FORM",filterClientById)
+    // const filterClientById = clients.filter((client) => client._id === clientId)
+    // console.log("CLIENT FROM MEDICATION FORM",filterClientById)
 
+    //
+    // const handleTimeslotChange = (e) => {
+    //     const selectedTimeslot = e.target.value;
+    //     setScheduleData(prevState => {
+    //         const updatedTimeSlots = prevState.time_slot?.includes(selectedTimeslot)
+    //             ? (prevState.time_slot|| []).filter(slot => slot !== selectedTimeslot) // Remove if already selected
+    //             : [...(prevState.time_slot || []), selectedTimeslot]; // Add if not selected
+    //         return {...prevState, time_slot: updatedTimeSlots};
+    //     });
+    // }
+
+    const handleTimeSlotChange = (e) => {
+        const selectedTimeSlot = e.target.value;
+        const isChecked = e.target.checked;
+
+        setScheduleData((prevScheduleData) => {
+            if (isChecked) {
+                // Add a new schedule object if the time slot is checked
+                return [...prevScheduleData, { time_slot: selectedTimeSlot, schedule_time: "" }];
+            } else {
+                // Remove the schedule object if the time slot is unchecked
+                return prevScheduleData.filter((schedule) => schedule.time_slot !== selectedTimeSlot);
+            }
+        });
+    };
+    //
+    // const handleScheduleTimeChange = (time_slot,newTime) => {
+    //     const now = new Date();
+    //     const year = now.getFullYear()
+    //     const month = String(now.getMonth() + 1).padStart(2,"0")
+    //     const day = String(now.getDate()).padStart(2,"0")
+    //     const fullDateTime = `${year}-${month}-${day}T${newTime}:00.000Z`
+    //     setScheduleData((prevScheduleData) =>
+    //     prevScheduleData.map((schedule) =>
+    //         schedule.time_slot === time_slot? {...schedule,schedule_time:fullDateTime}:schedule
+    //     )
+    //     )
+    // }
+
+
+    const handleScheduleTimeChange = (time_slot, newTime) => {
+        setScheduleData((prevScheduleData) =>
+            prevScheduleData.map((schedule) => {
+                if (schedule.time_slot === time_slot) {
+                    // Extract the date part from the existing schedule_time or use today's date if it's not set
+                    const currentDate = schedule.schedule_time
+                        ? schedule.schedule_time.split("T")[0] // Extract "YYYY-MM-DD"
+                        : new Date().toISOString().split("T")[0];
+
+                    const fullDateTime = `${currentDate}T${newTime}:00.000Z`;
+                    return { ...schedule, schedule_time: fullDateTime };
+                }
+                return schedule;
+            })
+        );
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        let missingFields = []
-        if (!medication.medName) {
-            missingFields.push("Medication name")
-        }
-        if (!medication.medDosage) {
-            missingFields.push("Medication dosage")
-        }
-        if (!medication.dosageUnit) {
-            missingFields.push("Dosage Unit")
-        }
-        if(medication.timeSlot.length === 0){
-            missingFields.push("timeslot")
-        }
-        if (missingFields.length > 0) {
-            throw new Error(`The following fields are required: ${missingFields.join(", ")}`)
-        }
+        // let missingFields = []
+        // if (!medicationData.medication_name) {
+        //     missingFields.push("Medication name")
+        // }
+        // if (!medicationData.medication_dosage) {
+        //     missingFields.push("Medication dosage")
+        // }
+        // if (!medicationData.dosage_unit) {
+        //     missingFields.push("Dosage Unit")
+        // }
+        // if(scheduleData.time_slot.length === 0){
+        //     missingFields.push("timeslot")
+        // }
+        // if (missingFields.length > 0) {
+        //     throw new Error(`The following fields are required: ${missingFields.join(", ")}`)
+        // }
+
+        console.log("schecule data: ", scheduleData)
 
         const response = await fetch("http://localhost:4000/api/med", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({...medication,clientFirstName:filterClientById[0]?.firstName,clientLastName:filterClientById[0].lastName,clientId:filterClientById[0]._id})
+            body: JSON.stringify({medicationData,clientId,scheduleData})
         })
         console.log("CLIENT ID::::::",clientId)
         const json = await response.json()
@@ -54,45 +114,42 @@ const MedicationForm = () => {
         }
 
         if (response.ok) {
-            dispatch({type: "CREATE_MEDICATION",payload:json.data})
+            dispatch({type: "CREATE_MEDICATION",payload:json})
             console.log("Created new meds")
         }
 
 
     }
 
-    const handleTimeslotChange = (e) => {
-        const selectedTimeslot = e.target.value;
-        setMedication(prevState => {
-            const updatedTimeSlots = prevState.timeSlot.includes(selectedTimeslot)
-                ? prevState.timeSlot.filter(slot => slot !== selectedTimeslot) // Remove if already selected
-                : [...prevState.timeSlot, selectedTimeslot]; // Add if not selected
-            return {...prevState, timeSlot: updatedTimeSlots};
-        });
-    }
+
 
     return (
         <div>
             <h1>Medication Form</h1>
             <Link className={"navigation-btn"} to ="/all-medication">All Medications</Link>
             <form onSubmit={handleSubmit}>
+                {/*MEDICATION DATA*/}
                 <label>Medication Name</label>
                 <input
+                    className={"border-2"}
                     type="text"
-                    value={medication.medName}
-                    onChange={(e) => setMedication({...medication, medName: e.target.value})}
+                    value={medicationData.medication_name}
+                    onChange={(e) => setMedicationData({...medicationData, medication_name: e.target.value})}
                 />
                 <label>Medication Dosage</label>
                 <input
-                    type="text"
-                    value={medication.medDosage}
-                    onChange={(e) => setMedication({...medication, medDosage: e.target.value})}
+                    className={"border-2"}
+                    type="number"
+                    value={medicationData.medication_dosage}
+                    onChange={(e) => setMedicationData({...medicationData, medication_dosage: e.target.value})}
 
                 />
+
                 <label>Dosage Unit</label>
                 <select
-                    value={medication.dosageUnit}
-                    onChange={(e) => setMedication({...medication, dosageUnit: e.target.value})}
+                    className={"border-2"}
+                    value={medicationData.dosage_unit}
+                    onChange={(e) => setMedicationData({...medicationData, dosage_unit: e.target.value})}
                 >
                     {
                         Object.values(DosageUnits).map((unit) => (
@@ -100,7 +157,13 @@ const MedicationForm = () => {
                         ))
                     }
                 </select>
-                <label>Timeslot: </label>
+                <label>Medication Instruction: </label>
+                <input
+                    className={"border-2"}
+                    value = {medicationData.medication_instruction}
+                    type="text"
+                    onChange={(e) => setMedicationData({...medicationData,medication_instruction:e.target.value})}
+                />
                 {/*<select*/}
                 {/*    value={medication.timeSlot}*/}
                 {/*    onChange={(e) => setMedication({...medication, timeSlot: [e.target.value]})}*/}
@@ -110,44 +173,100 @@ const MedicationForm = () => {
                 {/*    <option value="evening">Evening</option>*/}
                 {/*    <option value="bedtime">Bedtime</option>*/}
                 {/*</select>*/}
-                <label>Timeslot: </label>
                 <div>
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="morning"
-                            checked={medication.timeSlot.includes("morning")}
-                            onChange={handleTimeslotChange}
-                        />
-                        Morning
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="afternoon"
-                            checked={medication.timeSlot.includes("afternoon")}
-                            onChange={handleTimeslotChange}
-                        />
-                        Afternoon
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="evening"
-                            checked={medication.timeSlot.includes("evening")}
-                            onChange={handleTimeslotChange}
-                        />
-                        Evening
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="bedtime"
-                            checked={medication.timeSlot.includes("bedtime")}
-                            onChange={handleTimeslotChange}
-                        />
-                        Bedtime
-                    </label>
+
+                    {/*TIME SLOT*/}
+                    <label>Timeslot: </label>
+                    <div className={"inline-flex"}>
+                        {["morning", "afternoon", "evening", "bedtime"].map((time_slot) => (
+                            <div key={time_slot}>
+                                <label htmlFor="">
+
+                                    <input
+                                        className={" border-2 py-1 mt-2 ml-2"}
+                                        type="checkbox"
+                                        value={time_slot}
+                                        checked={scheduleData.some((schedule) => schedule.time_slot === time_slot)}
+                                        onChange={handleTimeSlotChange}
+                                    />
+                                    <div className={"ml-1 inline-flex"}>
+
+                                    {time_slot}
+                                    </div>
+
+                                    {/*{*/}
+                                    {/*    scheduleData.some((schedule) => schedule.time_slot === time_slot) && (*/}
+                                    {/*        <input*/}
+                                    {/*            type="time"*/}
+                                    {/*            value = {*/}
+                                    {/*            scheduleData.find((schedule) => schedule.time_slot === time_slot).schedule_time*/}
+                                    {/*            }*/}
+                                    {/*            onChange={(e) => handleScheduleTimeChange(time_slot,e.target.value)}*/}
+                                    {/*        />*/}
+                                    {/*    )*/}
+                                    {/*}*/}
+
+                                    {scheduleData.some((schedule) => schedule.time_slot === time_slot) && (
+                                        <input
+                                            type="time"
+                                            value={
+                                                // Extract just the time part for the input value
+                                                scheduleData.find((schedule) => schedule.time_slot === time_slot).schedule_time
+                                                    ? new Date(scheduleData.find((schedule) => schedule.time_slot === time_slot).schedule_time)
+                                                        .toISOString()
+                                                        .slice(11, 16) // Get "HH:MM" part of the ISO string
+                                                    : ""
+                                            }
+                                            onChange={(e) => handleScheduleTimeChange(time_slot, e.target.value)}
+                                        />
+                                    )}
+
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* SCHEDULE TIME*/}
+
+
+
+
+                    {/*<label>*/}
+                    {/*    <input*/}
+                    {/*        type="checkbox"*/}
+                    {/*        value="morning"*/}
+                    {/*        checked={scheduleData.timeSlot.includes("morning")}*/}
+                    {/*        onChange={handleTimeSlotChange}*/}
+                    {/*    />*/}
+                    {/*    Morning*/}
+                    {/*</label>*/}
+                    {/*<label>*/}
+                    {/*    <input*/}
+                    {/*        type="checkbox"*/}
+                    {/*        value="afternoon"*/}
+                    {/*        checked={scheduleData.timeSlot.includes("afternoon")}*/}
+                    {/*        onChange={handleTimeSlotChange}*/}
+                    {/*    />*/}
+                    {/*    Afternoon*/}
+                    {/*</label>*/}
+                    {/*<label>*/}
+                    {/*    <input*/}
+                    {/*        type="checkbox"*/}
+                    {/*        value="evening"*/}
+                    {/*        checked={scheduleData.timeSlot.includes("evening")}*/}
+                    {/*        onChange={handleTimeSlotChange}*/}
+                    {/*    />*/}
+                    {/*    Evening*/}
+                    {/*</label>*/}
+                    {/*<label>*/}
+                    {/*    <input*/}
+                    {/*        type="checkbox"*/}
+                    {/*        value="bedtime"*/}
+                    {/*        checked={scheduleData.timeSlot.includes("bedtime")}*/}
+                    {/*        onChange={handleTimeSlotChange}*/}
+                    {/*    />*/}
+                    {/*    Bedtime*/}
+                    {/*</label>*/}
                 </div>
 
                 <button

@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 
 
-const AdministerMed = () =>{
+const AdministerMedForListClient = () =>{
     const {clients} = useClientContext()
     const [loading,setLoading] = useState(true)
     const [error,setError] = useState("")
@@ -42,4 +42,4 @@ const AdministerMed = () =>{
 
 
 
-export default AdministerMed
+export default AdministerMedForListClient

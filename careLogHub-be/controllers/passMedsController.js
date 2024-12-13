@@ -1,5 +1,5 @@
 const asyncHandler = require("../middleware/asyncHandler")
-const PassMedsModel = require("../models/passMedsModel")
+const PassMedsModel = require("../models/MedicationAdministration")
 const mongoose = require("mongoose")
 const CustomError = require("../utils/CustomError")
 
@@ -14,13 +14,19 @@ const createPassMeds2 = asyncHandler(async(req,res) => {
             status,
             comment,
             dosageGiven,
-            administeredTimeAndDate
+            administeredTimeAndDate,
+            timeSlot
         } = med;
 
         // Ensure clientId is converted to a valid ObjectId
         // const validClientId = mongoose.Types.ObjectId(clientId);
         if (!mongoose.Types.ObjectId.isValid(clientId)) {
             throw new CustomError("Invalid client ID format", 400);
+        }
+
+        // Validate medication ID
+        if (!mongoose.Types.ObjectId.isValid(medicationId)) {
+            throw new CustomError("Invalid medication ID format", 400);
         }
         const validClientId = new mongoose.Types.ObjectId(clientId);
 
@@ -30,7 +36,8 @@ const createPassMeds2 = asyncHandler(async(req,res) => {
             status,
             comment,
             client: validClientId, // Use converted ObjectId
-            administeredTimeAndDate: administeredTimeAndDate || Date.now()
+            administeredTimeAndDate: administeredTimeAndDate || Date.now(),
+            timeSlot
         });
 
         passMedsRecords.push(newPassMed);
