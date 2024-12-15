@@ -18,7 +18,8 @@ const medicationScheduleSchema = new Schema({
     },
     // // Optional: Store a specific time for the slot
     schedule_time:{
-        type:Date
+        type:Date,
+        required:true
     }
 
 },{timestamps:true})

@@ -1,5 +1,102 @@
-const PassMedsList = () =>{
+import {useMedicationContext} from "../../hooks/useMedicationContext.js";
+import {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
+import {useClientContext} from "../../hooks/useClientContext.js";
+import TimeSlot from "./TimeSlot.jsx";
+import {TIME_SLOTS,filterMedicationByTimeSlot,getCurrentTimeSlot} from "../../utils/timeSlotUtils.js";
+import Tab from "./PassMedTabs.jsx";
 
+const PassMedsList = () =>{
+    const [activeTab,setActiveTab] = useState(getCurrentTimeSlot)
+
+    useEffect(() =>{
+        const interval = setInterval(() =>{
+            setActiveTab(getCurrentTimeSlot)  // automatically update active tab based on current time
+        },60000) //update every minute
+
+        return () => clearInterval(interval)
+
+
+
+    },[])
+
+    const handleTabClick = (tab) =>{
+        setActiveTab(tab);
+    }
+
+
+    const {clients} = useClientContext()
+    const {clientId} = useParams()
+    const [loading,setLoading] = useState(false)
+
+    const {medicationByClientId,fetchMedicationByClientId} = useMedicationContext()
+
+    useEffect(() => {
+        if(clientId){
+            setLoading(true)
+            fetchMedicationByClientId(clientId).finally(() => setLoading(false))
+            console.log(medicationByClientId)
+        }
+
+    }, [clientId]); // Fetch all medications only on mount
+    const medications = medicationByClientId[clientId] || []
+
+    const client = clients.find((client) => client._id === clientId)
+    console.log(client)
+    const firstName = client ? client.firstName : "Unknown"
+    console.log(medications)
+
+    if(loading){
+        return <p>Loading Medication</p>
+    }
+
+    return(
+        <div>
+            {/*Tab navigation*/}
+            <div>
+                {Object.entries(TIME_SLOTS).map(([key,{label}])=>(
+                    <Tab
+                        key = {key}
+                        label = {label}
+                        active={activeTab === key}
+                        onClick={() => handleTabClick(key)}
+                    />
+                ))}
+            </div>
+
+        {/*    Medication for Active tab*/}
+            <div>
+                <TimeSlot
+                    label={TIME_SLOTS[activeTab].label}
+                    medications={filterMedicationByTimeSlot(medications,activeTab)}
+
+                />
+            </div>
+
+
+
+        {/*    { client && `${client.firstName} ${client.lastName}`}*/}
+        {/*    {*/}
+
+
+        {/*        medications.length > 0 ?(*/}
+        {/*            <ul>*/}
+        {/*                {*/}
+        {/*                    medications.map((med) =>(*/}
+        {/*                        <div key = {med._id}>*/}
+        {/*                            <label>Medication Name:</label>*/}
+        {/*                            <p>{med.medication_name}</p>*/}
+        {/*                            <p>{med.schedules.schedule_time}</p>*/}
+        {/*                        </div>*/}
+        {/*                    ))*/}
+        {/*                }*/}
+        {/*            </ul>*/}
+        {/*        ):(*/}
+        {/*            <div>No medications for this client</div>*/}
+        {/*        )*/}
+        {/*}*/}
+        </div>
+    )
 }
 
 

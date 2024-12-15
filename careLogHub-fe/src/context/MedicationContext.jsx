@@ -3,6 +3,9 @@ import {createContext, useEffect, useReducer} from "react";
 export const MedicationContext = createContext()
 
 export const medicationReducer = (state,action) =>{
+    console.log("JSON",state.medications)
+    // console.log("JSON",action.payload.clientId)
+
     switch (action.type){
         case "SET_MEDICATION":
             return{
@@ -24,10 +27,19 @@ export const medicationReducer = (state,action) =>{
                 ...state,
                 medications: state.medications.filter((med) => med._id !== action.payload._id)
             }
+        // case "SET_MEDICATION_BY_CLIENT_ID":
+        //     return{
+        //         ...state,
+        //         medicationByClient: action.payload
+        //     }
         case "SET_MEDICATION_BY_CLIENT_ID":
-            return{
+            return {
                 ...state,
-                medicationByClient: action.payload
+                medicationByClientId: {
+                    ...state.medicationByClientId,
+                    [action.payload.clientId]: action.payload.medications,
+
+                }
             }
         default:
             return state
@@ -38,17 +50,19 @@ export const medicationReducer = (state,action) =>{
 export const MedicationContextProvider = ({children}) => {
     const [state,dispatch] = useReducer(medicationReducer,{
         medications: [],
-        medicationByClient:[]
+        // medicationByClient:[]
+        medicationByClientId: {}
+
     })
 
 
-    useEffect(() => {
-        const getAllMedication = async () => {
+        const fetchMedicationByClientId = async (clientId) => {
             try {
-                const response = await fetch("http://localhost:4000/api/med/all-medications?deleted=false");
+                const response = await fetch(`http://localhost:4000/api/med/${clientId}?deleted=true`);
                 const json = await response.json();
                 if (response.ok) {
-                    dispatch({ type: "SET_MEDICATION", payload: json });
+                    // console.log("JSON",json)
+                    dispatch({ type: "SET_MEDICATION_BY_CLIENT_ID", payload: {clientId,medications:json} });
                 } else {
                     console.log("Failed to fetch medications");
                 }
@@ -57,18 +71,11 @@ export const MedicationContextProvider = ({children}) => {
             }
         };
 
-        getAllMedication()
-            .then(() => {
-                console.log("Medications successfully fetched.");
-            })
-            .catch((error) => {
-                console.error("Error during medication fetch", error);
-            });
-    }, []); // Fetch all medications only on mount
+
 
 
     return (
-        <MedicationContext.Provider value={{...state, dispatch}}>
+        <MedicationContext.Provider value={{...state, dispatch,fetchMedicationByClientId}}>
             {children}
         </MedicationContext.Provider>
     )

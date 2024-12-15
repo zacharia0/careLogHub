@@ -29,29 +29,12 @@ const medicationSchema = new Schema({
         type:Date,
         default:null
     },
-    // time_slot:{
-    //     type:[String],
-    //     enum:["morning","afternoon","evening", "bedtime"],
-    //     validate: {
-    //         validator: (v) => v && v.length > 0, // Ensure array is not empty
-    //         message: "At least one timeslot must be specified.",
-    //     },
-    //     required:true
-    //
-    // },
+
     medication_instruction:{
         type:String,
         required:true
     },
 
-    // clientFirstName:{
-    //     type:String,
-    //     required:true
-    // },
-    // clientLastName:{
-    //     type:String,
-    //     required:true
-    // }
 },{
     timestamps:true,
     toJSON:{virtuals:true},

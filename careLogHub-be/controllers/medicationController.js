@@ -120,44 +120,141 @@ const MedicationScheduleModel =require("../models/MedicationSchedule")
 
 
 
-    const createMedicationAndSchedule = asyncHandler(async (req,res) =>{
-        const {clientId,scheduleData,medicationData} =req.body
-        if(!clientId){
-            throw new CustomError("Client not found",404)
-        }
+    // const createMedicationAndSchedule = asyncHandler(async (req,res) =>{
+    //     const {clientId,scheduleData,medicationData} =req.body
+    //     if(!clientId){
+    //         throw new CustomError("Client not found",404)
+    //     }
+    //
+    //     const missingFields = []
+    //     if(!medicationData.medication_name){
+    //         missingFields.push("medication name")
+    //     }
+    //     if(!medicationData.medication_dosage){
+    //         missingFields.push("medication dosage")
+    //     }
+    //     if(!medicationData.medication_instruction){
+    //         missingFields.push("medication instruction")
+    //     }
+    //
+    //
+    //     scheduleData.forEach((schedule) => {
+    //         if( !schedule.schedule_time ){
+    //             console.log(schedule)
+    //             // throw new CustomError("Must select time to administer medication",400)
+    //             missingFields.push("schedule time")
+    //         }
+    //         if( !schedule.time_slot){
+    //             // throw new CustomError("Choose a time slot",400)
+    //             missingFields.push("time slot ")
+    //
+    //         }
+    //         console.log(schedule.time_slot)
+    //     })
+    //
+    //     if(missingFields > 0){
+    //         throw new CustomError(`The following fields are missing: ${missingFields.join(", ")}`,400)
+    //     }
+    //
+    //
+    //
+    //
+    //
+    //     //create Medication
+    //     const medication = new MedicationModel({
+    //         ...medicationData,
+    //         client:clientId
+    //     })
+    //     await medication.save()
+    //
+    //     const schedules = await Promise.all(
+    //         scheduleData.map(async (schedule) =>{
+    //             const newSchedule = new MedicationScheduleModel({
+    //                 ...schedule,
+    //                 medication:medication._id
+    //             })
+    //             await newSchedule.save()
+    //             return newSchedule
+    //         })
+    //     )
+    //
+    //
+    //     // if(!schedules || schedules.length ===0){
+    //     //     throw new CustomError("Time slot is required",400)
+    //     // }
+    //
+    //     res.status(201).json({medication,schedules})
+    // })
 
-        console.log(scheduleData)
+const createMedicationAndSchedule = asyncHandler(async (req, res) => {
+    const { clientId, scheduleData, medicationData } = req.body;
 
-        //create Medication
-        const medication = new MedicationModel({
-            ...medicationData,
-            client:clientId
+    // Validate client ID
+    if (!clientId) {
+        throw new CustomError("Client not found", 404);
+    }
+
+    // Validate medicationData fields
+    const missingFields = [];
+    if (!medicationData.medication_name) {
+        missingFields.push("medication name");
+    }
+    if (!medicationData.medication_dosage) {
+        missingFields.push("medication dosage");
+    }
+    if (!medicationData.medication_instruction) {
+        missingFields.push("medication instruction");
+    }
+    if (!medicationData.dosage_unit) {
+        missingFields.push("dosage unit");
+    }
+
+    // Validate scheduleData fields
+    if (!scheduleData || scheduleData.length === 0) {
+        missingFields.push("Time slot, Time");
+    } else {
+        scheduleData.forEach((schedule, index) => {
+            if (!schedule.schedule_time) {
+                missingFields.push(`schedule time for entry ${index + 1}`);
+            }
+            if (!schedule.time_slot) {
+                missingFields.push(`time slot for entry ${index + 1}`);
+            }
+        });
+    }
+
+    // If any missing fields, throw a custom error
+    if (missingFields.length > 0) {
+        throw new CustomError(
+            `The following fields are missing: ${missingFields.join(", ")}`,
+            400
+        );
+    }
+
+    // Create Medication
+    const medication = new MedicationModel({
+        ...medicationData,
+        client: clientId,
+    });
+
+    await medication.save(); // Will only save if manual validation passes
+
+    // Create MedicationSchedules
+    const schedules = await Promise.all(
+        scheduleData.map(async (schedule) => {
+            const newSchedule = new MedicationScheduleModel({
+                ...schedule,
+                medication: medication._id,
+            });
+            await newSchedule.save();
+            return newSchedule;
         })
-        await medication.save()
+    );
 
-        const schedules = await Promise.all(
-                scheduleData.map(async (schedule) =>{
-                    const newSchedule = new MedicationScheduleModel({
-                        ...schedule,
-                        medication:medication._id
-                    })
-                    await newSchedule.save()
-                    return newSchedule
-                })
-        )
+    // Respond with created data
+    res.status(201).json({ medication, schedules });
+});
 
-        // console.log("Medication Id: " , medication._id)
-
-
-
-        if(!schedules || schedules.length ===0){
-            throw new CustomError("Time slot is required",400)
-
-        }
-
-
-        res.status(201).json({medication,schedules})
-    })
 
 
     const getMedicationByClientId = asyncHandler(async(req,res) =>{
@@ -165,9 +262,7 @@ const MedicationScheduleModel =require("../models/MedicationSchedule")
 
         //Find medications for the client and populate the 'medication' field in the schedules
 
-        const medication = await MedicationModel.find({client:clientId}).populate({
-            path:'schedules',
-        })
+        const medication = await MedicationModel.find({client:clientId}).populate({path:"schedules"}) || []
 
         if(!medication){
             throw new CustomError("Medication cannot be found",400)

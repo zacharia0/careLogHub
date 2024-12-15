@@ -6,10 +6,9 @@ import {useClientContext} from "../hooks/useClientContext.js";
 
 const MedicationForm = () => {
 
-
     const {clientId} = useParams()
-    const {clients} = useClientContext()
-    const {medications,dispatch} = useMedicationContext()
+    const [createMedicationError,setCreateMedicationError] = useState("")
+    const {dispatch} = useMedicationContext()
     const [scheduleData,setScheduleData] = useState([])
     const [medicationData, setMedicationData] = useState({
         medication_name: "",
@@ -19,23 +18,10 @@ const MedicationForm = () => {
 
     })
 
-    // const filterClientById = clients.filter((client) => client._id === clientId)
-    // console.log("CLIENT FROM MEDICATION FORM",filterClientById)
-
-    //
-    // const handleTimeslotChange = (e) => {
-    //     const selectedTimeslot = e.target.value;
-    //     setScheduleData(prevState => {
-    //         const updatedTimeSlots = prevState.time_slot?.includes(selectedTimeslot)
-    //             ? (prevState.time_slot|| []).filter(slot => slot !== selectedTimeslot) // Remove if already selected
-    //             : [...(prevState.time_slot || []), selectedTimeslot]; // Add if not selected
-    //         return {...prevState, time_slot: updatedTimeSlots};
-    //     });
-    // }
-
     const handleTimeSlotChange = (e) => {
         const selectedTimeSlot = e.target.value;
         const isChecked = e.target.checked;
+
 
         setScheduleData((prevScheduleData) => {
             if (isChecked) {
@@ -47,20 +33,6 @@ const MedicationForm = () => {
             }
         });
     };
-    //
-    // const handleScheduleTimeChange = (time_slot,newTime) => {
-    //     const now = new Date();
-    //     const year = now.getFullYear()
-    //     const month = String(now.getMonth() + 1).padStart(2,"0")
-    //     const day = String(now.getDate()).padStart(2,"0")
-    //     const fullDateTime = `${year}-${month}-${day}T${newTime}:00.000Z`
-    //     setScheduleData((prevScheduleData) =>
-    //     prevScheduleData.map((schedule) =>
-    //         schedule.time_slot === time_slot? {...schedule,schedule_time:fullDateTime}:schedule
-    //     )
-    //     )
-    // }
-
 
     const handleScheduleTimeChange = (time_slot, newTime) => {
         setScheduleData((prevScheduleData) =>
@@ -80,25 +52,39 @@ const MedicationForm = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        // let missingFields = []
-        // if (!medicationData.medication_name) {
-        //     missingFields.push("Medication name")
-        // }
-        // if (!medicationData.medication_dosage) {
-        //     missingFields.push("Medication dosage")
-        // }
-        // if (!medicationData.dosage_unit) {
-        //     missingFields.push("Dosage Unit")
-        // }
-        // if(scheduleData.time_slot.length === 0){
-        //     missingFields.push("timeslot")
-        // }
-        // if (missingFields.length > 0) {
-        //     throw new Error(`The following fields are required: ${missingFields.join(", ")}`)
-        // }
 
-        console.log("schecule data: ", scheduleData)
+        e.preventDefault()
+
+        if(!scheduleData || scheduleData.length === 0){
+            // setCreateMedicationError("Time Slot is required.")
+        }
+        let missingFields = []
+        if (!medicationData.medication_name) {
+            missingFields.push("Medication name")
+        }
+        if (!medicationData.medication_dosage) {
+            missingFields.push("Medication dosage")
+        }
+        if (!medicationData.dosage_unit) {
+            missingFields.push("Dosage Unit")
+        }
+        scheduleData.forEach((schedule) =>{
+            if(!schedule.time_slot){
+                missingFields.push("time slot")
+            }
+            if(!schedule.schedule_time){
+                missingFields.push("schedule time")
+            }
+        })
+
+        if (missingFields.length > 0) {
+            setCreateMedicationError(`The following fields are required: ${missingFields.join(", ")}`)
+        }
+
+        console.log(missingFields)
+        console.log(scheduleData)
+
+        console.log("schedule data: ", scheduleData)
 
         const response = await fetch("http://localhost:4000/api/med", {
             method: "POST",
@@ -109,13 +95,23 @@ const MedicationForm = () => {
         })
         console.log("CLIENT ID::::::",clientId)
         const json = await response.json()
-        if (!response.ok) {
-            console.log("Failed to create new medication")
-        }
 
         if (response.ok) {
             dispatch({type: "CREATE_MEDICATION",payload:json})
             console.log("Created new meds")
+            setCreateMedicationError("")
+             setMedicationData({
+                medication_name: "",
+                medication_dosage: "",
+                dosage_unit: "MG",
+                medication_instruction:""
+
+            })
+            setScheduleData([])
+
+        }else {
+            console.log("Failed to create new medication")
+            setCreateMedicationError(json.error)
         }
 
 
@@ -128,6 +124,7 @@ const MedicationForm = () => {
             <h1>Medication Form</h1>
             <Link className={"navigation-btn"} to ="/all-medication">All Medications</Link>
             <form onSubmit={handleSubmit}>
+
                 {/*MEDICATION DATA*/}
                 <label>Medication Name</label>
                 <input
@@ -164,15 +161,6 @@ const MedicationForm = () => {
                     type="text"
                     onChange={(e) => setMedicationData({...medicationData,medication_instruction:e.target.value})}
                 />
-                {/*<select*/}
-                {/*    value={medication.timeSlot}*/}
-                {/*    onChange={(e) => setMedication({...medication, timeSlot: [e.target.value]})}*/}
-                {/*>*/}
-                {/*    <option value="morning">Morning</option>*/}
-                {/*    <option value="afternoon">Afternoon</option>*/}
-                {/*    <option value="evening">Evening</option>*/}
-                {/*    <option value="bedtime">Bedtime</option>*/}
-                {/*</select>*/}
                 <div>
 
                     {/*TIME SLOT*/}
@@ -194,18 +182,6 @@ const MedicationForm = () => {
                                     {time_slot}
                                     </div>
 
-                                    {/*{*/}
-                                    {/*    scheduleData.some((schedule) => schedule.time_slot === time_slot) && (*/}
-                                    {/*        <input*/}
-                                    {/*            type="time"*/}
-                                    {/*            value = {*/}
-                                    {/*            scheduleData.find((schedule) => schedule.time_slot === time_slot).schedule_time*/}
-                                    {/*            }*/}
-                                    {/*            onChange={(e) => handleScheduleTimeChange(time_slot,e.target.value)}*/}
-                                    {/*        />*/}
-                                    {/*    )*/}
-                                    {/*}*/}
-
                                     {scheduleData.some((schedule) => schedule.time_slot === time_slot) && (
                                         <input
                                             type="time"
@@ -225,48 +201,8 @@ const MedicationForm = () => {
                             </div>
                         ))}
                     </div>
+                    {createMedicationError && <p className={"text-red-400"}>{createMedicationError}</p>}
 
-                    {/* SCHEDULE TIME*/}
-
-
-
-
-                    {/*<label>*/}
-                    {/*    <input*/}
-                    {/*        type="checkbox"*/}
-                    {/*        value="morning"*/}
-                    {/*        checked={scheduleData.timeSlot.includes("morning")}*/}
-                    {/*        onChange={handleTimeSlotChange}*/}
-                    {/*    />*/}
-                    {/*    Morning*/}
-                    {/*</label>*/}
-                    {/*<label>*/}
-                    {/*    <input*/}
-                    {/*        type="checkbox"*/}
-                    {/*        value="afternoon"*/}
-                    {/*        checked={scheduleData.timeSlot.includes("afternoon")}*/}
-                    {/*        onChange={handleTimeSlotChange}*/}
-                    {/*    />*/}
-                    {/*    Afternoon*/}
-                    {/*</label>*/}
-                    {/*<label>*/}
-                    {/*    <input*/}
-                    {/*        type="checkbox"*/}
-                    {/*        value="evening"*/}
-                    {/*        checked={scheduleData.timeSlot.includes("evening")}*/}
-                    {/*        onChange={handleTimeSlotChange}*/}
-                    {/*    />*/}
-                    {/*    Evening*/}
-                    {/*</label>*/}
-                    {/*<label>*/}
-                    {/*    <input*/}
-                    {/*        type="checkbox"*/}
-                    {/*        value="bedtime"*/}
-                    {/*        checked={scheduleData.timeSlot.includes("bedtime")}*/}
-                    {/*        onChange={handleTimeSlotChange}*/}
-                    {/*    />*/}
-                    {/*    Bedtime*/}
-                    {/*</label>*/}
                 </div>
 
                 <button
