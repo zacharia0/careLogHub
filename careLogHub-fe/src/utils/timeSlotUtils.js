@@ -4,10 +4,10 @@ import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(isBetween)
 
 export const TIME_SLOTS = {
-    morning:{label:"Morning",start:"00:00",end:"11:59"},
-    afternoon:{label:"Afternoon",start:"12:00",end:"15:59"},
-    evening:{label:"Evening",start:"16:00",end:"18:59"},
-    bedtime:{label:"Bedtime", start:"19:00",end:"23:59"}
+    morning:{label:"Morning"},
+    afternoon:{label:"Afternoon"},
+    evening:{label:"Evening"},
+    bedtime:{label:"Bedtime",}
 };
 
 
@@ -16,31 +16,12 @@ export const filterMedicationByTimeSlot = (medications, timeSlot) =>{
 }
 
 
-// export const getCurrentTimeSlot = () =>{
-//     const now = dayjs();
-//     for(const [key,{start,end}] of Object.entries(TIME_SLOTS)){
-//         const startTime = dayjs().set("hour",parseInt(start.split(":")[0])).set("minute",parseInt(start.split(":")[1]))
-//         const endTime = dayjs().set("hour",parseInt(end.split(":")[0])).set("minute",parseInt(end.split(":")[1]))
-//         if (now.isBetween(startTime, endTime, null, "[]")) {
-//             return key; // Return the current time slot (e.g., "bedtime")
-//         }
-//     }
-//     return 'morning' // default fallback
-// }
 
+export const getCurrentTimeSlot = () => {
+    const currentHour = new Date().getHours();
 
-export function getCurrentTimeSlot() {
-    const now = dayjs();
-
-    if (now.isBetween(dayjs().startOf("day"), dayjs().hour(11).minute(59).second(59))) {
-        return "morning";
-    } else if (now.isBetween(dayjs().hour(12), dayjs().hour(15).minute(59).second(59))) {
-        return "afternoon";
-    } else if (now.isBetween(dayjs().hour(16), dayjs().hour(18).minute(59).second(59))) {
-        return "evening";
-    } else if (now.isBetween(dayjs().hour(19), dayjs().endOf("day"))) {
-        return "bedtime";
-    } else {
-        return null; // Fallback if none of the conditions are met
-    }
-}
+    if (currentHour >= 6 && currentHour < 12) return "morning";
+    if (currentHour >= 12 && currentHour < 16) return "afternoon";
+    if (currentHour >= 16 && currentHour < 18) return "evening";
+    return "bedtime";
+};

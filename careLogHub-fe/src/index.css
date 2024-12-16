@@ -35,7 +35,8 @@
     @apply border-2 border-gray-500 p-1 rounded-md  focus:border-teal-500 focus:ring-teal-500
 }
 
-.textarea-form{
-    @apply flex items-center justify-center border-2 border-gray-500 p-1 px-4 rounded-md  focus:border-teal-500 focus:ring-teal-500
-
+.textarea-form {
+    @apply block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500
 }
+
+

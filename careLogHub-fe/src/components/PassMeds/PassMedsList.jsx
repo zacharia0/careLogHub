@@ -4,32 +4,34 @@ import {useParams} from "react-router-dom";
 import {useClientContext} from "../../hooks/useClientContext.js";
 import TimeSlot from "./TimeSlot.jsx";
 import {TIME_SLOTS,filterMedicationByTimeSlot,getCurrentTimeSlot} from "../../utils/timeSlotUtils.js";
-import Tab from "./PassMedTabs.jsx";
+import Tab from "./Tabs.jsx";
 
 const PassMedsList = () =>{
+    const {clients} = useClientContext()
+    const {clientId} = useParams()
+    const [loading,setLoading] = useState(false)
+    const [isManualOverride, setIsManualOverride] = useState(false) // Track manual tab selection
+
+    const {medicationByClientId,fetchMedicationByClientId} = useMedicationContext()
     const [activeTab,setActiveTab] = useState(getCurrentTimeSlot)
 
     useEffect(() =>{
         const interval = setInterval(() =>{
-            setActiveTab(getCurrentTimeSlot)  // automatically update active tab based on current time
+            if(!isManualOverride){
+                setActiveTab(getCurrentTimeSlot)  // automatically update active tab based on current time
+
+            }
         },60000) //update every minute
 
         return () => clearInterval(interval)
+    },[isManualOverride])
 
-
-
-    },[])
 
     const handleTabClick = (tab) =>{
         setActiveTab(tab);
+        setIsManualOverride(true)
     }
 
-
-    const {clients} = useClientContext()
-    const {clientId} = useParams()
-    const [loading,setLoading] = useState(false)
-
-    const {medicationByClientId,fetchMedicationByClientId} = useMedicationContext()
 
     useEffect(() => {
         if(clientId){
@@ -44,6 +46,8 @@ const PassMedsList = () =>{
     const client = clients.find((client) => client._id === clientId)
     console.log(client)
     const firstName = client ? client.firstName : "Unknown"
+    const lastName = client ? client.lastName : "Unknown"
+
     console.log(medications)
 
     if(loading){
@@ -51,330 +55,56 @@ const PassMedsList = () =>{
     }
 
     return(
-        <div>
+        <div >
+
             {/*Tab navigation*/}
-            <div>
-                {Object.entries(TIME_SLOTS).map(([key,{label}])=>(
-                    <Tab
-                        key = {key}
-                        label = {label}
-                        active={activeTab === key}
-                        onClick={() => handleTabClick(key)}
-                    />
-                ))}
+            <div >
+                {Object.entries(TIME_SLOTS).map(([key, {label}]) =>  (
+
+                    <div key = {key} className={"inline-flex "} >
+
+
+                        <Tab
+
+                            key={key}
+                            label={label}
+                            active={activeTab === key}
+                            onClick={() => handleTabClick(key)}
+
+                        />
+                    </div>
+            )) }
             </div>
 
-        {/*    Medication for Active tab*/}
+            {<div className={"inline-flex mt-3"}>
+                <label className={"font-light"}>Administrating Medication for:</label>
+                <div className={"font-bold ml-1"}>
+                    { firstName && `${firstName} ${lastName}`}
+
+                </div>
+            </div>}
+
+
+
+            {/*    Medication for Active tab*/}
             <div>
-                <TimeSlot
-                    label={TIME_SLOTS[activeTab].label}
-                    medications={filterMedicationByTimeSlot(medications,activeTab)}
+                {
+                    TIME_SLOTS[activeTab] ? (
 
-                />
+                        <TimeSlot
+                            label={ TIME_SLOTS[activeTab].label}
+                            medications={filterMedicationByTimeSlot(medications, activeTab)}
+                        />
+                        ): (<p>No valid time slot selected.</p>)
+
+            }
             </div>
-
-
-
-        {/*    { client && `${client.firstName} ${client.lastName}`}*/}
-        {/*    {*/}
-
-
-        {/*        medications.length > 0 ?(*/}
-        {/*            <ul>*/}
-        {/*                {*/}
-        {/*                    medications.map((med) =>(*/}
-        {/*                        <div key = {med._id}>*/}
-        {/*                            <label>Medication Name:</label>*/}
-        {/*                            <p>{med.medication_name}</p>*/}
-        {/*                            <p>{med.schedules.schedule_time}</p>*/}
-        {/*                        </div>*/}
-        {/*                    ))*/}
-        {/*                }*/}
-        {/*            </ul>*/}
-        {/*        ):(*/}
-        {/*            <div>No medications for this client</div>*/}
-        {/*        )*/}
-        {/*}*/}
         </div>
     )
 }
 
 
 export default PassMedsList
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // PassMedsList.jsx
-// import {useState, useEffect, createContext, useContext} from "react";
-// import { useParams } from "react-router-dom";
-// import { useMedicationContext } from "../../hooks/useMedicationContext.js";
-// import { useClientContext } from "../../hooks/useClientContext.js";
-// import PassMedsForm from "./PassMedsForm.jsx";
-// import {usePassMedsContext} from "../../hooks/usePassMedsContext.js";
-//
-//
-//
-// // GIMINI
-// const ActiveTimeSlotContext = createContext()
-// export const useActiveTimeSlot = () =>  useContext(ActiveTimeSlotContext)
-//
-//
-//
-// const PassMedsList = () => {
-//     const { medicationByClient, dispatch } = useMedicationContext();
-//     const [loading, setLoading] = useState(true);
-//     const [activeTab, setActiveTab] = useState("morning");
-//     const {dispatch:passMedsDispatch} = usePassMedsContext()
-//     const { clientId } = useParams();
-//     const { clients } = useClientContext();
-//     const [err, setError] = useState("");
-//     const [dummy,setDummy] =useState(0)
-//
-//     useEffect(() => {
-//         const determineActiveTab = () => {
-//             const currentHour = new Date().getHours();
-//             if (currentHour >= 0 && currentHour < 12) return "morning";
-//             if (currentHour >= 12 && currentHour < 16) return "afternoon";
-//             if (currentHour >= 16 && currentHour < 20) return "evening";
-//             return "bedtime";
-//         };
-//         setActiveTab(determineActiveTab());
-//
-//         const fetchMedicationByClientId = async () => {
-//             setLoading(true);
-//             try {
-//                 const response = await fetch(`http://localhost:4000/api/med/${clientId}`);
-//                 const json = await response.json();
-//                 if (response.ok) {
-//                     dispatch({ type: "SET_MEDICATION_BY_CLIENT_ID", payload: json });
-//                     setError("");
-//                 } else {
-//                     setError(json.error);
-//                 }
-//             } catch (error) {
-//                 console.log("An error occurred:", error);
-//                 setError("Failed to fetch medication. Please try again later.");
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
-//         fetchMedicationByClientId();
-//     }, [dispatch, clientId]);
-//
-//     const handleMedicationSubmit = (updatedPassMeds) => {
-//         passMedsDispatch({ type: "CREATE_PASS_MEDS", payload: updatedPassMeds });
-//         setDummy(prevState => prevState + 1);  // Ensure it increments
-//     };
-//
-//     if (loading) {
-//         return <p>Loading Medications...</p>;
-//     }
-//
-//     const findClient = clients.find((client) => client._id === clientId);
-//     const filteredMeds = medicationByClient
-//         .filter((med) => med.timeSlot.includes(activeTab));
-//
-//     const firstName = findClient?.firstName;
-//     const lastName = findClient?.lastName;
-//
-//     return (
-//         <ActiveTimeSlotContext.Provider value = {{activeTimeSlot:activeTab}}>
-//
-//             <div>
-//                 <h1>Pass Meds</h1>
-//                 <div className="ml-2 md:flex">
-//                     <ul className="flex-column space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0 text-center">
-//                         {["morning", "afternoon", "evening", "bedtime"].map((timeslot) => (
-//                             <li key={timeslot}>
-//                                 <button
-//                                     type="button"
-//                                     onClick={() => setActiveTab(timeslot)}
-//                                     className={`inline-flex items-center px-4 py-3 rounded-lg w-full ${
-//                                         activeTab === timeslot
-//                                             ? "text-white bg-blue-700 dark:bg-blue-600 font-bold"
-//                                             : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-300 font-normal"
-//                                     }`}
-//                                 >
-//                                     {timeslot.charAt(0).toUpperCase() + timeslot.slice(1)}
-//                                 </button>
-//                             </li>
-//                         ))}
-//                     </ul>
-//
-//                     <div className="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-700 rounded-lg w-full">
-//                         <div>
-//                             <label className="font-medium">Medication For: </label>
-//                             <div className="inline-flex ml-3 font-bold text-white">{`${firstName} ${lastName}`}</div>
-//                         </div>
-//
-//                         <PassMedsForm
-//                             filteredMeds={filteredMeds}
-//                             clientInfo={clientId}
-//                             onMedicationSubmit={handleMedicationSubmit}
-//                         />
-//
-//                     </div>
-//                 </div>
-//             </div>
-//         </ActiveTimeSlotContext.Provider>
-//     );
-// };
-//
-// export default PassMedsList;
-
-
-
-
-
-//
-// import { useState, useEffect, createContext, useContext } from "react";
-// import { useParams } from "react-router-dom";
-// import { useMedicationContext } from "../../hooks/useMedicationContext.js";
-// import { useClientContext } from "../../hooks/useClientContext.js";
-// import { usePassMedsContext } from "../../hooks/usePassMedsContext.js";
-// import PassMedsForm from "./PassMedsForm.jsx";
-//
-// const ActiveTimeSlotContext = createContext();
-// export const useActiveTimeSlot = () => useContext(ActiveTimeSlotContext);
-//
-// const PassMedsList = () => {
-//     const { medicationByClient, dispatch: medicationDispatch } = useMedicationContext();
-//     const {passMeds,dispatch:passMedsDispatch} = usePassMedsContext()
-//     const [loading, setLoading] = useState(true);
-//     const [activeTab, setActiveTab] = useState("morning");
-//     const { clientId } = useParams();
-//     const { clients } = useClientContext();
-//     const [err, setError] = useState("");
-//
-//     const [dummy,setDummy] =useState(0)
-//
-//
-//     useEffect(() => {
-//         const determineActiveTab = () => {
-//             const currentHour = new Date().getHours();
-//             if (currentHour >= 0 && currentHour < 12) return "morning";
-//             if (currentHour >= 12 && currentHour < 16) return "afternoon";
-//             if (currentHour >= 16 && currentHour < 20) return "evening";
-//             return "bedtime";
-//         };
-//         setActiveTab(determineActiveTab());
-//
-//         const fetchMedicationByClientId = async () => {
-//             setLoading(true);
-//             try {
-//                 const response = await fetch(
-//                     `http://localhost:4000/api/med/${clientId}`
-//                 );
-//                 const json = await response.json();
-//                 if (response.ok) {
-//                     medicationDispatch({
-//                         type: "SET_MEDICATION_BY_CLIENT_ID",
-//                         payload: json,
-//                     });
-//                     setError("");
-//                 } else {
-//                     setError(json.error);
-//                 }
-//             } catch (error) {
-//                 console.log("An error occurred:", error);
-//                 setError("Failed to fetch medication. Please try again later.");
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
-//         fetchMedicationByClientId();
-//     }, [medicationDispatch, clientId]);
-//
-//     // const handleMedicationSubmit = (updatedPassMeds) => {
-//     //     // passMedsDispatch({type:"CREATE_PASS_MEDS",payload:updatedPassMeds})
-//     //     passMedsDispatch({ type: "CREATE_PASS_MEDS", payload: updatedPassMeds });
-//     //     setDummy(prevState => + 1 )
-//     //
-//     // };
-//     const handleMedicationSubmit = (updatedPassMeds) => {
-//         passMedsDispatch({ type: "CREATE_PASS_MEDS", payload: updatedPassMeds });
-//         setDummy(prevState => prevState + 1);  // Ensure it increments
-//     };
-//
-//     if (loading) {
-//         return <p>Loading Medications...</p>;
-//     }
-//
-//     const findClient = clients.find((client) => client._id === clientId);
-//     const filteredMeds = medicationByClient.filter((med) =>
-//         med.timeSlot.includes(activeTab)
-//     );
-//
-//     const firstName = findClient?.firstName;
-//     const lastName = findClient?.lastName;
-//
-//     return (
-//         <ActiveTimeSlotContext.Provider value={{ activeTimeSlot: activeTab }}>
-//             <div>
-//                 <h1>Pass Meds</h1>
-//                 <div className="ml-2 md:flex">
-//                     <ul className="flex-column space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0 text-center">
-//                         {["morning", "afternoon", "evening", "bedtime"].map((timeslot) => (
-//                             <li key={timeslot}>
-//                                 <button
-//                                     type="button"
-//                                     onClick={() => setActiveTab(timeslot)}
-//                                     className={`inline-flex items-center px-4 py-3 rounded-lg w-full ${
-//                                         activeTab === timeslot
-//                                             ? "text-white bg-blue-700 dark:bg-blue-600 font-bold"
-//                                             : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-300 font-normal"
-//                                     }`}
-//                                 >
-//                                     {timeslot.charAt(0).toUpperCase() + timeslot.slice(1)}
-//                                 </button>
-//                             </li>
-//                         ))}
-//                     </ul>
-//
-//                     <div className="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-700 rounded-lg w-full">
-//                         <div>
-//                             <label className="font-medium">Medication For: </label>
-//                             <div className="inline-flex ml-3 font-bold text-white">{`${firstName} ${lastName}`}</div>
-//                         </div>
-//
-//                         <PassMedsForm
-//                             filteredMeds={filteredMeds}
-//                             clientInfo={clientId}
-//                             onMedicationSubmit={handleMedicationSubmit}
-//                         />
-//                     </div>
-//                 </div>
-//             </div>
-//         </ActiveTimeSlotContext.Provider>
-//     );
-// };
-//
-// export default PassMedsList;
-
 
 
 
