@@ -1,76 +1,196 @@
 import {useEmployeeContext} from "../hooks/useEmployeeContext.js";
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import {signupEmployee} from "../ApiCalls/auth.js";
+import {getLoggedEmployee} from "../ApiCalls/employees.js";
+// import axios from "axios";
 
-const EmployeeForm = () =>{
+const EmployeeForm = ({onClose}) =>{
     const {dispatch} = useEmployeeContext()
-    const [employee,setEmployee] = useState({
+    const [registerError,setRegisterError] = useState("")
+    const [registerEmployee,setRegisterEmployee] = useState({
         firstName:"",
         lastName:"",
+        password: "",
         middleName:"",
-        username:""
+        phoneNumber:"",
+        dateOfBirth:"",
+        hiredDate:"",
+        email:""
+        // username:""
     })
+
 
     const handleSubmit = async(e) =>{
         e.preventDefault()
-        const response = await fetch( "http://localhost:4000/api/employee",{
-            method:"POST",
-            headers:{
-                "Content-type":"application/json"
-            },
-            body:JSON.stringify(employee)
-        })
+        try{
+            const missingFields = []
+            if(!registerEmployee.firstName){
+                missingFields.push('First Name')
+            }
+            if(!registerEmployee.middleName){
+                missingFields.push('Middle Name')
+            }
+            if(!registerEmployee.lastName){
+                missingFields.push('Last Name')
+            }
+            if(!registerEmployee.password){
+                missingFields.push('Password')
+            }
+            if(!registerEmployee.phoneNumber){
+                missingFields.push('Phone number')
+            }
+            if(!registerEmployee.dateOfBirth){
+                missingFields.push('Date of birth')
+            }
+            if(!registerEmployee.hiredDate){
+                missingFields.push('Hired date')
+            }
+            if(!registerEmployee.email){
+                missingFields.push('Email')
+            }
 
-        const json = await response.json()
-        if(response.ok){
-            dispatch({type:"CREATE_EMPLOYEE",payload:json.data})
-            setEmployee({
-                firstName: "",
-                middleName: "",
-                lastName: "",
-                username: ""
-            })
-            console.log("The following new employee has been added",json)
-        }else{
-            console.log("Unable to create a new employee")
+            if(missingFields.length > 0){
+                setRegisterError(`Missing the following fields ${missingFields.join(', ')}`)
+            }
+
+
+
+            const response = await signupEmployee({registerEmployee})
+
+            const employee = await getLoggedEmployee()
+
+            console.log("Logged INnn user", employee)
+
+
+            console.log(registerEmployee.firstName)
+            if(response.success){
+                dispatch({type:"CREATE_EMPLOYEE",payload:response.data.data})
+                setRegisterEmployee({
+                    firstName: "",
+                    lastName: "",
+                    password: "",
+                    middleName:"",
+                    phoneNumber:"",
+                    dateOfBirth:"",
+                    hiredDate:"",
+                    email:""
+                })
+                onClose(true)
+                console.log("*************************", registerEmployee.firstName)
+                console.log("The following new employee has been added: ", response.data)
+            }
+
+        }catch(error){
+            console.error("Unable to create a new employee:", error.response?.data || error.message)
         }
+
+
     }
 
     return(
-        <div>
-            <Link className={"navigation-btn"} to = "/all-employees">All Employees</Link>
-            <form>
-                <label >First Name:</label>
+        <form
+            onSubmit={handleSubmit}
+            className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6 sm:p-8 space-y-6 overflow-auto max-h-[90vh]"
+        >
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-800">Add New Employee</h3>
+                <button
+                    onClick={onClose}
+                    type="button"
+                >
+                    &times;
+                </button>
+            </div>
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">First Name:</label>
                 <input
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
                     type="text"
-                    value = {employee.firstName}
-                    onChange={(e) => setEmployee({...employee,firstName: e.target.value})}
+                    value={registerEmployee.firstName}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, firstName: e.target.value})}
                 />
-                <label >Last Name:</label>
+            </div>
+
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">Middle Name:</label>
+                <input
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
+                    type="text"
+                    value={registerEmployee.middleName}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, middleName: e.target.value})}
+                />
+            </div>
+
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">Last Name:</label>
 
                 <input
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
                     type="text"
-                    value = {employee.lastName}
-                    onChange = {(e) => setEmployee({...employee,lastName: e.target.value})}
+                    value={registerEmployee.lastName}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, lastName: e.target.value})}
                 />
-                <label >Middle Name:</label>
+            </div>
 
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">Email:</label>
                 <input
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
                     type="text"
-                    value = {employee.middleName}
-                    onChange={(e) => setEmployee({...employee,middleName: e.target.value})}
+                    value={registerEmployee.email}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, email: e.target.value})}
                 />
-
-                <label >username:</label>
+            </div>
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">Phone Number:</label>
                 <input
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
                     type="text"
-                    value = {employee.username}
-                    onChange={(e) => setEmployee({...employee,username: e.target.value})}
+                    value={registerEmployee.phoneNumber}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, phoneNumber: e.target.value})}
                 />
+            </div>
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">Date of Birth:</label>
+                <input
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
+                    type="date"
+                    value={registerEmployee.dateOfBirth}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, dateOfBirth: e.target.value})}
+                />
+            </div>
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">Hired Date:</label>
+                <input
+                    required
 
-                <button className="create-btn" onClick={handleSubmit}>Add new Employee</button>
-            </form>
-        </div>
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
+                    type="date"
+                    value={registerEmployee.hiredDate}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, hiredDate: e.target.value})}
+                />
+            </div>
+
+            <div>
+                <label className="block text-gray-700 font-medium mb-1">Password:</label>
+                <input
+                    required
+                    className="w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-300 px-3 py-2"
+                    type="password"
+                    value={registerEmployee.password}
+                    onChange={(e) => setRegisterEmployee({...registerEmployee, password: e.target.value})}
+                />
+            </div>
+
+            <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:ring focus:ring-blue-300 focus:ring-offset-2"
+            >
+                Add new Employee
+            </button>
+            {registerError && <p>{registerError}</p>}
+        </form>
     )
 }
 

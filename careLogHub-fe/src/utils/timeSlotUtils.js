@@ -3,12 +3,19 @@ import isBetween from "dayjs/plugin/isBetween";
 
 dayjs.extend(isBetween)
 
-export const TIME_SLOTS = {
-    morning:{label:"Morning"},
-    afternoon:{label:"Afternoon"},
-    evening:{label:"Evening"},
-    bedtime:{label:"Bedtime",}
-};
+// export const TIME_SLOTS = {
+//     morning:{label:"Morning"},
+//     afternoon:{label:"Afternoon"},
+//     evening:{label:"Evening"},
+//     bedtime:{label:"Bedtime",}
+// };
+
+export const TIME_SLOT = {
+    Morning:"morning",
+    Afternoon:"afternoon",
+    Evening:"evening",
+    Bedtime:'bedtime'
+}
 
 
 export const filterMedicationByTimeSlot = (medications, timeSlot) =>{
@@ -22,6 +29,6 @@ export const getCurrentTimeSlot = () => {
 
     if (currentHour >= 6 && currentHour < 12) return "morning";
     if (currentHour >= 12 && currentHour < 16) return "afternoon";
-    if (currentHour >= 16 && currentHour < 18) return "evening";
+    if (currentHour >= 16 && currentHour < 19) return "evening";
     return "bedtime";
 };

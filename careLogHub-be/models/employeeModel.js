@@ -12,14 +12,40 @@ const employeeSchema = new Schema({
     middleName:{
         type:String
     },
+    password:{
+        type:String,
+        required:true
+    },
     username:{
         type:String,
         required:true,
         unique:true
-    }
-},
-    {timestamps:true}
+    },
+    email:{
+        type:String,
+        required:true,
 
-)
+    },
+    phoneNumber:{
+        type:String,
+    },
+    dateOfBirth:{
+        type:Date,
+    },
+    hiredDate:{
+        type:Date,
+        required:true
+    },
+
+
+    // roles:{
+    //     type:String,
+    //     enum:["caregiver","nurse","supervisor","administrator"],
+    //     required:true
+    // },
+    // profilePic:{
+    //     type:String
+    // }
+}, {timestamps:true})
 
 module.exports = mongoose.model("Employee",employeeSchema)

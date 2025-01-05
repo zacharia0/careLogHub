@@ -34,17 +34,43 @@ const medicationSchema = new Schema({
         type:String,
         required:true
     },
+    // schedule_time:[{
+    //     type:Date,
+    //     required:true
+    // }], // An array to store multiple schedule times
+    // time_slot:[{
+    //     type:String,
+    //     enum:["morning","afternoon","evening","bedtime"]
+    // }] // An array to store multiple time slots
+
+    schedule_time: {
+        type: [Date],
+        required: [true, "Schedule time is required."],
+        validate: {
+            validator: function (value) {
+                return Array.isArray(value) && value.length > 0;
+            },
+            message: "Schedule time must contain at least one date."
+        }
+    },
+
+
+    time_slot: {
+        type: [String],
+        required:[true, "Time slot is required"],
+        enum: ["morning", "afternoon", "evening", "bedtime"]
+    }
 
 },{
     timestamps:true,
-    toJSON:{virtuals:true},
-    toObject:{virtuals:true}
+    // toJSON:{virtuals:true},
+    // toObject:{virtuals:true}
 })
 
-medicationSchema.virtual('schedules',{
-    ref:'MedicationSchedule', // The model to use for population
-    localField:'_id',  // The field on the Medication model
-    foreignField:'medication' // The field on the MedicationSchedule model (refers to Medication's _id)
-})
+// medicationSchema.virtual('client',{
+//     ref:'Client', // The model to use for population
+//     localField:'_id',  // The field on the Medication model
+//     foreignField:'medication' // The field on the MedicationSchedule model (refers to Medication's _id)
+// })
 
 module.exports = mongoose.model("Medication",medicationSchema)

@@ -2,282 +2,134 @@ const mongoose = require("mongoose")
 const MedicationModel = require("../models/medicationModel")
 const asyncHandler = require("../middleware/asyncHandler")
 const CustomError = require('../utils/CustomError')
-const ClientModel = require("../models/clientModel")
-const MedicationScheduleModel =require("../models/MedicationSchedule")
 
-// const createMed = asyncHandler(async(req,res)=>{
-//     const {clientId,medicationData,scheduleMedicationData}= req.body
-//
-//     if(!mongoose.Types.ObjectId.isValid(clientId)){
-//         throw new CustomError("Invalid client ID format.")
-//     }
-//     let missingFields = []
-//     if(!medication_name){
-//         missingFields.push("Medication name")
-//     }
-//     if(!medication_dosage){
-//         missingFields.push("Medication dosage")
-//     }
-//     if(!dosage_unit){
-//         missingFields.push("Dosage Unit")
-//     }
-//     if(!clientId){
-//         missingFields.push("Client")
-//     }
-//
-//     if(!time_slot){
-//         missingFields.push("Time slot")
-//     }
-//     if(!schedule_time){
-//         missingFields.push("Schedule time")
-//     }
-//     // if(!timeSlot){
-//     //     missingFields.push("Timeslot")
-//     // }
-//     if(missingFields.length > 0){
-//         throw new CustomError(`The following fields are required: ${missingFields.join(", ")}`)
-//     }
-//
-//     const newMed = new MedicationModel({
-//         medName,
-//         medDosage,
-//         dosageUnit,
-//         client:clientId,
-//         clientFirstName,
-//         clientLastName
-//
-//     })
-//     // console.log(newMed)
-//
-//     await newMed.save()
-//
-//     // const newMed = await MedicationModel.create(req.body)
-//     if(!newMed){
-//         throw new CustomError("Failed to add new med",400)
-//     }
-//     res.status(201).json({success:true,data:newMed})
-// })
-//
-// const getAllMedications = asyncHandler(async(req,res)=>{
-//     const deleted = req.query.deleted === "true"? true: false
-//     const allMedications = await MedicationModel.find({deleted}).populate("client","deleted")
-//     if(!allMedications || allMedications.length === 0){
-//         throw new CustomError("Medication(s) is empty",404)
-//     }
-//     res.status(200).json(allMedications)
-// })
-//
-//
-// const updateMedicationById = asyncHandler(async(req,res,next) =>{
-//     const {medicationId} = req.params
-//     console.log("medication :66" ,req.body)
-//     if(!mongoose.Types.ObjectId.isValid(medicationId)){
-//         throw new CustomError("Invalid medication ID format.", 400)
-//     }
-//
-//     const medicationToUpdate = await MedicationModel.findOneAndUpdate({_id:medicationId},{...req.body}, {new:true})
-//     if(!medicationToUpdate){
-//         throw new CustomError("Medication not found.",404)
-//     }
-//     res.status(200).json(medicationToUpdate)
-//
-// })
-//
-//
-// const deleteMedicationById = asyncHandler(async(req,res) =>{
-//     const {medicationId} = req.params
-//     if(!mongoose.Types.ObjectId.isValid(medicationId)){
-//         throw new CustomError("Invalid medication format.",400)
-//     }
-//     const deletedMedication = await MedicationModel.findById(medicationId)
-//     if(!deletedMedication){
-//         throw new CustomError("Medication not found.",404)
-//     }
-//      deletedMedication.deleted = true
-//      deletedMedication.deletedAt = new Date()
-//     await deletedMedication.save({validateModifiedOnly:true})
-//     res.status(200).json(deletedMedication)
-//
-// })
-//
-// const getMedicationByClientId = asyncHandler(async(req,res) =>{
-//     const {clientId} = req.params
-//
-//     // console.log("req.params.clientId",req.params.clientId)
-//     const medications = await MedicationModel.find({client:clientId}).populate(
-//        "client","firstName lastName deleted"
-//     )
-//
-//     // console.log("client Id in MedicationController line 96:",clientId)
-//     // console.log(medications)
-//     const filterMedications = medications.filter((med) => med.client !== null)
-//     if(filterMedications.length === 0){
-//         throw new CustomError("No Medications found for the specified client.",404)
-//     }
-//
-//     res.status(200).json(filterMedications)
-// })
+const createMed = asyncHandler(async(req,res)=>{
+    const {clientId,medicationData}= req.body
 
-
-
-    // const createMedicationAndSchedule = asyncHandler(async (req,res) =>{
-    //     const {clientId,scheduleData,medicationData} =req.body
-    //     if(!clientId){
-    //         throw new CustomError("Client not found",404)
-    //     }
-    //
-    //     const missingFields = []
-    //     if(!medicationData.medication_name){
-    //         missingFields.push("medication name")
-    //     }
-    //     if(!medicationData.medication_dosage){
-    //         missingFields.push("medication dosage")
-    //     }
-    //     if(!medicationData.medication_instruction){
-    //         missingFields.push("medication instruction")
-    //     }
-    //
-    //
-    //     scheduleData.forEach((schedule) => {
-    //         if( !schedule.schedule_time ){
-    //             console.log(schedule)
-    //             // throw new CustomError("Must select time to administer medication",400)
-    //             missingFields.push("schedule time")
-    //         }
-    //         if( !schedule.time_slot){
-    //             // throw new CustomError("Choose a time slot",400)
-    //             missingFields.push("time slot ")
-    //
-    //         }
-    //         console.log(schedule.time_slot)
-    //     })
-    //
-    //     if(missingFields > 0){
-    //         throw new CustomError(`The following fields are missing: ${missingFields.join(", ")}`,400)
-    //     }
-    //
-    //
-    //
-    //
-    //
-    //     //create Medication
-    //     const medication = new MedicationModel({
-    //         ...medicationData,
-    //         client:clientId
-    //     })
-    //     await medication.save()
-    //
-    //     const schedules = await Promise.all(
-    //         scheduleData.map(async (schedule) =>{
-    //             const newSchedule = new MedicationScheduleModel({
-    //                 ...schedule,
-    //                 medication:medication._id
-    //             })
-    //             await newSchedule.save()
-    //             return newSchedule
-    //         })
-    //     )
-    //
-    //
-    //     // if(!schedules || schedules.length ===0){
-    //     //     throw new CustomError("Time slot is required",400)
-    //     // }
-    //
-    //     res.status(201).json({medication,schedules})
-    // })
-
-const createMedicationAndSchedule = asyncHandler(async (req, res) => {
-    const { clientId, scheduleData, medicationData } = req.body;
-
-    // Validate client ID
-    if (!clientId) {
-        throw new CustomError("Client not found", 404);
+    if(!mongoose.Types.ObjectId.isValid(clientId)){
+        throw new CustomError("Invalid client ID format.")
+    }
+    let missingFields = []
+    if(!medicationData.medication_name){
+        missingFields.push("Medication name")
+    }
+    if(!medicationData.medication_dosage){
+        missingFields.push("Medication dosage")
+    }
+    if(!medicationData.dosage_unit){
+        missingFields.push("Dosage Unit")
+    }
+    if(!clientId){
+        missingFields.push("Client")
+    }
+    if(!medicationData.medication_instruction){
+        missingFields.push("Medication Instruction")
     }
 
-    // Validate medicationData fields
-    const missingFields = [];
-    if (!medicationData.medication_name) {
-        missingFields.push("medication name");
+    if(!Array.isArray(medicationData.time_slot) || medicationData.time_slot.length === 0){
+        missingFields.push("Time slot")
     }
-    if (!medicationData.medication_dosage) {
-        missingFields.push("medication dosage");
-    }
-    if (!medicationData.medication_instruction) {
-        missingFields.push("medication instruction");
-    }
-    if (!medicationData.dosage_unit) {
-        missingFields.push("dosage unit");
-    }
-
-    // Validate scheduleData fields
-    if (!scheduleData || scheduleData.length === 0) {
-        missingFields.push("Time slot, Time");
-    } else {
-        scheduleData.forEach((schedule, index) => {
-            if (!schedule.schedule_time) {
-                missingFields.push(`schedule time for entry ${index + 1}`);
-            }
-            if (!schedule.time_slot) {
-                missingFields.push(`time slot for entry ${index + 1}`);
-            }
-        });
+    // if(!Array.isArray(medicationData.schedule_time) || medicationData.schedule_time === [null]){
+    //
+    //     missingFields.push("Schedule time")
+    // }
+    // if(!timeSlot){
+    //     missingFields.push("Timeslot")
+    // }
+    if (!Array.isArray(medicationData.schedule_time) || medicationData.schedule_time.some(time => time === null)) {
+        missingFields.push("Schedule time");
     }
 
-    // If any missing fields, throw a custom error
-    if (missingFields.length > 0) {
-        throw new CustomError(
-            `The following fields are missing: ${missingFields.join(", ")}`,
-            400
-        );
+    if(missingFields.length > 0){
+        throw new CustomError(`The following fields are required: ${missingFields.join(", ")}.`)
     }
 
-    // Create Medication
-    const medication = new MedicationModel({
-        ...medicationData,
-        client: clientId,
-    });
-
-    await medication.save(); // Will only save if manual validation passes
-
-    // Create MedicationSchedules
-    const schedules = await Promise.all(
-        scheduleData.map(async (schedule) => {
-            const newSchedule = new MedicationScheduleModel({
-                ...schedule,
-                medication: medication._id,
-            });
-            await newSchedule.save();
-            return newSchedule;
-        })
-    );
-
-    // Respond with created data
-    res.status(201).json({ medication, schedules });
-});
-
-
-
-    const getMedicationByClientId = asyncHandler(async(req,res) =>{
-        const {clientId} = req.params;
-
-        //Find medications for the client and populate the 'medication' field in the schedules
-
-        const medication = await MedicationModel.find({client:clientId}).populate({path:"schedules"}) || []
-
-        if(!medication){
-            throw new CustomError("Medication cannot be found",400)
-        }
-
-        res.status(200).json(medication)
-
+    const newMed = new MedicationModel({
+        // medication_name,
+        // medDosage,
+        // dosageUnit,
+        // medicationData,
+        // clientFirstName,
+        // clientLastName
+        medication_name: medicationData.medication_name,
+        medication_dosage: medicationData.medication_dosage,
+        dosage_unit: medicationData.dosage_unit,
+        medication_instruction: medicationData.medication_instruction,
+        schedule_time: medicationData.schedule_time, // Array of dates
+        time_slot: medicationData.time_slot,
+        client:clientId,
 
     })
+    // console.log(newMed)
+
+    await newMed.save()
+
+    // const newMed = await MedicationModel.create(req.body)
+    if(!newMed){
+        throw new CustomError("Failed to add new med",400)
+    }
+    res.status(201).json({success:true,data:newMed})
+})
+
+const getAllMedications = asyncHandler(async(req,res)=>{
+    const deleted = req.query.deleted === "true"? true: false
+    const allMedications = await MedicationModel.find({deleted}).populate("client","deleted firstName lastName")
+    if(!allMedications || allMedications.length === 0){
+        throw new CustomError("Medication(s) is empty",404)
+    }
+    res.status(200).json(allMedications)
+})
 
 
+const updateMedicationById = asyncHandler(async(req,res,next) =>{
+    const {medicationId} = req.params
+    console.log("medication :66" ,req.body)
+    if(!mongoose.Types.ObjectId.isValid(medicationId)){
+        throw new CustomError("Invalid medication ID format.", 400)
+    }
+
+    const medicationToUpdate = await MedicationModel.findOneAndUpdate({_id:medicationId},{...req.body}, {new:true})
+    if(!medicationToUpdate){
+        throw new CustomError("Medication not found.",404)
+    }
+    res.status(200).json(medicationToUpdate)
+
+})
 
 
+const deleteMedicationById = asyncHandler(async(req,res) =>{
+    const {medicationId} = req.params
+    if(!mongoose.Types.ObjectId.isValid(medicationId)){
+        throw new CustomError("Invalid medication format.",400)
+    }
+    const deletedMedication = await MedicationModel.findById(medicationId)
+    if(!deletedMedication){
+        throw new CustomError("Medication not found.",404)
+    }
+     deletedMedication.deleted = true
+     deletedMedication.deletedAt = new Date()
+    await deletedMedication.save({validateModifiedOnly:true})
+    res.status(200).json(deletedMedication)
+
+})
+
+const getMedicationByClientId = asyncHandler(async(req,res) =>{
+    const {clientId} = req.params
+    const deleted = req.query.deleted === "true"? true: false
 
 
-// module.exports = {createMed,getAllMedications,updateMedicationById,deleteMedicationById,getMedicationByClientId}
+    console.log("req.params.clientId",req.params.clientId)
+    const medications = await MedicationModel.find({deleted,client:clientId}).populate(
+       "client","firstName lastName deleted"
+    )
 
-module.exports = {createMedicationAndSchedule,getMedicationByClientId}
+    const filterMedications = medications.filter((med) => med.client !== null)
+    if(filterMedications.length === 0){
+        throw new CustomError("No Medications found for the specified client.",404)
+    }
+
+    res.status(200).json(filterMedications)
+})
+
+
+module.exports = {createMed,getAllMedications,updateMedicationById,deleteMedicationById,getMedicationByClientId}

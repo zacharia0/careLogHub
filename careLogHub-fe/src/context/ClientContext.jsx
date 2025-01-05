@@ -1,4 +1,4 @@
-import {createContext, useEffect, useReducer} from "react";
+import {createContext, useEffect, useReducer, useState} from "react";
 
 
 export const ClientContext = createContext()
@@ -18,17 +18,19 @@ export const clientReducer = (state, action) => {
         case "DELETE_CLIENT":
             return {
                 ...state,
-                clients: state.clients.filter((client) => client._id !== action.payload._id)
+                clients: state.clients.filter((client) => client._id !== action.payload._id),
+                singleClient: state.singleClient?._id !== action.payload._id
             }
         case "UPDATE_CLIENT":
             return {
                 ...state,
-                clients: state.clients.map((client) => client._id === action.payload._id ? action.payload : client)
+                clients: state.clients.map((client) => client._id === action.payload._id ? action.payload : client),
+                singleClient: state.singleClient?._id === action.payload._id ? action.payload : state.singleClient
             }
         case "SET_SINGLE_CLIENT":
-            return{
+            return {
                 ...state,
-                singleClient:action.payload
+                singleClient: action.payload
             }
         default:
             return state
@@ -38,7 +40,7 @@ export const clientReducer = (state, action) => {
 export const ClientContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(clientReducer, {
         clients: [],
-        singleClient:null
+        singleClient: null
     })
 
     useEffect(() => {
@@ -54,6 +56,7 @@ export const ClientContextProvider = ({children}) => {
                 console.log("Failed to fetch all clients...")
             }
         }
+
         fetchAllClients().then(() => {
             console.log("Client successfully fetched.");
         })
@@ -63,8 +66,19 @@ export const ClientContextProvider = ({children}) => {
 
     }, [])
 
+    const getSingleClient = async (clientId) => {
+        const response = await fetch(`http://localhost:4000/api/client/${clientId}`,)
+        const json = await response.json()
+        if (!response.ok) {
+            console.error("Failed to fetch a single client")
+        }
+        // setSingleClient(json)
+        dispatch({type: "SET_SINGLE_CLIENT", payload: json})
+
+    }
+
     return (
-        <ClientContext.Provider value={{...state, dispatch}}>
+        <ClientContext.Provider value={{...state, dispatch, getSingleClient}}>
             {children}
         </ClientContext.Provider>
     )

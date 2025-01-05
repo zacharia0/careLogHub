@@ -8,9 +8,12 @@ import {EmployeeContextProvider} from "./context/EmployeeContext.jsx";
 import {MedicationContextProvider} from "./context/MedicationContext.jsx";
 import {PassMedsContextProvider} from "./context/PassMedsContext.jsx";
 
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
+
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-
         <ClientContextProvider>
             <MedicationContextProvider>
                 <PassMedsContextProvider>

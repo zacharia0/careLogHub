@@ -2,36 +2,50 @@ import {createContext, useEffect, useReducer} from "react";
 
 export const MedicationContext = createContext()
 
-export const medicationReducer = (state,action) =>{
-    console.log("JSON",state.medications)
-    // console.log("JSON",action.payload.clientId)
+export const medicationReducer = (state, action) => {
+    console.log("JSON", state.medications)
+    console.log("JSON", state.medicationByClientId[action.payload.client])
 
-    switch (action.type){
+    switch (action.type) {
         case "SET_MEDICATION":
-            return{
+            return {
                 ...state,
                 medications: action.payload
             }
         case "CREATE_MEDICATION":
-            return{
+            return {
                 ...state,
-                medications: [...state.medications,action.payload]
+                medications: [...state.medications, action.payload]
             }
+
         case "UPDATE_MEDICATION":
-            return{
+            return {
                 ...state,
-                medications: state.medications.map((medication) => medication._id === action.payload._id? action.payload: medication)
-            }
+                medications: state.medications.map((medication) =>
+                    medication._id === action.payload._id ? action.payload : medication
+                ),
+                medicationByClientId: {
+                    ...state.medicationByClientId,
+                    [action.payload.client]: state.medicationByClientId[action.payload.client].map((med) =>
+                        med._id === action.payload._id ? action.payload : med
+                    ),
+                }
+            };
+
+
         case "DELETE_MEDICATION":
-            return{
+            return {
                 ...state,
-                medications: state.medications.filter((med) => med._id !== action.payload._id)
-            }
-        // case "SET_MEDICATION_BY_CLIENT_ID":
-        //     return{
-        //         ...state,
-        //         medicationByClient: action.payload
-        //     }
+                medications: state.medications.filter((med) => med._id !== action.payload._id),
+                medicationByClientId: {
+                    ...state.medicationByClientId,
+                    [action.payload.client]: state.medicationByClientId[action.payload.client].filter(
+                        (med) => med._id !== action.payload._id
+                    ),
+                }
+            };
+
+
         case "SET_MEDICATION_BY_CLIENT_ID":
             return {
                 ...state,
@@ -48,7 +62,7 @@ export const medicationReducer = (state,action) =>{
 }
 
 export const MedicationContextProvider = ({children}) => {
-    const [state,dispatch] = useReducer(medicationReducer,{
+    const [state, dispatch] = useReducer(medicationReducer, {
         medications: [],
         // medicationByClient:[]
         medicationByClientId: {}
@@ -56,26 +70,31 @@ export const MedicationContextProvider = ({children}) => {
     })
 
 
-        const fetchMedicationByClientId = async (clientId) => {
-            try {
-                const response = await fetch(`http://localhost:4000/api/med/${clientId}?deleted=true`);
-                const json = await response.json();
-                if (response.ok) {
-                    // console.log("JSON",json)
-                    dispatch({ type: "SET_MEDICATION_BY_CLIENT_ID", payload: {clientId,medications:json} });
-                } else {
-                    console.log("Failed to fetch medications");
+    const fetchMedicationByClientId = async (clientId) => {
+        const token = localStorage.getItem('token')
+        try {
+            const response = await fetch(`http://localhost:4000/api/med/${clientId}?deleted=false`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
-            } catch (error) {
-                console.error("Error, fetching medications", error);
+            );
+            const json = await response.json();
+            if (response.ok) {
+                // console.log("JSON",json)
+                dispatch({type: "SET_MEDICATION_BY_CLIENT_ID", payload: {clientId, medications: json}});
+            } else {
+                console.log("Failed to fetch medications");
             }
-        };
-
-
+        } catch (error) {
+            console.error("Error, fetching medications", error);
+        }
+    };
 
 
     return (
-        <MedicationContext.Provider value={{...state, dispatch,fetchMedicationByClientId}}>
+        <MedicationContext.Provider value={{...state, dispatch, fetchMedicationByClientId}}>
             {children}
         </MedicationContext.Provider>
     )

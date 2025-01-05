@@ -9,4 +9,5 @@ router.delete("/:clientId",deleteClientById)
 router.put("/:clientId",updateClientById)
 router.get("/:clientId",getClientById)
 
+
 module.exports = router

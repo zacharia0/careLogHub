@@ -1,134 +1,28 @@
-import {useEmployeeContext} from "../hooks/useEmployeeContext.js";
-import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+
+import {Link, } from "react-router-dom";
 
 const EmployeeDetail = ({employees}) => {
-    const {dispatch} = useEmployeeContext()
-    const [isEditing, setIsEditing] = useState(false)
-    const [updateEmployee, setUpdateEmployee] = useState({
-        firstName: employees.firstName,
-        lastName: employees.lastName,
-        middleName: employees.middleName,
-        username: employees.username
-    })
-
-    const handleEmployeeUpdate = async(e) => {
-        e.preventDefault()
-        const employeeId = employees._id
-        console.log(employeeId)
-        const response = await fetch(`http://localhost:4000/api/employee/${employeeId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updateEmployee)
-        })
-        const json = await response.json()
-        if (response.ok) {
-            console.log("Updated")
-            dispatch({type: "UPDATE_EMPLOYEE", payload: json})
-            setIsEditing(false)
-        }
-        if (!response.ok) {
-            console.log("failed to update")
-
-        }
-    }
-
-    const handleDeleteEmployee = async() =>{
-        const employeeId = employees._id
-        const response = await fetch(`http://localhost:4000/api/employee/${employeeId}`,{
-            method:"DELETE"
-        })
-        const json = await response.json()
-        if(!response.ok){
-            console.warn("FAILED TO DELETE")
-            return
-        }
-        if(response.ok){
-            console.log("Deleted employee...")
-            dispatch({type:"DELETE_EMPLOYEE", payload:json})
-        }
-    }
-
 
     return (
-        <div className={"mb-1"}>
-
-            <hr/>
-            {
-
-                isEditing ? (
-                        <form onSubmit={handleEmployeeUpdate}>
-
-                            <label>Middle Name:</label>
-                            <input
-                                type="text"
-                                value={updateEmployee.firstName}
-                                onChange={(e) => setUpdateEmployee({...updateEmployee, firstName: e.target.value})}
-                            />
-
-                            <label>Middle Name:</label>
-                            <input
-                                type="text"
-                                value={updateEmployee.lastName}
-                                onChange={(e) => setUpdateEmployee({...updateEmployee, lastName: e.target.value})}
-                            />
-
-                            <label>Middle Name:</label>
-                            <input
-                                type="text"
-                                value={updateEmployee.middleName}
-                                onChange={(e) => setUpdateEmployee({...updateEmployee, middleName: e.target.value})}
-                            />
-
-                            <label>Username:</label>
-                            <input
-                                type="text"
-                                value={updateEmployee.username}
-                                onChange={(e) => setUpdateEmployee({...updateEmployee, username: e.target.value})}
-                            />
-
-                            <button type="submit"
-                                    className="save-btn">Save
-                            </button>
-                            <button onClick={(e) => setIsEditing(false)}
-                                    className="cancel">cancel
-                            </button>
 
 
-                        </form>
+        <tr className="border-b hover:bg-gray-100 transition duration-150">
 
-                    ) :
-                    (
+            <td className="py-4 px-4">{employees?.firstName}</td>
+            <td className="py-4 px-4">{employees?.lastName}</td>
+            {/*<td className="py-4 px-4">{employees?.middleName}</td>*/}
+            <td className="py-4 px-4">{employees?.username}</td>
+            <td className='py-4 px-4 flex space-x-3'>
+                <Link
+                    to={`/employee-profile/${employees?._id}`}
+                    className={"text-green-600 hover:underline"}
+                >
+                    Detail
+                </Link>
+            </td>
 
-                        <div className="font-thin">
-                            <label>Name: </label>
-                            <span>
-                            {employees.firstName}
 
-                        </span>
-                            <span>
-                            {employees.lastName}
-
-                        </span>
-                            {employees.middleName}
-                            {employees.username}
-
-                            <button
-                                onClick={(e) => setIsEditing(true)}
-                                className={"edit-btn"}>Edit
-                            </button>
-                            <button
-                                onClick={handleDeleteEmployee}
-                                className=" delete-btn ">Delete
-                            </button>
-
-                        </div>
-                    )
-            }
-
-        </div>
+        </tr>
     )
 }
 
