@@ -11,14 +11,6 @@ const createEmployee = asyncHandler(async(req,res) =>{
     let missingFields = []
     console.log(registerEmployee.firstName)
 
-    let employeeUsername = `${registerEmployee.firstName}.${registerEmployee.lastName}`
-    let validUsername = await Employee.findOne({username: employeeUsername.toLowerCase()})
-    let increment = 1
-    while(validUsername){
-        employeeUsername = `${registerEmployee.firstName}.${registerEmployee.lastName}${increment}`
-        validUsername = await Employee.findOne({username: employeeUsername})
-        increment++
-    }
     if(!registerEmployee.firstName){
         missingFields.push("first name")
     }
@@ -32,6 +24,14 @@ const createEmployee = asyncHandler(async(req,res) =>{
         throw new CustomError(`The following fields are missing: ${missingFields.join(',')}`,400)
     }
 
+    let baseUsername = `${registerEmployee.firstName.toLowerCase()}.${registerEmployee.lastName.toLowerCase()}`
+    let employeeUsername = baseUsername
+    let increment = 1
+    while (await Employee.exists({username: employeeUsername}))
+    {
+        employeeUsername = `${baseUsername}${increment}`
+        increment++
+    }
     // Encrypt the password
     const hashedPassword = await bcrypt.hash(registerEmployee.password,10)
 
@@ -42,7 +42,7 @@ const createEmployee = asyncHandler(async(req,res) =>{
         email:registerEmployee.email,
         phoneNumber:registerEmployee.phoneNumber,
         dateOfBirth:registerEmployee.dateOfBirth,
-        hiredDate:registerEmployee.dateOfBirth,
+        hiredDate:registerEmployee.hiredDate,
         username:employeeUsername.toLowerCase(),
         password:hashedPassword ,
 
@@ -55,6 +55,11 @@ const createEmployee = asyncHandler(async(req,res) =>{
 
     res.status(201).json({success:true, data: newEmployee})
 })
+
+
+
+
+
 
 const loginEmployee = asyncHandler(async (req, res) => {
     const { employeeLogin } = req.body;

@@ -6,15 +6,6 @@ const EditEmployeeProfile = ({onClose}) => {
     const {getSingleEmployee, singleEmployee, dispatch} = useEmployeeContext()
     const {employeeId} = useParams()
 
-
-    // Helper function to format date for input
-    // const formatDateForInput = (dateString) => {
-    //     const date = new Date(dateString);
-    //     const year = date.getUTCFullYear();
-    //     const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-    //     const day = String(date.getUTCDate()).padStart(2, "0");
-    //     return `${year}-${month}-${day}`;
-    // };
     const formatDateForInput = (dateString) => {
         const date = parseISO(dateString); // Parses ISO 8601 string to Date object
         return format(date, 'yyyy-MM-dd'); // Formats to YYYY-MM-DD

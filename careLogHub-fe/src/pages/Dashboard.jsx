@@ -1,14 +1,11 @@
-
-
-
-import { FaBriefcaseMedical, FaFilePen, FaPeopleRoof, FaPeopleCarryBox } from "react-icons/fa6";
+import { FaFilePen, FaPeopleRoof, FaPeopleCarryBox } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
     return (
         <div >
             {/* Container */}
-            <div className="mx-auto  grid-cols-2 gap-4 h-[60vh] w-[50vw] bg-white p-6 rounded-lg shadow-lg">
+            <div className="mx-auto grid-cols-2 gap-4 h-[60vh] w-[50vw] bg-white p-6 rounded-lg shadow-lg">
 
                 <Link
                     to="/all-daily-logs"

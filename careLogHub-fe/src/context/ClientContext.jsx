@@ -8,7 +8,8 @@ export const clientReducer = (state, action) => {
         case "SET_CLIENT":
             return {
                 ...state,
-                clients: action.payload
+                // clients: action.payload
+                clients: Array.isArray(action.payload) ? action.payload : []
             }
         case "CREATE_CLIENT":
             return {
@@ -51,6 +52,9 @@ export const ClientContextProvider = ({children}) => {
             if (response.ok) {
                 console.log("Fetched all Clients...", json)
                 dispatch({type: "SET_CLIENT", payload: json})
+            }else{
+                console.log("No clients found, setting empty array");
+                dispatch({type:'SET_CLIENT',payload:[]})
             }
             if (!response) {
                 console.log("Failed to fetch all clients...")

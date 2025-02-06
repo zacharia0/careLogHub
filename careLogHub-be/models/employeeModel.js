@@ -33,19 +33,10 @@ const employeeSchema = new Schema({
         type:Date,
     },
     hiredDate:{
-        type:Date,
+        type: Date,
         required:true
     },
 
-
-    // roles:{
-    //     type:String,
-    //     enum:["caregiver","nurse","supervisor","administrator"],
-    //     required:true
-    // },
-    // profilePic:{
-    //     type:String
-    // }
 }, {timestamps:true})
 
 module.exports = mongoose.model("Employee",employeeSchema)
